@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Partner {
+  id           Int      @id
+  CompanyName  String
+  Contact      String
+  Email        String
+  Address      String
+  ESI          String
+  PF           String
+  PAN          String
+  PAN_No       String
+  MOA          String
+  CIN          String
+  GST          String
+  TradeLicense String
+  MSMC         String
+  CreatedAt    DateTime @default(now())
+
+  PlanId Int          @unique
+  Plan   Subscription @relation(fields: [PlanId], references: [id], onDelete: Cascade)
+}
+
+model PartnerRequest {
+  id           Int           @id @default(autoincrement())
+  CompanyName  String
+  Contact      String
+  Email        String
+  Address      String
+  ESI          String
+  PF           String
+  PAN          String
+  PAN_No       String
+  MOA          String
+  CIN          String
+  GST          String
+  TradeLicense String
+  MSMC         String
+  Status       RequestStatus @default(PENDING)
+  CreatedAt    DateTime      @default(now())
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  Plan      String
+  StartDate DateTime
+  EndDate   DateTime
+  Status    String
+  CreatedAt DateTime @default(now())
+  Partner   Partner?
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

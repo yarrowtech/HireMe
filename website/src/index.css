@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background:#1c398e;
+  border-radius: 13px;
+}
+
+
+/*utility classes*/
+.active-employee-sidebar-item {
+  @apply bg-white text-black;
+}
+
+.calendar-day-name {
+  @apply self-center border-2 font-bold text-sm w-20 h-10 flex justify-center items-center rounded-lg text-blue-900 text-center
+}
+.calendar-day {
+  @apply self-center border-2 text-center font-bold text-sm w-20 h-10 flex justify-center items-center rounded-lg
+}
