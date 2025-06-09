@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, Post, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { PartnerService } from "./partner.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
@@ -8,6 +8,7 @@ import { unlinkSync } from "node:fs";
 import { ArgumentsHost } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import { Request, Response } from "express";
+import { RequestStatus } from "generated/prisma";
 
 
 const storage = {storage: diskStorage({
@@ -59,6 +60,7 @@ export class PartnerController {
     }
 
     @Post("send-request")
+    @HttpCode(201)
     @UseFilters(CleanupFileOnValidationFailFilter)
     @UseInterceptors(FileFieldsInterceptor([
         { name: "ESI", maxCount: 1 },
@@ -70,7 +72,8 @@ export class PartnerController {
         { name: "MSMC", maxCount: 1 }
     ], storage))
     sendPartnerRequest(@Body(new ValidationPipe()) requestData: PartnerRequestDto): Object {
-        return requestData
+        const res = this.partnerService.sendPartnerRequest({...requestData, Status: RequestStatus.PENDING});
+        return {status: "success", message: "Partner request sent successfully"};
     }
 }
 

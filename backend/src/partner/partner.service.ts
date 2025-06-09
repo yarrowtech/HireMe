@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { PartnerRequest } from "generated/prisma";
+import type { Prisma } from "generated/prisma";
+import prisma from "src/prisma";
 
 
 @Injectable()
@@ -8,7 +9,12 @@ export class PartnerService {
         return "This is the partner service";
     }
 
-    sendPartnerRequest(partner: PartnerRequest): string {
+    async sendPartnerRequest(partner: Prisma.PartnerRequestCreateInput): Promise<string> {
+        await prisma.partnerRequest.create({
+            data: {
+                ...partner
+            }
+        });
         return "Partner request sent successfully";
     }
 }
