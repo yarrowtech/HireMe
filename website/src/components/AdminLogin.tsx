@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -29,6 +30,7 @@ export default function AdminLogin() {
   const [ loginCred, setLoginCred ] = useState({ username: "", password: "" });
   const [showForgot, setShowForgot] = useState(false);
   const navigate = useNavigate();
+  const { updateUserState } = useContext(UserContext)!;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginCred(prev => ({ ...prev, [name]: value }));
@@ -46,7 +48,8 @@ export default function AdminLogin() {
     if (res.ok) {
       toast.success(data.message)
       localStorage.setItem("authToken", data.token);
-      localStorage.setItem("metadata", data.encrypteddata);
+      localStorage.setItem("metadata", data.encryptedData);
+      updateUserState();
       navigate("/partner-requests")
     }
     else {

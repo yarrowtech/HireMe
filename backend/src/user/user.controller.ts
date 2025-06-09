@@ -8,7 +8,7 @@ class JsonWebTokenErrorFilter implements ExceptionFilter {
       catch(exception: JsonWebTokenError, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
-        const status = 401; // Unauthorized
+        const status = 401;
 
         response.status(status).json({
             statusCode: status,

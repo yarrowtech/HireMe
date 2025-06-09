@@ -25,7 +25,7 @@ export class UserService {
             if (!data) {
                 throw new UnauthorizedException("User not found");
             }
-            return data
+            return {...data, type}
         }
         else throw new HttpException("Invalid metadata", 400);
     }
