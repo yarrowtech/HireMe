@@ -13,6 +13,7 @@ import Subscription from "./components/Subscription";
 import Partners from "./components/Partners";
 import RequestDetails from "./components/RequestDetails";
 import RequestsLayout from "./context/RequestsContext";
+import AdminLogin from "./components/AdminLogin";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/employees/employee/:id" element={<Employee />} />
           <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/manage-account" element={<AccountManagement />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
         <Footer />
       </UserContextProvider>
