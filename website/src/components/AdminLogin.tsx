@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function ForgotPasswordModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState("");
@@ -24,27 +26,53 @@ function ForgotPasswordModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function AdminLogin() {
-  const [adminUsername, setAdminUsername] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
+  const [ loginCred, setLoginCred ] = useState({ username: "", password: "" });
   const [showForgot, setShowForgot] = useState(false);
+  const navigate = useNavigate();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginCred(prev => ({ ...prev, [name]: value }));
+  }
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(loginCred)
+    })
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(data.message)
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("metadata", data.encrypteddata);
+      navigate("/partner-requests")
+    }
+    else {
+      toast.error(data.message)
+    }
+  };
   return (
     <>
       {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
-      <form className="w-[35vw] mt-[15vh] mx-auto shadow-2xl p-10 flex flex-col items-center rounded-2xl bg-white border border-blue-100 gap-5">
+      <form className="w-[35vw] mt-[15vh] mx-auto shadow-2xl p-10 flex flex-col items-center rounded-2xl bg-white border border-blue-100 gap-5" onSubmit={handleLogin}>
         <h2 className="text-3xl font-extrabold text-blue-900 mb-2 tracking-tight">Admin LogIn</h2>
         <input
           type="text"
           placeholder="Enter admin username"
           className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-          value={adminUsername}
-          onChange={e => setAdminUsername(e.target.value)}
+          value={loginCred.username}
+          name="username"
+          onChange={handleChange}
         />
         <input
           type="password"
           placeholder="Enter admin password"
           className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-          value={adminPassword}
-          onChange={e => setAdminPassword(e.target.value)}
+          value={loginCred.password}
+          name="password"
+          onChange={handleChange}
         />
         <span className="text-blue-500 underline text-xs font-semibold cursor-pointer" onClick={() => setShowForgot(true)}>Forgot Password?</span>
         <button className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-3/5 transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">

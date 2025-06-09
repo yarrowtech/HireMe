@@ -43,11 +43,6 @@ export default function Navbar() {
     const observer = new IntersectionObserver(intersectionHandler, { root: null, threshold: 1 })
     observer.observe(navbar.current!)
 
-    setTimeout(() => {
-      if (userState.companyName === null && userState.position === "guest")
-        setShowLogin(true)
-    }, 5000)
-
   }, [])
 
   useEffect(() => {

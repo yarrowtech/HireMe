@@ -9,17 +9,30 @@ import AllEmployees from "./components/AllEmployees";
 import AddEmployee from "./components/AddEmployee";
 import Employee from "./components/Employee";
 import AccountManagement from "./components/AccountManagement";
-import Subscription from "./components/Subscription";
 import Partners from "./components/Partners";
 import RequestDetails from "./components/RequestDetails";
 import RequestsLayout from "./context/RequestsContext";
 import AdminLogin from "./components/AdminLogin";
+import { ToastContainer, Bounce } from "react-toastify";
 
 function App() {
   return (
     <>
       <UserContextProvider>
         <Navbar />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/be-a-partner" element={<BecomePartner />} />

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Post, Get, ValidationPipe, Headers } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { AdminLoginCredDto } from "./dto/adminLoginCred.dto";
 
@@ -9,10 +9,11 @@ export class AdminController {
 
     @Post("auth/login")
     async login(@Body(new ValidationPipe()) loginCred: AdminLoginCredDto): Promise<Object> {
-        const res = await this.adminService.login(loginCred.username, loginCred.password);        
+        const { token, encryptedData } = await this.adminService.login(loginCred.username, loginCred.password);        
         return {
-            status: "success",
-            message: res,
+            message: "Login successful",
+            token: token,
+            encryptedData: encryptedData
         }
     }
 }

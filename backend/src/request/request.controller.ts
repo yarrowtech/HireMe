@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
-import { PartnerService } from "./partner.service";
+import { PartnerService } from "./request.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { PartnerRequestDto } from "./dto/partnerRequest.dto";
