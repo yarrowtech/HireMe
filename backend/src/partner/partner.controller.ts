@@ -8,7 +8,7 @@ import { unlinkSync } from "node:fs";
 import { ArgumentsHost } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import { Request, Response } from "express";
-import { RequestStatus } from "generated/prisma";
+import { PartnerRequest, RequestStatus } from "generated/prisma";
 
 
 const storage = {storage: diskStorage({
@@ -55,8 +55,9 @@ export class PartnerController {
     }
 
     @Get()
-    getPartner(): string {
-        return this.partnerService.getPartner();
+    async getPartner(): Promise<PartnerRequest[]> {
+        const requests = await this.partnerService.getPartnerRequests();
+        return requests;
     }
 
     @Post("send-request")
@@ -71,9 +72,9 @@ export class PartnerController {
         { name: "TradeLicense", maxCount: 1 },
         { name: "MSMC", maxCount: 1 }
     ], storage))
-    sendPartnerRequest(@Body(new ValidationPipe()) requestData: PartnerRequestDto): Object {
-        const res = this.partnerService.sendPartnerRequest({...requestData, Status: RequestStatus.PENDING});
-        return {status: "success", message: "Partner request sent successfully"};
+    async sendPartnerRequest(@Body(new ValidationPipe()) requestData: PartnerRequestDto): Promise<Object> {
+        const message = await this.partnerService.sendPartnerRequest({ ...requestData, Status: RequestStatus.PENDING });
+        return { status: "success", message };
     }
 }
 
