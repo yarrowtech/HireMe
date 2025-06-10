@@ -7,13 +7,25 @@ import { UserContext } from "../context/UserContext";
 import Login from "./Login";
 
 export default function Navbar() {
-  const { userState } = useContext(UserContext)!
+  const { userState, updateUserState } = useContext(UserContext)!
   const [showLogin, setShowLogin] = useState<Boolean>(false)
   const [logout, setLogout] = useState<Boolean>(false)
   const userIcon = useRef<HTMLImageElement>(null)
   const navbar = useRef<HTMLElement>(null)
 
+  async function handleLogout() {
+    localStorage.removeItem("authToken")
+    localStorage.removeItem("metadata")
+    await updateUserState()
+    window.location.href = "/"
+    setLogout(false)
+  }
+
   useEffect(() => {
+
+    // fetching user details
+    updateUserState()
+
     userIcon.current?.addEventListener("click", () => {
       setShowLogin(true)
     })
@@ -81,7 +93,7 @@ export default function Navbar() {
               <div id="profile" className="flex relative" onClick={() => setLogout(!logout)}>
                 <h3 className="p-2 cursor-pointer">Welcome, {userState.username}</h3>
                 <img src={UserIcon} className="w-8 cursor-pointer hover:scale-110 transition-transform" />
-                {logout && <button className="absolute -right-5 -bottom-18 py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-lg font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
+                {logout && <button onClick={handleLogout} className="absolute -right-5 -bottom-18 py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-lg font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
                 }
               </div>
             </>
@@ -101,7 +113,7 @@ export default function Navbar() {
                 {logout &&
                   <div className="flex flex-col absolute -right-5 -bottom-30 gap-2">
                     <Link to={`${userState.position !== "employee" ? "/manage-account" : "/employees/employee/ae41hcahfq24awfh"}`} className="py-3 px-5 bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-blue-300 text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"><img src={Tweak} />Manage Account</Link>
-                    <button className="py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
+                    <button onClick={handleLogout} className="py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
                   </div>
                 }
               </div>

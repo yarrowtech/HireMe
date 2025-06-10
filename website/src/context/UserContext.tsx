@@ -14,6 +14,7 @@ export default function UserContextProvider({ children }: { children: ReactNode 
             }
         })
         const data = await res.json();
+        
         if (res.ok) {
             setUserState({
                 username: data.data.Username,
@@ -21,7 +22,11 @@ export default function UserContextProvider({ children }: { children: ReactNode 
                 position: data.data.type
             });
         } else {
-            console.error("Failed to fetch user details: ", data);
+            setUserState({
+                username: "",
+                companyName: null,
+                position: "guest"
+            })
         }
     }
     return (

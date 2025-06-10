@@ -49,7 +49,7 @@ export default function AdminLogin() {
       toast.success(data.message)
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("metadata", data.encryptedData);
-      updateUserState();
+      await updateUserState();
       navigate("/partner-requests")
     }
     else {
