@@ -1,17 +1,17 @@
-import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UploadedFiles, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { PartnerService } from "./request.service";
-import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import { PartnerRequestDto } from "./dto/partnerRequest.dto";
 import { extname } from "node:path";
 import { unlinkSync } from "node:fs";
 import { ArgumentsHost } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import { Request, Response } from "express";
 import { PartnerRequest, RequestStatus } from "generated/prisma";
+import { PartnerRequestDto } from "./dto/partnerRequest.dto";
 
 
-const storage = {storage: diskStorage({
+const storage = diskStorage({
     destination: "./uploads",
     filename: (req, file, cb) => {
         const ext = extname(file.originalname);
@@ -19,7 +19,7 @@ const storage = {storage: diskStorage({
         req.body[file.fieldname] = `uploads/${name}`;
         cb(null, name);
     }
-})}
+})
 
 @Catch(BadRequestException)
 class CleanupFileOnValidationFailFilter
@@ -31,13 +31,13 @@ class CleanupFileOnValidationFailFilter
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    unlinkSync(request.body.ESI);
-    unlinkSync(request.body.PF);
-    unlinkSync(request.body.PAN);
-    unlinkSync(request.body.MOA);
-    unlinkSync(request.body.GST);
-    unlinkSync(request.body.TradeLicense);
-    unlinkSync(request.body.MSMC);
+    if (request.body.ESI) unlinkSync(request.body.ESI);
+    if (request.body.PF) unlinkSync(request.body.PF);
+    if (request.body.PAN) unlinkSync(request.body.PAN);
+    if (request.body.MOA) unlinkSync(request.body.MOA);
+    if (request.body.GST) unlinkSync(request.body.GST);
+    if (request.body.TradeLicense) unlinkSync(request.body.TradeLicense);
+    if (request.body.MSMC) unlinkSync(request.body.MSMC);
 
     response
       .status(status)
@@ -71,11 +71,43 @@ export class PartnerController {
         { name: "GST", maxCount: 1 },
         { name: "TradeLicense", maxCount: 1 },
         { name: "MSMC", maxCount: 1 }
-    ], storage))
-    async sendPartnerRequest(@Body(new ValidationPipe()) requestData: PartnerRequestDto): Promise<Object> {
+    ], {storage}))
+    async sendPartnerRequest(
+        @Body() requestData: any
+    ): Promise<Object> {
+        validatePartnerRequest(requestData);
+
         const message = await this.partnerService.sendPartnerRequest({ ...requestData, Status: RequestStatus.PENDING });
         return { status: "success", message };
     }
+}
+
+function validatePartnerRequest(requestData: any): requestData is PartnerRequestDto {
+
+    // Required text fields (adjust as per your DTO)
+    const requiredFields = ["CompanyName", "Contact", "Email", "Address", "CIN", "PAN_No"];
+    requiredFields.forEach(field => {
+        
+        if (field === "Email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requestData[field])) {
+            throw new BadRequestException(`Invalid email format: ${requestData[field]}`);
+        }
+        else if (field === "Contact" && !/^\d{10}$/.test(requestData[field])) {
+            throw new BadRequestException(`Invalid contact number: ${requestData[field]}`);
+        }
+        else if (!requestData[field] || typeof requestData[field] !== "string" || requestData[field].trim() === "") {
+            throw new BadRequestException(`Missing required field: ${field}`);
+        }
+    });
+
+    // Required file fields (now in requestData as file paths)
+    const requiredFiles = ["ESI", "PF", "PAN", "MOA", "GST", "TradeLicense", "MSMC"];
+    requiredFiles.forEach(field => {
+        if (!requestData[field] || typeof requestData[field] !== "string" || requestData[field].trim() === "") {
+            throw new BadRequestException(`Missing required field: ${field}`);
+        }
+    });
+
+    return true;
 }
 
 

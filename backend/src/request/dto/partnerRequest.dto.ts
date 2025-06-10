@@ -11,7 +11,7 @@ export class PartnerRequestDto {
     @IsString()
     Address: string;
     @IsString()
-    PAN_No: string;
+    PAN_NO: string;
     @IsString()
     CIN: string;
 
