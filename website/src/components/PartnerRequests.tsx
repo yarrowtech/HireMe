@@ -10,14 +10,14 @@ import type { Request } from "../context/RequestsContext"
 
 export default function PartnerRequests() {
 
-    const { requests } = useContext(RequestsContext)!
+    const { requests, fetchRequests } = useContext(RequestsContext)!
     const [partners, setPartners] = useState<Request[]>(requests)
 
 
     const search = (e: ChangeEvent) => {
         const searchParam = (e.target as HTMLInputElement).value.toLowerCase()
         const filteredPartners = requests.filter(partner => {
-            return partner.companyName.toLowerCase().includes(searchParam)
+            return partner.CompanyName.toLowerCase().includes(searchParam)
         })
         setPartners(filteredPartners)
     }
@@ -27,9 +27,17 @@ export default function PartnerRequests() {
     const navigate = useNavigate()
 
     useEffect(() => {
+        setPartners(requests)
+    }, [requests])
+
+    useEffect(() => {
         if (!(userState.companyName === null && userState.position === "admin"))
             navigate("/")
+
+        fetchRequests()
+
     }, [])
+    
 
     return (
         <section className="w-full max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
@@ -55,8 +63,23 @@ export default function PartnerRequests() {
 function PartnerCard({ partnerData }: { partnerData: Request }) {
     return (
         <div className="w-[48%] rounded-2xl flex flex-col p-6 gap-2 bg-white/90 border border-blue-100 shadow-xl cursor-pointer transition-all duration-300 ease-linear hover:scale-105 hover:shadow-2xl">
-            <h2 className="font-bold text-3xl col-span-full text-blue-900">{partnerData.companyName}</h2>
-            <Link to={`./${partnerData.reqId}`} className="w-[40%] self-end px-5 py-3 font-semibold cursor-pointer flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-xl transition-all duration-300 ease-linear shadow hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400">View Details<img className="fil" src={RightArrow} /></Link>
+            <h2 className="font-bold text-3xl col-span-full text-blue-900">{partnerData.CompanyName}</h2>
+            
+            {/* Status Badge */}
+            <div className="flex items-center gap-2 mb-2">
+                <span className="font-semibold text-blue-800">Status:</span>
+                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    partnerData.Status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                    partnerData.Status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                    'bg-red-100 text-red-800'
+                }`}>
+                    {partnerData.Status}
+                </span>
+            </div>
+            
+            <Link to={`./${partnerData.id}`} className="w-[40%] self-end px-5 py-3 font-semibold cursor-pointer flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-xl transition-all duration-300 ease-linear shadow hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                View Details<img className="fil" src={RightArrow} />
+            </Link>
         </div>
     )
 }

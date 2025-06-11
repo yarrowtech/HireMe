@@ -1,57 +1,62 @@
 
 import { createContext, useState, type ReactNode } from "react";
 import { Outlet } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const RequestsContext = createContext<RequestsContextType | null>(null)
 
 function RequestsContextProvider({ children }: { children: ReactNode }) {
-    const [requests, setRequests] = useState<Request[]>([
-            {
-                reqId: 9,
-                companyName: "XYZ company",
-                mobileNo: "+90 1234567890",
-                emailId: "abcafdafafd@gmail.com",
-                address: "kolkata, india, 700143"
-            },
-            {
-                reqId: 0,
-                companyName: "ABC company",
-                mobileNo: "+90 1234567890",
-                emailId: "abcafdafafd@gmail.com",
-                address: "kolkata, india, 700143"
-            },
-            {
-                reqId: 1,
-                companyName: "ABD company",
-                mobileNo: "+90 1234567890",
-                emailId: "abcafdafafd@gmail.com",
-                address: "kolkata, india, 700143"
-            },
-            {
-                reqId: 4,
-                companyName: "YZX company",
-                mobileNo: "+90 1234567890",
-                emailId: "abcafdafafd@gmail.com",
-                address: "kolkata, india, 700143"
+    const [requests, setRequests] = useState<Request[]>([])
+
+    async function fetchRequests() {
+        const token = localStorage.getItem("authToken")
+        const metadata = localStorage.getItem("metadata")
+        if (!token || !metadata) {
+            return
+        }
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/get-requests`, {
+            method: "GET",
+            headers: {
+                "authorization": `Bearer ${token}`,
+                "metadata": metadata
             }
-        ])
+        })
+        const data = await res.json();
+        if (res.ok) {
+            setRequests(data);
+        } else {
+            toast.error(data.message || "Failed to fetch requests");
+        }
+    }
+
     return (
-        <RequestsContext.Provider value={{ requests }}>
+        <RequestsContext.Provider value={{ requests, fetchRequests }}>
             {children}
         </RequestsContext.Provider>
     )
 }
 
 type RequestsContextType = {
-    requests: Request[]
+    requests: Request[],
+    fetchRequests: () => Promise<void>
 }
 
 export type Request = {
-    reqId: number
-    companyName: string
-    mobileNo: string
-    emailId: string
-    address: string
+    id: number
+    CompanyName: string
+    Contact: string
+    Email: string
+    Address: string
+    ESI: string
+    PF: string
+    PAN: string
+    PAN_No: string
+    MOA: string
+    CIN: string
+    GST: string
+    TradeLicense: string
+    MSMC: string
+    Status: "PENDING" | "APPROVED" | "REJECTED"
 }
 
 export default function RequestsLayout() {

@@ -12,7 +12,7 @@ export default function RequestDetails() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const found = requests.find(req => req.reqId === parseInt(id!))
+        const found = requests.find(req => req.id === parseInt(id!))
         setRequestDetails(found || null)
     }, [id, requests])
 
@@ -56,19 +56,135 @@ export default function RequestDetails() {
             <div className="w-full rounded-2xl bg-white/90 border border-blue-100 shadow-xl p-8 flex flex-col gap-4">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <span className="font-bold text-blue-900 text-2xl md:w-1/3">Company Name:</span>
-                    <span className="text-lg text-blue-800">{requestDetails.companyName}</span>
+                    <span className="text-lg text-blue-800">{requestDetails.CompanyName}</span>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <span className="font-bold text-blue-900 text-2xl md:w-1/3">Mobile No:</span>
-                    <span className="text-lg text-blue-800">{requestDetails.mobileNo}</span>
+                    <span className="text-lg text-blue-800">{requestDetails.Contact}</span>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <span className="font-bold text-blue-900 text-2xl md:w-1/3">Email ID:</span>
-                    <span className="text-lg text-blue-800">{requestDetails.emailId}</span>
+                    <span className="text-lg text-blue-800">{requestDetails.Email}</span>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <span className="font-bold text-blue-900 text-2xl md:w-1/3">Address:</span>
-                    <span className="text-lg text-blue-800">{requestDetails.address}</span>
+                    <span className="text-lg text-blue-800">{requestDetails.Address}</span>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <span className="font-bold text-blue-900 text-2xl md:w-1/3">CIN:</span>
+                    <span className="text-lg text-blue-800">{requestDetails.CIN}</span>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <span className="font-bold text-blue-900 text-2xl md:w-1/3">PAN Number:</span>
+                    <span className="text-lg text-blue-800">{requestDetails.PAN_No}</span>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <span className="font-bold text-blue-900 text-2xl md:w-1/3">Status:</span>
+                    <span className={`text-lg font-semibold ${
+                        requestDetails.Status === 'PENDING' ? 'text-yellow-600' :
+                        requestDetails.Status === 'APPROVED' ? 'text-green-600' :
+                        'text-red-600'
+                    }`}>
+                        {requestDetails.Status}
+                    </span>
+                </div>
+
+                {/* Document Links Section - Now inside the main container */}
+                <div className="mt-6 pt-6 border-t border-blue-200">
+                    <h3 className="font-bold text-blue-900 text-2xl mb-4">Uploaded Documents:</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {requestDetails.ESI && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">ESI:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.ESI}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.PF && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">PF:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.PF}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.PAN && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">PAN Card:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.PAN}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.MOA && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">MOA:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.MOA}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.GST && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">GST Certificate:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.GST}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.TradeLicense && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">Trade License:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.TradeLicense}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                        {requestDetails.MSMC && (
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-blue-800">MSMC:</span>
+                                <a 
+                                    href={`${import.meta.env.VITE_API_URL}/${requestDetails.MSMC}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    View Document
+                                </a>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="flex gap-8 mt-6">
