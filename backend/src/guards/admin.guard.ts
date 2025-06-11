@@ -6,7 +6,7 @@ import { decryptUserData } from "src/utils/encryption";
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-    canActivate(context: ExecutionContext): boolean {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         try {
             const request = context.switchToHttp().getRequest();
             const token = request.headers.authorization?.split(" ")[1];
@@ -27,16 +27,19 @@ export class AdminGuard implements CanActivate {
                 return false;
             }
 
-            const user = prisma.admin.findFirst({
+            const user = await prisma.admin.findFirst({
                 where: {
                     id: parseInt(userId),
+                },
+                select: {
+                    Username: true,
                 }
             })
 
             if (!user) {
                 return false;
             }
-
+            
             return true
         }catch (error) {
             throw new BadRequestException("Invalid authentication data");
