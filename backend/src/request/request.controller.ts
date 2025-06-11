@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Param, Post, Put, UploadedFiles, UseFilters, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { PartnerService } from "./request.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
@@ -8,8 +8,8 @@ import { ArgumentsHost } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import { Request, Response } from "express";
 import { PartnerRequest, RequestStatus } from "@prisma/client";
-import { PartnerRequestDto } from "./dto/partnerRequest.dto";
 import { AdminGuard } from "src/guards/admin.guard";
+import validatePartnerRequest from "./dto/requestValidation";
 
 
 const storage = diskStorage({
@@ -84,34 +84,22 @@ export class PartnerController {
         return { status: "success", message };
     }
 
-}
+    @Put("approve-request/:id")
+    @HttpCode(200)
+    @UseGuards(AdminGuard)
+    async approveRequest(@Param("id") id: string): Promise<Object> {
+        const request = await this.partnerService.updatePartnerRequestStatus(parseInt(id), "APPROVED");
+        return { status: "success", message: "Request approved successfully", request };
+    }
 
-function validatePartnerRequest(requestData: any): requestData is PartnerRequestDto {
+    @Put("reject-request/:id")
+    @HttpCode(200)
+    @UseGuards(AdminGuard)
+    async rejectRequest(@Param("id") id: string): Promise<Object> {
+        const request = await this.partnerService.updatePartnerRequestStatus(parseInt(id), "REJECTED");
+        return { status: "success", message: "Request rejected successfully", request };
+    }
 
-    // Required text fields (adjust as per your DTO)
-    const requiredFields = ["CompanyName", "Contact", "Email", "Address", "CIN", "PAN_No"];
-    requiredFields.forEach(field => {
-        
-        if (field === "Email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requestData[field])) {
-            throw new BadRequestException(`Invalid email format: ${requestData[field]}`);
-        }
-        else if (field === "Contact" && !/^\d{10}$/.test(requestData[field])) {
-            throw new BadRequestException(`Invalid contact number: ${requestData[field]}`);
-        }
-        else if (!requestData[field] || typeof requestData[field] !== "string" || requestData[field].trim() === "") {
-            throw new BadRequestException(`Missing required field: ${field}`);
-        }
-    });
-
-    // Required file fields (now in requestData as file paths)
-    const requiredFiles = ["ESI", "PF", "PAN", "MOA", "GST", "TradeLicense", "MSMC"];
-    requiredFiles.forEach(field => {
-        if (!requestData[field] || typeof requestData[field] !== "string" || requestData[field].trim() === "") {
-            throw new BadRequestException(`Missing required field: ${field}`);
-        }
-    });
-
-    return true;
 }
 
 

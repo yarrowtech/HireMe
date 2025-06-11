@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Partner" ALTER COLUMN "PlanId" SET DEFAULT 0;
