@@ -88,16 +88,16 @@ export class PartnerController {
     @HttpCode(200)
     @UseGuards(AdminGuard)
     async approveRequest(@Param("id") id: string): Promise<Object> {
-        const request = await this.partnerService.updatePartnerRequestStatus(parseInt(id), "APPROVED");
-        return { status: "success", message: "Request approved successfully", request };
+        await this.partnerService.updatePartnerRequestStatus(parseInt(id), "APPROVED");
+        return { status: "success", message: "Request approved successfully" };
     }
 
     @Put("reject-request/:id")
     @HttpCode(200)
     @UseGuards(AdminGuard)
     async rejectRequest(@Param("id") id: string): Promise<Object> {
-        const request = await this.partnerService.updatePartnerRequestStatus(parseInt(id), "REJECTED");
-        return { status: "success", message: "Request rejected successfully", request };
+        await this.partnerService.updatePartnerRequestStatus(parseInt(id), "REJECTED");
+        return { status: "success", message: "Request rejected successfully" };
     }
 
 }

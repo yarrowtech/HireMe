@@ -39,7 +39,7 @@ export class PartnerService {
         return uniqueId!;
     }
 
-    async updatePartnerRequestStatus(id: number, status: RequestStatus): Promise<PartnerRequest> {
+    async updatePartnerRequestStatus(id: number, status: RequestStatus): Promise<void> {
         const request = await prisma.partnerRequest.update({
             where: { id },
             data: { Status: status, UpdatedAt: new Date() }
@@ -69,7 +69,5 @@ export class PartnerService {
                 data: partnerData
             });
         }
-
-        return request;
     }
 }

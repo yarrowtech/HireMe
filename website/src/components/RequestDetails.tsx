@@ -4,6 +4,7 @@ import { RequestsContext, type Request } from "../context/RequestsContext"
 import LeftArrow from "../assets/left-arrow-white.svg"
 import ApproveIcon from "../assets/approve.svg"
 import RejectIcon from "../assets/reject.svg"
+import { toast } from "react-toastify"
 
 export default function RequestDetails() {
     const { id } = useParams()
@@ -31,15 +32,61 @@ export default function RequestDetails() {
         )
     }
 
-    // Placeholder handlers for approve/reject
-    const handleApprove = () => {
-        // Implement approve logic here
-        alert("Request approved!")
-    }
-    const handleReject = () => {
-        // Implement reject logic here
-        alert("Request rejected!")
-    }
+    const handleApprove = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            const metadata = localStorage.getItem("metadata");
+            
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/approve-request/${requestDetails.id}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "metadata": metadata || "",
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                toast.success(data.message || "Request approved successfully!");
+                setRequestDetails(prev => prev ? { ...prev, Status: "APPROVED" } : null);
+            } else {
+                toast.error(data.message || "Failed to approve request");
+            }
+        } catch (error) {
+            console.error("Error approving request:", error);
+            alert("An error occurred while approving the request");
+        }
+    };
+
+    const handleReject = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            const metadata = localStorage.getItem("metadata");
+            
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/reject-request/${requestDetails.id}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "metadata": metadata || "",
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                alert("Request rejected successfully!");
+                setRequestDetails(prev => prev ? { ...prev, Status: "REJECTED" } : null);
+            } else {
+                alert(data.message || "Failed to reject request");
+            }
+        } catch (error) {
+            console.error("Error rejecting request:", error);
+            alert("An error occurred while rejecting the request");
+        }
+    };
 
     return (
         <section className="w-full max-w-2xl my-[15vh] mx-auto flex flex-col items-center gap-8">
@@ -187,22 +234,24 @@ export default function RequestDetails() {
                     </div>
                 </div>
             </div>
-            <div className="flex gap-8 mt-6">
-                <button
-                    onClick={handleApprove}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-xl shadow font-bold text-lg hover:bg-green-600 hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-green-400"
-                >
-                    <img src={ApproveIcon} className="w-6" alt="Approve" />
-                    Approve
-                </button>
-                <button
-                    onClick={handleReject}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl shadow font-bold text-lg hover:bg-red-600 hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
-                >
-                    <img src={RejectIcon} className="w-6" alt="Reject" />
-                    Reject
-                </button>
-            </div>
+            {requestDetails.Status === 'PENDING' && (
+                <div className="flex gap-8 mt-6">
+                    <button
+                        onClick={handleApprove}
+                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-xl shadow font-bold text-lg hover:bg-green-600 hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-green-400"
+                    >
+                        <img src={ApproveIcon} className="w-6" alt="Approve" />
+                        Approve
+                    </button>
+                    <button
+                        onClick={handleReject}
+                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl shadow font-bold text-lg hover:bg-red-600 hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
+                    >
+                        <img src={RejectIcon} className="w-6" alt="Reject" />
+                        Reject
+                    </button>
+                </div>
+            )}
         </section>
     )
 }
