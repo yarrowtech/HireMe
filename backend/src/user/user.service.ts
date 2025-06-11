@@ -12,7 +12,7 @@ export class UserService {
             throw new UnauthorizedException("Invalid token");
         }
         const { userId, type} = decryptUserData(metadata)
-        if (type === "admin") {
+        if (type === "admin") { 
             const data = await prisma.admin.findFirst({
                 where: {
                     id: parseInt(userId),

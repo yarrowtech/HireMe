@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import type { PartnerRequest, Prisma } from "generated/prisma";
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, Injectable } from "@nestjs/common";
 import prisma from "src/prisma";
+import { Response } from "express";
+import { PartnerRequest, Prisma } from "@prisma/client";
 
 
 @Injectable()

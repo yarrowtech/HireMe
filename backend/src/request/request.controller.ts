@@ -1,14 +1,15 @@
-import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UploadedFiles, UseFilters, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { PartnerService } from "./request.service";
-import { FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "node:path";
 import { unlinkSync } from "node:fs";
 import { ArgumentsHost } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import { Request, Response } from "express";
-import { PartnerRequest, RequestStatus } from "generated/prisma";
+import { PartnerRequest, RequestStatus } from "@prisma/client";
 import { PartnerRequestDto } from "./dto/partnerRequest.dto";
+import { AdminGuard } from "src/guards/admin.guard";
 
 
 const storage = diskStorage({
@@ -54,7 +55,9 @@ export class PartnerController {
     constructor(private partnerService: PartnerService) {
     }
 
-    @Get()
+    @Get("get-requests")
+    @HttpCode(200)
+    @UseGuards(AdminGuard)
     async getPartner(): Promise<PartnerRequest[]> {
         const requests = await this.partnerService.getPartnerRequests();
         return requests;
@@ -80,6 +83,7 @@ export class PartnerController {
         const message = await this.partnerService.sendPartnerRequest({ ...requestData, Status: RequestStatus.PENDING });
         return { status: "success", message };
     }
+
 }
 
 function validatePartnerRequest(requestData: any): requestData is PartnerRequestDto {
