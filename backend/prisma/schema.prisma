@@ -66,9 +66,12 @@ model PartnerAccount {
   CompanyCode Int
   Username    String
   Password    String
-  type        String @default("admin")
+  AccountType String @default("admin")
 
-  Comapany Partner @relation(fields: [CompanyCode], references: [id])
+  Company Partner @relation(fields: [CompanyCode], references: [id])
+
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @default(now())
 }
 
 model Subscription {

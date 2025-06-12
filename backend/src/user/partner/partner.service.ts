@@ -7,7 +7,6 @@ import { encryptUserData } from "src/utils/encryption";
 @Injectable()
 export class PartnerService {
 
-
     async partnerAccountLogin(companyCode: number, username: string, password: string): Promise<{ token: string, encryptedData: string }> {
         const user = await prisma.partnerAccount.findFirst({
             where: {
@@ -22,7 +21,7 @@ export class PartnerService {
         }
         if (compareSync(password, user.Password)) {
             const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!)
-            const encryptedData = encryptUserData(`${user.id}`, "admin")
+            const encryptedData = encryptUserData(`${user.id}`, "company")
             return {token, encryptedData};
         }
         else {

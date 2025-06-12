@@ -26,7 +26,7 @@ export class UserController {
     constructor(private userService: UserService) {}
     
     @Get("details")
-    async getUserDetails(@Headers("authToken") authToken: string, @Headers("metadata") metadata: string): Promise<Object> {
+    async getUserDetails(@Headers("authorization") authToken: string, @Headers("metadata") metadata: string): Promise<Object> {
         const userDetails = await this.userService.getUserDetails(authToken, metadata);
         return {
             message: "User details retrieved successfully",

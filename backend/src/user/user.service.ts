@@ -7,7 +7,11 @@ import prisma from "src/prisma";
 export class UserService {
 
     async getUserDetails(authToken: string, metadata: string): Promise<Object> {
-        const ok = jwt.verify(authToken, process.env.JWT_SECRET!);
+        if (!authToken || !metadata) {
+            throw new UnauthorizedException("Missing authentication token or metadata");
+        }
+        const token = authToken.split(" ")[1];
+        const ok = jwt.verify(token, process.env.JWT_SECRET!);
         if (!ok) {
             throw new UnauthorizedException("Invalid token");
         }
@@ -25,7 +29,27 @@ export class UserService {
             if (!data) {
                 throw new UnauthorizedException("User not found");
             }
-            return {...data, type}
+            return {...data, AccountType: "admin" }
+        }
+        else if (type === "company") {
+            const data = await prisma.partnerAccount.findFirst({
+                where: {
+                    id: parseInt(userId),
+                },
+                select: {
+                    Username: true,
+                    AccountType: true,
+                    Company: {
+                        select: {
+                            CompanyName: true,
+                        }
+                    }
+                },
+            })
+            if (!data) {
+                throw new UnauthorizedException("User not found");
+            }
+            return {...data }
         }
         else throw new HttpException("Invalid metadata", 400);
     }

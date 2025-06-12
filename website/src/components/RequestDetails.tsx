@@ -37,7 +37,7 @@ export default function RequestDetails() {
             const token = localStorage.getItem("authToken");
             const metadata = localStorage.getItem("metadata");
             
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/approve-request/${requestDetails.id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/request/approve-request/${requestDetails.id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -65,7 +65,7 @@ export default function RequestDetails() {
             const token = localStorage.getItem("authToken");
             const metadata = localStorage.getItem("metadata");
             
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/reject-request/${requestDetails.id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/request/reject-request/${requestDetails.id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,

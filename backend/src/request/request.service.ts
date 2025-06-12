@@ -74,7 +74,7 @@ export class RequestService {
             await prisma.partnerAccount.create({
                 data: {
                     CompanyCode: partnerId,
-                    Username: request.Email,
+                    Username: request.CompanyName,
                     Password: password,
                 }
             })

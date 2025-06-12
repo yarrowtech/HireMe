@@ -14,7 +14,7 @@ function RequestsContextProvider({ children }: { children: ReactNode }) {
         if (!token || !metadata) {
             return
         }
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/get-requests`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/request/get-requests`, {
             method: "GET",
             headers: {
                 "authorization": `Bearer ${token}`,
