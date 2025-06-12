@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { PartnerController } from "./request.controller";
-import { PartnerService } from "./request.service";
+import { RequestController } from "./request.controller";
+import { RequestService } from "./request.service";
 
 
 
 @Module({
-    controllers: [PartnerController],
-    providers: [PartnerService]
+    controllers: [RequestController],
+    providers: [RequestService]
 })
 export class PartnerModule {}

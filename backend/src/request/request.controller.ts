@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Catch, Controller, ExceptionFilter, Get, HttpCode, Param, Post, Put, UploadedFiles, UseFilters, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
-import { PartnerService } from "./request.service";
+import { RequestService } from "./request.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "node:path";
@@ -48,18 +48,18 @@ class CleanupFileOnValidationFailFilter
 
 
 
-@Controller("partner")
-export class PartnerController {
+@Controller("request")
+export class RequestController {
 
 
-    constructor(private partnerService: PartnerService) {
+    constructor(private requestService: RequestService) {
     }
 
     @Get("get-requests")
     @HttpCode(200)
     @UseGuards(AdminGuard)
     async getPartner(): Promise<PartnerRequest[]> {
-        const requests = await this.partnerService.getPartnerRequests();
+        const requests = await this.requestService.getPartnerRequests();
         return requests;
     }
 
@@ -80,7 +80,7 @@ export class PartnerController {
     ): Promise<Object> {
         validatePartnerRequest(requestData);
 
-        const message = await this.partnerService.sendPartnerRequest({ ...requestData, Status: RequestStatus.PENDING });
+        const message = await this.requestService.sendPartnerRequest({ ...requestData, Status: RequestStatus.PENDING });
         return { status: "success", message };
     }
 
@@ -88,7 +88,7 @@ export class PartnerController {
     @HttpCode(200)
     @UseGuards(AdminGuard)
     async approveRequest(@Param("id") id: string): Promise<Object> {
-        await this.partnerService.updatePartnerRequestStatus(parseInt(id), "APPROVED");
+        await this.requestService.updatePartnerRequestStatus(parseInt(id), "APPROVED");
         return { status: "success", message: "Request approved successfully" };
     }
 
@@ -96,7 +96,7 @@ export class PartnerController {
     @HttpCode(200)
     @UseGuards(AdminGuard)
     async rejectRequest(@Param("id") id: string): Promise<Object> {
-        await this.partnerService.updatePartnerRequestStatus(parseInt(id), "REJECTED");
+        await this.requestService.updatePartnerRequestStatus(parseInt(id), "REJECTED");
         return { status: "success", message: "Request rejected successfully" };
     }
 

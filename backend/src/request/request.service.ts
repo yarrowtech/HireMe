@@ -1,10 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import prisma from "src/prisma";
 import { PartnerRequest, Prisma, RequestStatus } from "@prisma/client";
+import { hashSync } from "bcryptjs";
 
 
 @Injectable()
-export class PartnerService {
+export class RequestService {
     async getPartnerRequests(): Promise<PartnerRequest[]> {
         const requests = await prisma.partnerRequest.findMany();
         return requests
@@ -69,11 +70,12 @@ export class PartnerService {
                 data: partnerData
             });
 
+            const password = hashSync("defaultPassword", 10);
             await prisma.partnerAccount.create({
                 data: {
                     CompanyCode: partnerId,
                     Username: request.Email,
-                    Password: "defaultPassword",
+                    Password: password,
                 }
             })
         }
