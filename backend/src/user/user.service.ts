@@ -6,15 +6,7 @@ import prisma from "src/prisma";
 @Injectable()
 export class UserService {
 
-    async getUserDetails(authToken: string, metadata: string): Promise<Object> {
-        if (!authToken || !metadata) {
-            throw new UnauthorizedException("Missing authentication token or metadata");
-        }
-        const token = authToken.split(" ")[1];
-        const ok = jwt.verify(token, process.env.JWT_SECRET!);
-        if (!ok) {
-            throw new UnauthorizedException("Invalid token");
-        }
+    async getUserDetails(metadata: string): Promise<Object> {
         const { userId, type} = decryptUserData(metadata)
         if (type === "admin") { 
             const data = await prisma.admin.findFirst({
@@ -41,7 +33,11 @@ export class UserService {
                     AccountType: true,
                     Company: {
                         select: {
+                            id: true,
                             CompanyName: true,
+                            Contact: true,
+                            Email: true,
+                            Address: true,
                         }
                     }
                 },

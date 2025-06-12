@@ -1,6 +1,7 @@
-import { Catch, Controller, Get, Headers, UseFilters, ExceptionFilter, ArgumentsHost } from "@nestjs/common";
+import { Catch, Controller, Get, Headers, UseFilters, ExceptionFilter, ArgumentsHost, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { UserGuard } from "src/guards/user.guard";
 
 
 @Catch(JsonWebTokenError)
@@ -26,8 +27,9 @@ export class UserController {
     constructor(private userService: UserService) {}
     
     @Get("details")
-    async getUserDetails(@Headers("authorization") authToken: string, @Headers("metadata") metadata: string): Promise<Object> {
-        const userDetails = await this.userService.getUserDetails(authToken, metadata);
+    @UseGuards(UserGuard)
+    async getUserDetails(@Headers("metadata") metadata: string): Promise<Object> {
+        const userDetails = await this.userService.getUserDetails(metadata);
         return {
             message: "User details retrieved successfully",
             data: userDetails

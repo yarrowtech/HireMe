@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import prisma from "src/prisma";
-import { compareSync } from "bcryptjs";
+import { compareSync, hashSync } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { encryptUserData } from "src/utils/encryption";
 
@@ -27,5 +27,30 @@ export class PartnerService {
         else {
             throw new UnauthorizedException("Invalid credentials");
         }
+    }
+
+    async createManagerAccount(CompanyCode: number, Username: string, Password: string, AccountType: string): Promise<string> {
+        const existingUser = await prisma.partnerAccount.findFirst({
+            where: {
+                AND: [
+                    { CompanyCode: CompanyCode },
+                    { Username: Username }
+                ]
+            }
+        });
+        if (existingUser) {
+            throw new UnauthorizedException("Username already exists for this company");
+        }
+
+        const hashedPassword = hashSync(Password, 10);
+        await prisma.partnerAccount.create({
+            data: {
+                CompanyCode,
+                Username,
+                AccountType,
+                Password: hashedPassword,
+            }
+        });
+        return `Manager account created successfully`;
     }
 }

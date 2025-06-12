@@ -1,6 +1,7 @@
-import { Body, Controller, Post, ValidationPipe, Get } from "@nestjs/common";
+import { Body, Controller, Post, ValidationPipe, Get, UseGuards } from "@nestjs/common";
 import { PartnerService } from "./partner.service";
-import { PartnerAccountCredDto } from "./dto/partnerAccountCred.dto";
+import { CreateManagerAccountDto, PartnerAccountCredDto } from "./dto/partnerAccountCred.dto";
+import { AdminGuard } from "src/guards/admin.guard";
 
 
 @Controller("partner")
@@ -16,5 +17,12 @@ export class PartnerController {
     @Post("auth/login")
     async partnerAccountLogin(@Body(new ValidationPipe()) partnerAccoundCred: PartnerAccountCredDto): Promise<{ token: string, encryptedData: string }> {
         return this.partnerService.partnerAccountLogin(partnerAccoundCred.companyCode, partnerAccoundCred.username, partnerAccoundCred.password);
+    }
+    
+    @Post("create-manager-account")
+    @UseGuards(AdminGuard)
+    async createManagerAccount(@Body(new ValidationPipe()) partnerAccount: CreateManagerAccountDto): Promise<Object> {
+        const message = await this.partnerService.createManagerAccount(partnerAccount.companyCode, partnerAccount.username, partnerAccount.password, partnerAccount.accountType)
+        return {message}
     }
 }

@@ -5,7 +5,7 @@ import { decryptUserData } from "src/utils/encryption";
 
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class UserGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         try {
             const request = context.switchToHttp().getRequest();
@@ -42,10 +42,6 @@ export class AdminGuard implements CanActivate {
                 })
 
                 if (!user) {
-                    return false;
-                }
-
-                if (user.AccountType !== "admin") {
                     return false;
                 }
             }
