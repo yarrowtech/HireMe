@@ -37,6 +37,8 @@ model Partner {
   TradeLicense String
   MSMC         String
   CreatedAt    DateTime @default(now())
+
+  PartnerAccount PartnerAccount[]
 }
 
 model PartnerRequest {
@@ -57,6 +59,16 @@ model PartnerRequest {
   Status       RequestStatus @default(PENDING)
   CreatedAt    DateTime      @default(now())
   UpdatedAt    DateTime      @default(now())
+}
+
+model PartnerAccount {
+  id          Int    @id @default(autoincrement())
+  CompanyCode Int
+  Username    String
+  Password    String
+  type        String @default("admin")
+
+  Comapany Partner @relation(fields: [CompanyCode], references: [id])
 }
 
 model Subscription {

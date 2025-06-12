@@ -68,6 +68,14 @@ export class PartnerService {
             await prisma.partner.create({
                 data: partnerData
             });
+
+            await prisma.partnerAccount.create({
+                data: {
+                    CompanyCode: partnerId,
+                    Username: request.Email,
+                    Password: "defaultPassword",
+                }
+            })
         }
     }
 }
