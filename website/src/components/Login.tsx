@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPasswordModal({ onClose }: { onClose: () => void }) {
   const [username, setUsername] = useState("");
@@ -71,13 +72,15 @@ function ForgotPasswordModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function Login() {
+export default function Login({ setShowLogin }: { setShowLogin: React.Dispatch<React.SetStateAction<Boolean>> }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [companyCode, setCompanyCode] = useState("");
   const [showForgot, setShowForgot] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { updateUserState } = useContext(UserContext)!;
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,8 +139,8 @@ export default function Login() {
         
         await updateUserState();
         toast.success("Login successful!");
-        // Redirect to dashboard or desired page
-        // window.location.href = "/dashboard";
+        setShowLogin(false);
+        navigate("/manage-account")
       } else {
         const message = typeof data.message === "object" ? data.message[0] : data.message;
         toast.error(message || "Login failed");

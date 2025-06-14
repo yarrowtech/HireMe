@@ -68,7 +68,7 @@ model PartnerAccount {
   Password    String
   AccountType String @default("admin")
 
-  Company Partner @relation(fields: [CompanyCode], references: [id])
+  Company Partner @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
 
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @default(now())

@@ -5,14 +5,15 @@ import { EmployeeCard } from "./AllEmployees";
 import type { Employee } from "./AllEmployees";
 import Search from "../assets/search.svg";
 import type { ChangeEvent } from "react";
+import { toast } from "react-toastify";
 
 export default function AccountManagement() {
     const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "manager" | "employees">("account")
     const navigate = useNavigate()
     const { userState } = useContext(UserContext)!
-    const isAdminWithCompany = userState.companyName !== null && userState.position === "admin"
+    const isAdminWithCompany = userState.Company !== null && userState.position === "admin"
     useEffect(() => {
-        if (userState.companyName === null || userState.position === "employee")
+        if (userState.Company === null || userState.position === "employee")
             navigate("/")
     }, [])
     return (
@@ -30,25 +31,44 @@ export default function AccountManagement() {
 }
 
 function AccountDetailsContainer() {
+
+    const { userState } = useContext(UserContext)!
+
     return (
         <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Account Details</h2>
             <div className="flex items-center gap-3 border-b pb-4">
                 <span className="text-lg font-semibold text-blue-900">Username:</span>
-                <span className="text-base font-medium text-blue-800">user1289</span>
+                <span className="text-base font-medium text-blue-800">{userState.username}</span>
+            </div>
+            <div className="flex items-center gap-3 border-b pb-4">
+                <span className="text-lg font-semibold text-blue-900">Account Type:</span>
+                <span className={`text-base font-medium px-3 py-1 rounded-full ${
+                    userState.position === 'admin' ? 'bg-red-100 text-red-800' :
+                    userState.position === 'manager' ? 'bg-blue-100 text-blue-800' :
+                    'bg-green-100 text-green-800'
+                }`}>
+                    {userState.position?.charAt(0).toUpperCase() + userState.position?.slice(1)}
+                </span>
             </div>
             <div className="flex items-center gap-3 border-b pb-4">
                 <span className="text-lg font-semibold text-blue-900">Company Name:</span>
-                <span className="text-base font-medium text-blue-800">XYZ Company</span>
+                <span className="text-base font-medium text-blue-800">{userState.Company?.CompanyName}</span>
+            </div>
+            <div className="flex items-center gap-3 border-b pb-4">
+                <span className="text-lg font-semibold text-blue-900">Company Code:</span>
+                <span className="text-base font-medium text-blue-800 bg-blue-50 px-3 py-1 rounded-lg font-mono">
+                    {userState.Company?.id}
+                </span>
             </div>
             <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex items-center gap-3">
                     <span className="text-lg font-semibold text-blue-900">Phone No:</span>
-                    <span className="text-base font-medium text-blue-800">01234567890</span>
+                    <span className="text-base font-medium text-blue-800">{userState.Company?.Contact}</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="text-lg font-semibold text-blue-900">Email ID:</span>
-                    <span className="text-base font-medium text-blue-800">example123@example.com</span>
+                    <span className="text-base font-medium text-blue-800">{userState.Company?.Email}</span>
                 </div>
             </div>
         </div>
@@ -75,26 +95,97 @@ function PaymentPanel() {
 
 function ManagerCreationPanel() {
     const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
+    const [accountType, setAccountType] = useState("");
     const [password, setPassword] = useState("");
-    // You can add your own submit logic here
+    const [isLoading, setIsLoading] = useState(false);
+    const { userState } = useContext(UserContext)!
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        // Form validation
+        if (!username.trim()) {
+            toast.error("Username is required");
+            return;
+        }
+        if (username.trim().length < 3) {
+            toast.error("Username must be at least 3 characters long");
+            return;
+        }
+
+        if (!accountType.trim()) {
+            toast.error("Account type is required");
+            return;
+        }
+
+        if (!password.trim()) {
+            toast.error("Password is required");
+            return;
+        }
+        if (password.length < 6) {
+            toast.error("Password must be at least 6 characters long");
+            return;
+        }
+
+        // API call
+        setIsLoading(true);
+        try {
+            const token = localStorage.getItem("authToken");
+            const metadata = localStorage.getItem("metadata");
+
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/partner/create-manager-account`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                    "metadata": metadata || "",
+                },
+                body: JSON.stringify({
+                    companyCode: userState.Company?.id,
+                    username: username.trim(),
+                    accountType: accountType.trim(),
+                    password: password
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success("Account created successfully!");
+                // Reset form
+                setUsername("");
+                setAccountType("");
+                setPassword("");
+            } else {
+                toast.error(data.message || "Failed to create account");
+            }
+        } catch (error) {
+            console.error("Account creation error:", error);
+            toast.error("An error occurred while creating account. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-            <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Create New Manager</h2>
-            <form className="flex flex-col gap-6">
+            <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Create New Account</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <input
                     type="text"
-                    placeholder="Manager Username"
+                    placeholder="Username"
                     className="p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
                     value={username}
                     onChange={e => setUsername(e.target.value)}
+                    disabled={isLoading}
                 />
                 <input
-                    type="email"
-                    placeholder="Manager Email"
+                    type="text"
+                    placeholder="Account Type (e.g., manager, employee)"
                     className="p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    value={accountType}
+                    onChange={e => setAccountType(e.target.value)}
+                    disabled={isLoading}
                 />
                 <input
                     type="password"
@@ -102,9 +193,14 @@ function ManagerCreationPanel() {
                     className="p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
+                    disabled={isLoading}
                 />
-                <button type="submit" className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-full transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Create Manager
+                <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-full transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isLoading ? "Creating Account..." : "Create Account"}
                 </button>
             </form>
         </div>

@@ -70,12 +70,12 @@ export default function Navbar() {
         <Link to="/" className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-400 to-blue-700 text-transparent bg-clip-text drop-shadow-lg">HireMe</Link>
         <div
           className={`w-3/5 h-full flex items-center ${
-            userState.companyName !== null && (userState.position === "admin" || userState.position === "employee")
+            userState.Company !== null && (userState.position === "admin" || userState.position === "employee")
               ? "justify-end"
               : "justify-around"
           }`}
         >
-          {userState.companyName === null && userState.position === "guest" &&
+          {userState.Company === null && userState.position === "guest" &&
             <>
               <a href="/#about" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">About Us</a>
               <a href="/#vision" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Our Vision</a>
@@ -86,7 +86,7 @@ export default function Navbar() {
             </>
           }
           {
-            userState.companyName === null && userState.position === "admin" &&
+            userState.Company === null && userState.position === "admin" &&
             <>
               <Link to="/partner-requests" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partner Requests</Link>
               <Link to="/partners" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partners</Link>
@@ -99,7 +99,7 @@ export default function Navbar() {
             </>
           }
           {
-            userState.companyName !== null &&
+            userState.Company !== null &&
             <>
               {(userState.position !== "admin" && userState.position !== "employee") && (
                 <>
@@ -124,7 +124,7 @@ export default function Navbar() {
       {showLogin && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowLogin(false)}>
           <div onClick={e => e.stopPropagation()} className="z-40">
-            <Login />
+            <Login setShowLogin={setShowLogin} />
           </div>
         </div>
       )}
