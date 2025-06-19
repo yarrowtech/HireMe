@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Get, ValidationPipe, Headers } from "@nestjs/common";
+import { Body, Controller, Post, Get, ValidationPipe, Headers, UseGuards } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { AdminLoginCredDto } from "./dto/adminLoginCred.dto";
+import { AdminGuard } from "src/guards/admin.guard";
 
 
 @Controller("admin")
@@ -15,5 +16,11 @@ export class AdminController {
             token: token,
             encryptedData: encryptedData
         }
+    }
+
+    @Get("partner-list")
+    @UseGuards(AdminGuard)
+    async getPartnerList(): Promise<Object[]> {
+        return await this.adminService.getPartnerList();
     }
 }

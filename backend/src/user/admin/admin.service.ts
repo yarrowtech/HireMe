@@ -8,8 +8,6 @@ import { encryptUserData } from "src/utils/encryption";
 
 @Injectable()
 export class AdminService {
-    // This service can be extended with methods to handle admin-related logic
-    // For example, you could add methods to manage users, roles, or other admin tasks
 
     async login(username: string, password: string): Promise<{ token: string, encryptedData: string }> {
         const user = await prisma.admin.findFirst({
@@ -26,5 +24,20 @@ export class AdminService {
         const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!)
         const encryptedData = encryptUserData(`${user.id}`, "admin")
         return {token, encryptedData};
+    }
+
+     async getPartnerList(): Promise<Object[]> {
+        const partners = await prisma.partner.findMany({
+            include: {
+                PartnerAccount: {
+                    select: {
+                        id: true,
+                        Username: true,
+                        AccountType: true
+                    }
+                }
+            }
+        });
+        return partners;
     }
 }

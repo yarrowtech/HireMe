@@ -1,5 +1,4 @@
 import { HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
-import * as jwt from "jsonwebtoken";
 import { decryptUserData } from "src/utils/encryption";
 import prisma from "src/prisma";
 
@@ -50,24 +49,5 @@ export class UserService {
         else throw new HttpException("Invalid metadata", 400);
     }
 
-    async getPartnerList(metadata: string): Promise<Object[]> {
-        const { userId, type } = decryptUserData(metadata);
-        const partners = await prisma.partnerAccount.findMany({
-            select: {
-                id: true,
-                Username: true,
-                AccountType: true,
-                Company: {
-                    select: {
-                        id: true,
-                        CompanyName: true,
-                        Contact: true,
-                        Email: true,
-                        Address: true,
-                    }
-                }
-            },
-        });
-        return partners;
-    }
+   
 }
