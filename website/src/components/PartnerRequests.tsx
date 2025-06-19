@@ -9,10 +9,11 @@ import type { Request } from "../context/RequestsContext"
 
 
 export default function PartnerRequests() {
-
     const { requests, fetchRequests } = useContext(RequestsContext)!
     const [partners, setPartners] = useState<Request[]>(requests)
-
+    const [filteredPartners, setFilteredPartners] = useState<Request[]>([]);
+    const [statusFilter, setStatusFilter] = useState<string>("ALL");
+    const [isLoading, setIsLoading] = useState(true);
 
     const search = (e: ChangeEvent) => {
         const searchParam = (e.target as HTMLInputElement).value.toLowerCase()
@@ -28,6 +29,8 @@ export default function PartnerRequests() {
 
     useEffect(() => {
         setPartners(requests)
+        if (requests)
+            setIsLoading(false)
     }, [requests])
 
     useEffect(() => {
@@ -37,7 +40,21 @@ export default function PartnerRequests() {
         fetchRequests()
 
     }, [])
-    
+
+    // Filter partners whenever the filter or partners list changes
+    useEffect(() => {
+        if (statusFilter === "ALL") {
+            setFilteredPartners(partners);
+        } else {
+            setFilteredPartners(
+                partners.filter(partner => partner.Status === statusFilter)
+            );
+        }
+    }, [statusFilter, partners]);
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setStatusFilter(e.target.value);
+    };
 
     return (
         <section className="w-full max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
@@ -48,15 +65,48 @@ export default function PartnerRequests() {
                     <img src={Search} className="w-5 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" />
                 </div>
             </div>
-            <div className="w-full flex flex-wrap justify-around gap-6">
-                {
-                    partners.map((partner, index) => {
-                        return <PartnerCard key={index} partnerData={partner}></PartnerCard>
-                    })
-                }
+            <div className="w-full flex justify-between items-center">
+                <h1 className="text-3xl font-bold text-blue-900">Partner Requests</h1>
+                <div className="flex items-center gap-2">
+                    <label htmlFor="statusFilter" className="font-medium text-blue-800">
+                        Filter by Status:
+                    </label>
+                    <select
+                        id="statusFilter"
+                        value={statusFilter}
+                        onChange={handleFilterChange}
+                        className="p-2 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                    >
+                        <option value="ALL">All Requests</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
             </div>
+            
+            {isLoading ? (
+                <div className="text-center py-10">
+                    <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-blue-800 font-medium">Loading requests...</p>
+                </div>
+            ) : filteredPartners.length === 0 ? (
+                <div className="w-full text-center py-10 bg-white/90 rounded-xl shadow-md">
+                    <p className="text-lg text-blue-800">
+                        {statusFilter === "ALL" 
+                            ? "No partner requests found." 
+                            : `No ${statusFilter.toLowerCase()} requests found.`}
+                    </p>
+                </div>
+            ) : (
+                <div className="w-full flex flex-wrap justify-around gap-6">
+                    {filteredPartners.map((partner, index) => (
+                        <PartnerCard key={index} partnerData={partner} />
+                    ))}
+                </div>
+            )}
         </section>
-    )
+    );
 }
 
 
