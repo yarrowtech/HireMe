@@ -59,7 +59,7 @@ export type Request = {
     Status: "PENDING" | "APPROVED" | "REJECTED"
 }
 
-export default function RequestsLayout() {
+export default function RequestContextLayout() {
     return (
         <RequestsContextProvider>
             <Outlet />

@@ -3,49 +3,24 @@ import { useContext, useEffect, useState, type ChangeEvent } from "react"
 import { UserContext } from "../context/UserContext"
 import { Link, useNavigate } from "react-router-dom"
 import RightArrow from "../assets/right-arrow.svg"
+import { PartnersContext } from "../context/PartnerContext"
 
 type Company = {
-    companyName: string
-    mobileNo: string
-    emailId: string
-    address: string
+    id: number
+    CompanyName: string
 }
 
 export default function Partners() {
 
-    const allCompanyRequests: Company[] = [
-        {
-            companyName: "XYZ company",
-            mobileNo: "+91 1234567890",
-            emailId: "abcafdafafd@gmail.com",
-            address: "kolkata, india, 700144"
-        },
-        {
-            companyName: "ABC company",
-            mobileNo: "+91 1234567890",
-            emailId: "abcafdafafd@gmail.com",
-            address: "kolkata, india, 700144"
-        },
-        {
-            companyName: "ABD company",
-            mobileNo: "+91 1234567890",
-            emailId: "abcafdafafd@gmail.com",
-            address: "kolkata, india, 700144"
-        },
-        {
-            companyName: "YZX company",
-            mobileNo: "+91 1234567890",
-            emailId: "abcafdafafd@gmail.com",
-            address: "kolkata, india, 700144"
-        }
-    ]
+    const { allPartners, fetchPartnerList } = useContext(PartnersContext)!
+    const [companies, setCompanies] = useState<Company[]>([])
 
-    const [companies, setCompanies] = useState<Company[]>(allCompanyRequests)
 
     const search = (e: ChangeEvent) => {
         const param = (e.target as HTMLInputElement).value.toLowerCase()
-        const filteredCompanies = allCompanyRequests.filter(company => {
-            return company.companyName.toLowerCase().includes(param)
+        if (!allPartners) return
+        const filteredCompanies = allPartners.filter(company => {
+            return company.CompanyName.toLowerCase().includes(param)
         })
         setCompanies(filteredCompanies)
     }
@@ -57,7 +32,12 @@ export default function Partners() {
     useEffect(() => {
         if (!(userState.Company === null && userState.position === "admin"))
             navigate("/")
+        fetchPartnerList()
     }, [])
+
+    useEffect(() => {
+        setCompanies(allPartners || [])
+    }, [allPartners])
 
     return (
         <section className="w-full max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
@@ -70,7 +50,7 @@ export default function Partners() {
             </div>
             <div className="w-full flex flex-wrap justify-around gap-6">
                 {
-                    companies.map((company, index) => {
+                    companies?.length === 0 ? "No partners available": companies.map((company, index) => {
                         return <CompanyCard key={index} companyData={company}></CompanyCard>
                     })
                 }
@@ -83,7 +63,7 @@ export default function Partners() {
 function CompanyCard({ companyData }: { companyData: Company }) {
     return (
         <Link to="/employees" className="w-[48%] rounded-2xl p-6 bg-white/90 border border-blue-100 shadow-xl flex items-center gap-4 cursor-pointer transition-all duration-300 ease-linear hover:scale-105 hover:shadow-2xl">
-            <h2 className="font-bold text-xl text-blue-900">{companyData.companyName}</h2>
+            <h2 className="font-bold text-xl text-blue-900">{companyData.CompanyName}</h2>
             <img src={RightArrow} className="ml-auto" />
         </Link>
     )
