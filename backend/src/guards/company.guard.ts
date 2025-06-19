@@ -1,12 +1,11 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import * as jwt from "jsonwebtoken";
-import prisma from "src/prisma";
-import { decryptUserData } from "src/utils/encryption";
-
+import { CanActivate, ExecutionContext, Injectable, BadRequestException } from '@nestjs/common';
+import prisma from 'src/prisma';
+import { decryptUserData } from 'src/utils/encryption';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
-    async canActivate(context: ExecutionContext): Promise<boolean> {
+export class CompanyAdminGuard implements CanActivate {
+async canActivate(context: ExecutionContext): Promise<boolean> {
         try {
             const request = context.switchToHttp().getRequest();
             const token = request.headers.authorization?.split(" ")[1];
@@ -23,14 +22,18 @@ export class AdminGuard implements CanActivate {
 
             const { userId, type } = decryptUserData(metadata);
 
-            if (type === "admin") {
-                const user = await prisma.admin.findFirst({
+            if (type === "company") {
+                const user = await prisma.partnerAccount.findFirst({
                     where: {
-                        id: parseInt(userId),
-                    }
+                        id: parseInt(userId)
+                    },
                 })
 
                 if (!user) {
+                    return false;
+                }
+
+                if (user.AccountType !== "admin") {
                     return false;
                 }
             }

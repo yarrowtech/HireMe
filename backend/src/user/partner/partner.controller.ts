@@ -1,7 +1,7 @@
 import { Body, Controller, Post, ValidationPipe, Get, UseGuards } from "@nestjs/common";
 import { PartnerService } from "./partner.service";
 import { CreateManagerAccountDto, PartnerAccountCredDto } from "./dto/partnerAccountCred.dto";
-import { AdminGuard } from "src/guards/admin.guard";
+import { CompanyAdminGuard } from "src/guards/company.guard";
 
 
 @Controller("partner")
@@ -20,7 +20,7 @@ export class PartnerController {
     }
     
     @Post("create-manager-account")
-    @UseGuards(AdminGuard)
+    @UseGuards(CompanyAdminGuard)
     async createManagerAccount(@Body(new ValidationPipe()) partnerAccount: CreateManagerAccountDto): Promise<Object> {
         const message = await this.partnerService.createManagerAccount(partnerAccount.companyCode, partnerAccount.username, partnerAccount.password, partnerAccount.accountType)
         return {message}
