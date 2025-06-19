@@ -79,7 +79,7 @@ export default function BecomePartner() {
         });
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/send-request`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/request/send-request`, {
                 method: "POST",
                 body: formData,
             });

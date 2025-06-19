@@ -55,7 +55,7 @@ export default function Partners() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!(userState.companyName === null && userState.position === "admin"))
+        if (!(userState.Company === null && userState.position === "admin"))
             navigate("/")
     }, [])
 

@@ -31,7 +31,7 @@ export default function PartnerRequests() {
     }, [requests])
 
     useEffect(() => {
-        if (!(userState.companyName === null && userState.position === "admin"))
+        if (!(userState.Company === null && userState.position === "admin"))
             navigate("/")
 
         fetchRequests()

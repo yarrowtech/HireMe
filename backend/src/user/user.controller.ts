@@ -12,7 +12,6 @@ class JsonWebTokenErrorFilter implements ExceptionFilter {
         const status = 401;
 
         response.status(status).json({
-            statusCode: status,
             message: "Invalid token",
             error: "Unauthorized"
         });

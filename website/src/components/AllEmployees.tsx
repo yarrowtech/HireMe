@@ -12,7 +12,7 @@ export type Employee = {
     dob: string
     mobileNo: string
     emailId: string
-    pic: string
+    pic: string | undefined
 }
 
 const allEmployees: Employee[] = [
@@ -22,7 +22,7 @@ const allEmployees: Employee[] = [
         dob: "01/01/2001",
         mobileNo: "1234567890",
         emailId: "example@gmail.com",
-        pic: ""
+        pic: undefined
     },
     {
         id: "ae41hcahfq24awfh",
@@ -30,7 +30,7 @@ const allEmployees: Employee[] = [
         dob: "01/01/2001",
         mobileNo: "1234567890",
         emailId: "example@gmail.com",
-        pic: ""
+        pic: undefined
     },
     {
         id: "ae41hcahfq24awfh",
@@ -38,7 +38,7 @@ const allEmployees: Employee[] = [
         dob: "01/01/2001",
         mobileNo: "1234567890",
         emailId: "example@gmail.com",
-        pic: ""
+        pic: undefined
     },
     {
         id: "ae41hcahfq24awfh",
@@ -46,7 +46,7 @@ const allEmployees: Employee[] = [
         dob: "01/01/2001",
         mobileNo: "1234567890",
         emailId: "example@gmail.com",
-        pic: ""
+        pic: undefined
     }
 ]
 
@@ -67,7 +67,7 @@ export default function AllEmployees() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (userState.companyName === null || userState.position === "admin" || userState.position === "employee")
+        if (userState.Company === null || userState.position === "admin" || userState.position === "employee")
             navigate("/")
     }, [])
 
