@@ -17,7 +17,7 @@ export default function UserContextProvider({ children }: { children: ReactNode 
         if (res.ok) {
             setUserState({
                 username: data.data.Username,
-                Company: data.data.Company.id || null,
+                Company: data.data.Company?.id || null,
                 position: data.data.AccountType
             });
         } else {

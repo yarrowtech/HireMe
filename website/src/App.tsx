@@ -9,12 +9,13 @@ import AllEmployees from "./components/AllEmployees";
 import AddEmployee from "./components/AddEmployee";
 import Employee from "./components/Employee";
 import ProfileDashboard from "./pages/ProfileDashboard";
-import Partners from "./components/Partners";
+import AllPartners from "./pages/AllPartners";
 import RequestDetails from "./components/RequestDetails";
 import RequestContextLayout from "./context/RequestsContext";
 import PartnerContextLayout from "./context/PartnerContext";
 import AdminLogin from "./components/AdminLogin";
 import { ToastContainer, Bounce } from "react-toastify";
+import PartnerDetails from "./pages/PartnerDetails";
 
 function App() {
   return (
@@ -42,7 +43,8 @@ function App() {
             <Route path="/partner-requests/:id" element={<RequestDetails />} />
           </Route>
           <Route element={<PartnerContextLayout />}>
-            <Route path="/partners" element={<Partners />} />
+            <Route path="/partners" element={<AllPartners />} />
+            <Route path="/partner/details/:id" element={<PartnerDetails />} />
             <Route path="/manage-account" element={<ProfileDashboard />} />
           </Route>
           <Route path="/employees" element={<AllEmployees />} />

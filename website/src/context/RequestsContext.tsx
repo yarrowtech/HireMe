@@ -64,7 +64,7 @@ type RequestsContextType = {
     fetchRequestDetails: (id: number) => Promise<Object | null>
 }
 
-type Request = {
+export type Request = {
     id: number
     CompanyName: string
     Status: "PENDING" | "APPROVED" | "REJECTED"
