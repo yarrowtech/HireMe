@@ -23,21 +23,42 @@ export class AdminService {
         }
         const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!)
         const encryptedData = encryptUserData(`${user.id}`, "admin")
-        return {token, encryptedData};
+        return { token, encryptedData };
     }
 
-     async getPartnerList(): Promise<Object[]> {
+    async getPartnerList(): Promise<Object[]> {
         const partners = await prisma.partner.findMany({
-            include: {
-                PartnerAccount: {
-                    select: {
-                        id: true,
-                        Username: true,
-                        AccountType: true
-                    }
-                }
+            select: {
+                id: true,
+                CompanyName: true
             }
         });
         return partners;
+    }
+
+    async getPartnerDetails(partnerId: number): Promise<Object | null> {
+        const partner = await prisma.partner.findUnique({
+            where: {
+                id: partnerId
+            },
+            select: {
+                id: true,
+                CompanyName: true,
+                Contact: true,
+                Email: true,
+                Address: true,
+                ESI: true,
+                PF: true,
+                PAN: true,
+                PAN_No: true,
+                MOA: true,
+                CIN: true,
+                GST: true,
+                TradeLicense: true,
+                MSMC: true,
+                CreatedAt: true
+            }
+        });
+        return partner;
     }
 }

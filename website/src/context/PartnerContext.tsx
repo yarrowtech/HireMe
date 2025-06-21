@@ -24,7 +24,6 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
         }
     }
 
-
     return (
         <PartnersContext.Provider value={{allPartners, fetchPartnerList}}>
             {children}
