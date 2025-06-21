@@ -62,7 +62,7 @@ export default function Partners() {
 
 function CompanyCard({ companyData }: { companyData: Company }) {
     return (
-        <Link to="/employees" className="w-[48%] rounded-2xl p-6 bg-white/90 border border-blue-100 shadow-xl flex items-center gap-4 cursor-pointer transition-all duration-300 ease-linear hover:scale-105 hover:shadow-2xl">
+        <Link to="/manage-account" className="w-[48%] rounded-2xl p-6 bg-white/90 border border-blue-100 shadow-xl flex items-center gap-4 cursor-pointer transition-all duration-300 ease-linear hover:scale-105 hover:shadow-2xl">
             <h2 className="font-bold text-xl text-blue-900">{companyData.CompanyName}</h2>
             <img src={RightArrow} className="ml-auto" />
         </Link>

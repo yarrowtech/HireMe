@@ -1,36 +1,11 @@
-import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { UserContext } from "../context/UserContext"
-import { EmployeeCard } from "./AllEmployees";
-import type { Employee } from "./AllEmployees";
-import Search from "../assets/search.svg";
-import type { ChangeEvent } from "react";
-import { toast } from "react-toastify";
+import React, { useState, useContext, type ChangeEvent } from 'react';
+import { UserContext } from '../context/UserContext';
+import { toast } from 'react-toastify';
+import Search from "../assets/search.svg"
+import type { Employee } from './AllEmployees';
+import {EmployeeCard} from '../components/AllEmployees';
 
-export default function AccountManagement() {
-    const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "manager" | "employees">("account")
-    const navigate = useNavigate()
-    const { userState } = useContext(UserContext)!
-    const isAdminWithCompany = userState.Company !== null && userState.position === "admin"
-    useEffect(() => {
-        if (userState.Company === null || userState.position === "employee")
-            navigate("/")
-    }, [])
-    return (
-        <section className="flex flex-col md:grid md:grid-cols-[18rem_auto] min-h-screen mt-[12vh] bg-gradient-to-br from-blue-50 to-blue-100">
-            <SideBar panelType={panelType} setPanelType={setPanelType} isAdminWithCompany={isAdminWithCompany} showManagerPanel={isAdminWithCompany} showEmployeesPanel={isAdminWithCompany} />
-            <main className="flex flex-col items-center w-full p-4">
-                {panelType === "account" && <AccountDetailsContainer />}
-                {panelType === "plan" && <SubscriptionPlanContainer />}
-                {panelType === "payment" && isAdminWithCompany && <PaymentPanel />}
-                {panelType === "manager" && isAdminWithCompany && <ManagerCreationPanel />}
-                {panelType === "employees" && isAdminWithCompany && <EmployeesPanel />}
-            </main>
-        </section>
-    )
-}
-
-function AccountDetailsContainer() {
+export function AccountDetailsContainer() {
 
     const { userState } = useContext(UserContext)!
 
@@ -43,11 +18,10 @@ function AccountDetailsContainer() {
             </div>
             <div className="flex items-center gap-3 border-b pb-4">
                 <span className="text-lg font-semibold text-blue-900">Account Type:</span>
-                <span className={`text-base font-medium px-3 py-1 rounded-full ${
-                    userState.position === 'admin' ? 'bg-red-100 text-red-800' :
+                <span className={`text-base font-medium px-3 py-1 rounded-full ${userState.position === 'admin' ? 'bg-red-100 text-red-800' :
                     userState.position === 'manager' ? 'bg-blue-100 text-blue-800' :
-                    'bg-green-100 text-green-800'
-                }`}>
+                        'bg-green-100 text-green-800'
+                    }`}>
                     {userState.position?.charAt(0).toUpperCase() + userState.position?.slice(1)}
                 </span>
             </div>
@@ -75,7 +49,7 @@ function AccountDetailsContainer() {
     )
 }
 
-function SubscriptionPlanContainer() {
+export function SubscriptionPlanContainer() {
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Subscription Plan</h2>
@@ -84,7 +58,7 @@ function SubscriptionPlanContainer() {
     )
 }
 
-function PaymentPanel() {
+export function PaymentPanel() {
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Payment</h2>
@@ -93,7 +67,7 @@ function PaymentPanel() {
     )
 }
 
-function ManagerCreationPanel() {
+export function ManagerCreationPanel() {
     const [username, setUsername] = useState("");
     const [accountType, setAccountType] = useState("");
     const [password, setPassword] = useState("");
@@ -102,7 +76,7 @@ function ManagerCreationPanel() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Form validation
         if (!username.trim()) {
             toast.error("Username is required");
@@ -195,8 +169,8 @@ function ManagerCreationPanel() {
                     onChange={e => setPassword(e.target.value)}
                     disabled={isLoading}
                 />
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     disabled={isLoading}
                     className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-full transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -207,7 +181,7 @@ function ManagerCreationPanel() {
     )
 }
 
-function EmployeesPanel() {
+export function EmployeesPanel() {
     // Example employees data
     const allEmployees: Employee[] = [
         {
@@ -259,7 +233,7 @@ function EmployeesPanel() {
     );
 }
 
-function SideBar({ panelType, setPanelType, isAdminWithCompany, showManagerPanel, showEmployeesPanel }: { panelType: "account" | "plan" | "payment" | "manager" | "employees", setPanelType: React.Dispatch<React.SetStateAction<"account" | "plan" | "payment" | "manager" | "employees">>, isAdminWithCompany: boolean, showManagerPanel: boolean, showEmployeesPanel: boolean }) {
+export function SideBar({ panelType, setPanelType, isAdminWithCompany, showManagerPanel, showEmployeesPanel }: { panelType: "account" | "plan" | "payment" | "manager" | "employees", setPanelType: React.Dispatch<React.SetStateAction<"account" | "plan" | "payment" | "manager" | "employees">>, isAdminWithCompany: boolean, showManagerPanel: boolean, showEmployeesPanel: boolean }) {
     return (
         <nav className="h-full w-full md:w-auto bg-gradient-to-b from-blue-900 to-blue-700 shadow-xl p-6 flex flex-row md:flex-col items-center gap-6 md:gap-8 rounded-b-3xl md:rounded-none md:rounded-r-3xl">
             <button

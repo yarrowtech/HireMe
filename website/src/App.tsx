@@ -1,4 +1,4 @@
-import Home from "./components/Home";
+import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
 import UserContextProvider from "./context/UserContext";
@@ -8,7 +8,7 @@ import PartnerRequests from "./components/PartnerRequests";
 import AllEmployees from "./components/AllEmployees";
 import AddEmployee from "./components/AddEmployee";
 import Employee from "./components/Employee";
-import AccountManagement from "./components/AccountManagement";
+import ProfileDashboard from "./pages/ProfileDashboard";
 import Partners from "./components/Partners";
 import RequestDetails from "./components/RequestDetails";
 import RequestContextLayout from "./context/RequestsContext";
@@ -47,7 +47,7 @@ function App() {
           <Route path="/employees" element={<AllEmployees />} />
           <Route path="/employees/employee/:id" element={<Employee />} />
           <Route path="/add-employee" element={<AddEmployee />} />
-          <Route path="/manage-account" element={<AccountManagement />} />
+          <Route path="/manage-account" element={<ProfileDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
         <Footer />
