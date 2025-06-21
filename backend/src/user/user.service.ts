@@ -33,10 +33,6 @@ export class UserService {
                     Company: {
                         select: {
                             id: true,
-                            CompanyName: true,
-                            Contact: true,
-                            Email: true,
-                            Address: true,
                         }
                     }
                 },

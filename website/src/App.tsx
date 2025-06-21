@@ -43,11 +43,11 @@ function App() {
           </Route>
           <Route element={<PartnerContextLayout />}>
             <Route path="/partners" element={<Partners />} />
+            <Route path="/manage-account" element={<ProfileDashboard />} />
           </Route>
           <Route path="/employees" element={<AllEmployees />} />
           <Route path="/employees/employee/:id" element={<Employee />} />
           <Route path="/add-employee" element={<AddEmployee />} />
-          <Route path="/manage-account" element={<ProfileDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
         <Footer />

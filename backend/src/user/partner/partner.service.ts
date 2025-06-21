@@ -53,4 +53,30 @@ export class PartnerService {
         });
         return `Manager account created successfully`;
     }
+
+    async getPartnerDetails(partnerId: number): Promise<Object | null> {
+        const partner = await prisma.partner.findUnique({
+            where: {
+                id: partnerId
+            },
+            select: {
+                id: true,
+                CompanyName: true,
+                Contact: true,
+                Email: true,
+                Address: true,
+                ESI: true,
+                PF: true,
+                PAN: true,
+                PAN_No: true,
+                MOA: true,
+                CIN: true,
+                GST: true,
+                TradeLicense: true,
+                MSMC: true,
+                CreatedAt: true
+            }
+        });
+        return partner;
+    }
 }

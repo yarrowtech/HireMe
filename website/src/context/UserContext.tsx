@@ -17,7 +17,7 @@ export default function UserContextProvider({ children }: { children: ReactNode 
         if (res.ok) {
             setUserState({
                 username: data.data.Username,
-                Company: data.data.Company || null,
+                Company: data.data.Company.id || null,
                 position: data.data.AccountType
             });
         } else {
@@ -44,14 +44,6 @@ type UserContextType = {
 
 type UserState = {
     username: string
-    Company: null | CompanyData
+    Company: null | number
     position: string 
-}
-
-type CompanyData = {
-    id: number
-    CompanyName: string
-    Contact: string
-    Email: string
-    Address: string
 }

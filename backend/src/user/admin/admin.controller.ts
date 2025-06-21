@@ -24,11 +24,5 @@ export class AdminController {
         return await this.adminService.getPartnerList();
     }
 
-    @Get("partner-details/:id")
-    @UseGuards(AdminGuard)
-    async getPartnerDetails(@Param("id") partnerId: string): Promise<Object | null> {
-        const details = await this.adminService.getPartnerDetails(parseInt(partnerId));
-        if (!details) throw new BadRequestException("Invalid partner ID");
-        return details;
-    }
+    
 }

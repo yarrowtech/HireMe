@@ -1,4 +1,4 @@
-import { Body, Controller, Post, ValidationPipe, Get, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, ValidationPipe, Get, UseGuards, Param, BadRequestException } from "@nestjs/common";
 import { PartnerService } from "./partner.service";
 import { CreateManagerAccountDto, PartnerAccountCredDto } from "./dto/partnerAccountCred.dto";
 import { CompanyAdminGuard } from "src/guards/company.guard";
@@ -9,9 +9,11 @@ export class PartnerController {
 
     constructor(private partnerService: PartnerService) {}
 
-    @Get("get")
-    getPartner(): string {
-        return "Partner details retrieved successfully";
+    @Get("details/:id")
+    async getPartnerDetails(@Param("id") partnerId: string): Promise<Object | null> {
+        const details = await this.partnerService.getPartnerDetails(parseInt(partnerId));
+        if (!details) throw new BadRequestException("Invalid partner ID");
+        return details;
     }
 
     @Post("auth/login")

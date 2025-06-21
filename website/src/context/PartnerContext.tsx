@@ -26,7 +26,7 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
     }
 
     async function fetchPartnerDetails(partnerId: number) {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/partner-details/${partnerId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/details/${partnerId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -52,14 +52,30 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
 type PartnersContextType = {
     allPartners: PartnerData[] | null
     fetchPartnerList: () => Promise<void>
-    fetchPartnerDetails: (partnerId: number) => Promise<Object | null>
+    fetchPartnerDetails: (partnerId: number) => Promise<PartnerDetails | null>
 }
 
 type PartnerData = {
     id: number,
     CompanyName: string,
 }
-
+export type PartnerDetails = {
+    id: string,
+    CompanyName: string,
+    Contact: string,
+    Email: string,
+    Address: string,
+    ESI: string,
+    PF: string,
+    PAN: string,
+    PAN_No: string,
+    MOA: string,
+    CIN: string,
+    GST: string,
+    TradeLicense: string,
+    MSMC: string,
+    CreatedAt: string
+}
 
 export default function PartnerContextLayout() {
     return (
