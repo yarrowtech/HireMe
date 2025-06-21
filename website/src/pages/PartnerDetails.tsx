@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { UserContext } from "../context/UserContext"
-import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from "../components/AccountDetails"
+import { useState, useEffect, useContext } from 'react';
+import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from '../components/AccountDetails';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
-export default function ProfileDashboard() {
+export default function PartnerDetails() {
     const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "manager" | "employees">("account")
-    const navigate = useNavigate()
     const { userState } = useContext(UserContext)!
-    const isAdminWithCompany =( userState.Company !== null && userState.position === "admin") || userState.position === "admin"
+    const navigate = useNavigate()
+    const isAdminWithCompany = false
     useEffect(() => {
         if (userState.position === "guest" || userState.position === "employee")
             navigate("/")
@@ -25,4 +25,3 @@ export default function ProfileDashboard() {
         </section>
     )
 }
-

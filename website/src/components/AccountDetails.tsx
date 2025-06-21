@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext';
 import { toast } from 'react-toastify';
 import Search from "../assets/search.svg"
 import type { Employee } from './AllEmployees';
-import {EmployeeCard} from '../components/AllEmployees';
+import {EmployeeCard} from './AllEmployees';
 
 export function AccountDetailsContainer() {
 
