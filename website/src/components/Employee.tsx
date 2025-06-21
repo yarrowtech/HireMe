@@ -13,7 +13,7 @@ export default function Employee() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (userState.companyName === null && userState.position !== "admin")
+        if (userState.position === "guest" && userState.Company === null) 
             navigate("/")
     }, [])
 

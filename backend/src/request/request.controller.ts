@@ -58,9 +58,20 @@ export class RequestController {
     @Get("get-requests")
     @HttpCode(200)
     @UseGuards(AdminGuard)
-    async getPartner(): Promise<PartnerRequest[]> {
+    async getPartner(): Promise<Object[]> {
         const requests = await this.requestService.getPartnerRequests();
         return requests;
+    }
+
+    @Get("get-request-details/:id")
+    @HttpCode(200)
+    @UseGuards(AdminGuard)
+    async getRequestDetails(@Param("id") id: string): Promise<PartnerRequest> {
+        const request = await this.requestService.getPartnerRequestDetails(parseInt(id));
+        if (!request) {
+            throw new BadRequestException("Request not found");
+        }
+        return request;
     }
 
     @Post("send-request")

@@ -55,7 +55,8 @@ export default function Companies() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!(userState.companyName === null && userState.position === "admin"))
+        console.log(userState.Company, userState.position)
+        if (!(userState.Company === null && userState.position === "admin" ))
             navigate("/")
     }, [])
 

@@ -6,9 +6,22 @@ import { hashSync } from "bcryptjs";
 
 @Injectable()
 export class RequestService {
-    async getPartnerRequests(): Promise<PartnerRequest[]> {
-        const requests = await prisma.partnerRequest.findMany();
+    async getPartnerRequests(): Promise<Object[]> {
+        const requests = await prisma.partnerRequest.findMany({
+            select: {
+                Status: true,
+                id: true,
+                CompanyName: true,
+            }
+        });
         return requests
+    }
+
+    async getPartnerRequestDetails(id: number): Promise<PartnerRequest | null> {
+        const request = await prisma.partnerRequest.findUnique({
+            where: { id },
+        });
+        return request;
     }
 
     async sendPartnerRequest(partner: Prisma.PartnerRequestCreateInput): Promise<string> {

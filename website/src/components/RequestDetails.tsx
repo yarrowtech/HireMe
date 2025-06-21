@@ -1,21 +1,44 @@
 import { useContext, useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { RequestsContext, type Request } from "../context/RequestsContext"
+import { RequestsContext } from "../context/RequestsContext"
 import LeftArrow from "../assets/left-arrow-white.svg"
 import ApproveIcon from "../assets/approve.svg"
 import RejectIcon from "../assets/reject.svg"
 import { toast } from "react-toastify"
 
+type RequestDetails = {
+    id: number;
+    CompanyName: string;
+    Contact: string;
+    Email: string;
+    Address: string;
+    CIN: string;
+    PAN_No: string;
+    Status: "PENDING" | "APPROVED" | "REJECTED";
+    ESI?: string;
+    PF?: string;
+    PAN?: string;
+    MOA?: string;
+    GST?: string;
+    TradeLicense?: string;
+    MSMC?: string;
+}
+
 export default function RequestDetails() {
     const { id } = useParams()
-    const { requests } = useContext(RequestsContext)!
-    const [requestDetails, setRequestDetails] = useState<Request | null>(null)
+    const { fetchRequestDetails } = useContext(RequestsContext)!
+    const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null)
     const navigate = useNavigate()
 
     useEffect(() => {
-        const found = requests.find(req => req.id === parseInt(id!))
-        setRequestDetails(found || null)
-    }, [id, requests])
+        const fetchDetails = async () => {
+            if (id) {
+                const details = await fetchRequestDetails(parseInt(id))
+                setRequestDetails(details as RequestDetails)
+            }
+        }
+        fetchDetails()
+    }, [])
 
     if (!requestDetails) {
         return (

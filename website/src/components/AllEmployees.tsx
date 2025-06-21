@@ -67,7 +67,7 @@ export default function AllEmployees() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (userState.Company === null || userState.position === "admin" || userState.position === "employee")
+        if (userState.position === "guest" || userState.position === "employee")
             navigate("/")
     }, [])
 
