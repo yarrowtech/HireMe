@@ -62,11 +62,12 @@ model PartnerRequest {
 }
 
 model PartnerAccount {
-  id          Int    @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   CompanyCode Int
   Username    String
   Password    String
-  AccountType String @default("admin")
+  AccountType String     @default("admin")
+  Employee    Employee[]
 
   Company Partner @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
 
@@ -74,13 +75,46 @@ model PartnerAccount {
   UpdatedAt DateTime @default(now())
 }
 
-model Subscription {
+model Employee {
   id        Int      @id @default(autoincrement())
-  Plan      String
-  StartDate DateTime
-  EndDate   DateTime
-  Status    String
+  // personal details
+  Name      String
+  DOB       String
+  Email     String   @unique
+  Mobile    String   @unique
+  Address   String
+  Pic       String
+  // identity documents
+  AadhaarNo String   @unique
+  Aadhaar String
+  PanNo   String   @unique
+  Pan String
+  Voter String
+  // education details
+  Qualification String
+  Institution String
+  YearOfPassing String
+  Percentage Float
+  Marksheet String
+  // bank details
+  AccountHolderName String
+  AccountNumber String @unique
+  IFSCCode String
+  BankName String
+  Branch String
+  AccountType String
+  // job details
+  JoiningDate String
+  Post String
+  PostCategory String
+  Amount Float
+  PaymentFrequency String
+
   CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @default(now())
+
+  ManagerId Int
+  Manager   PartnerAccount @relation(fields: [ManagerId], references: [id], onDelete: Cascade)
 }
 
 enum RequestStatus {
