@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
-import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from "../components/AccountDetails"
+import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from "./AccountDetails"
 
 export default function ProfileDashboard() {
     const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "manager" | "employees">("account")

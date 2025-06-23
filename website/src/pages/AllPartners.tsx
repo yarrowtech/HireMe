@@ -40,7 +40,7 @@ export default function AllPartners() {
     }, [allPartners])
 
     return (
-        <section className="w-full max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
+        <section className="w-full max-w-6xl min-h-[55vh] my-[15vh] mx-auto flex flex-col items-center gap-8">
             <div className="flex items-center justify-between w-full mb-10">
                 <h2 className="font-extrabold text-blue-900 text-4xl">All Partners</h2>
                 <div className="w-[20%] relative">

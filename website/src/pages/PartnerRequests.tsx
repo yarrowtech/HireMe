@@ -57,7 +57,7 @@ export default function PartnerRequests() {
     };
 
     return (
-        <section className="w-full max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
+        <section className="w-full min-h-[55vh] max-w-6xl my-[15vh] mx-auto flex flex-col items-center gap-8">
             <div className="flex items-center justify-between w-full mb-10">
                 <h2 className="font-extrabold text-blue-900 text-4xl">All Partner Requests</h2>
                 <div className="w-[20%] relative">

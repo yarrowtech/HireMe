@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { SideBar, CheckPartnerDetails, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from '../components/AccountDetails';
+import { SideBar, CheckPartnerDetails, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from './AccountDetails';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -30,7 +30,7 @@ export default function AdminLogin() {
   const [ loginCred, setLoginCred ] = useState({ username: "", password: "" });
   const [showForgot, setShowForgot] = useState(false);
   const navigate = useNavigate();
-  const { updateUserState } = useContext(UserContext)!;
+  const { userState, updateUserState } = useContext(UserContext)!;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginCred(prev => ({ ...prev, [name]: value }));
@@ -56,6 +56,10 @@ export default function AdminLogin() {
       toast.error(data.message)
     }
   };
+
+  useEffect(() => {
+    if (userState.position !== "guest") navigate("/");
+  }, [userState])
   return (
     <>
       {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
