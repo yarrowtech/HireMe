@@ -30,6 +30,14 @@ export class PartnerService {
     }
 
     async createManagerAccount(CompanyCode: number, Username: string, Password: string, AccountType: string): Promise<string> {
+        const partner = await prisma.partner.findFirst({
+            where: {
+                id: CompanyCode
+            }
+        })
+        if (!partner) {
+            throw new UnauthorizedException("Invalid company code");
+        }
         const existingUser = await prisma.partnerAccount.findFirst({
             where: {
                 AND: [
