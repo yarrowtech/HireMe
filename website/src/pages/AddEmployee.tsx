@@ -17,10 +17,14 @@ export default function AddEmployee() {
         pic: null
     })
     const [documentFiles, setDocumentFiles] = useState<{
+        aadhaarNo: string,
+        panNo: string,
         aadhaar: File | null,
         pan: File | null,
         voter: File | null
     }>({
+        aadhaarNo: "",
+        panNo: "",
         aadhaar: null,
         pan: null,
         voter: null
@@ -50,12 +54,14 @@ export default function AddEmployee() {
         post: string,
         postCategory: string,
         amount: number,
-        paymentFrequency: string
+        paymentFrequency: string,
+        joiningDate: string  // Added joining date
     }>({
         post: "",
         postCategory: "",
         amount: 0,
-        paymentFrequency: ""
+        paymentFrequency: "",
+        joiningDate: ""  // Initialize with empty string
     })
 
     const navigate = useNavigate()
@@ -268,7 +274,7 @@ function PersonalDetails({
     )
 }
 
-function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadhaar: File | null, pan: File | null, voter: File | null }, setDocumentFiles: React.Dispatch<React.SetStateAction<{ aadhaar: File | null, pan: File | null, voter: File | null }>> }) {
+function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadhaarNo: string, panNo: string, aadhaar: File | null, pan: File | null, voter: File | null }, setDocumentFiles: React.Dispatch<React.SetStateAction<{ aadhaarNo: string, panNo: string, aadhaar: File | null, pan: File | null, voter: File | null }>> }) {
     const aadhaarCardRef = useRef<HTMLInputElement>(null)
     const panCardRef = useRef<HTMLInputElement>(null)
     const voterCardRef = useRef<HTMLInputElement>(null)
@@ -287,6 +293,14 @@ function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadha
         setDocumentFiles({ ...documentFiles, [name]: file })
     }
 
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setDocumentFiles(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
     return (
         <div className="w-full grid grid-cols-2 gap-5">
             <div className="col-span-full mb-2">
@@ -298,9 +312,11 @@ function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadha
                 <h4 className="text-md font-medium text-blue-800">Aadhaar Card</h4>
                 <input
                     type="text"
-                    name="aadhaarNumber"
+                    name="aadhaarNo"
                     placeholder="Aadhaar Card Number"
                     className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
+                    value={documentFiles.aadhaarNo}
+                    onChange={handleInputChange}
                 />
                 <div className="flex items-center gap-3 mt-2">
                     <input
@@ -336,9 +352,11 @@ function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadha
                 <h4 className="text-md font-medium text-blue-800">PAN Card</h4>
                 <input
                     type="text"
-                    name="panNumber"
+                    name="panNo"
                     placeholder="PAN Card Number"
                     className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
+                    value={documentFiles.panNo}
+                    onChange={handleInputChange}
                 />
                 <div className="flex items-center gap-3 mt-2">
                     <input
@@ -543,8 +561,8 @@ function Bank({ bankDetails, setBankDetails }: {
 }
 
 function JobSpecifications({ jobDetails, setJobDetails }: {
-    jobDetails: { post: string, postCategory: string, amount: number, paymentFrequency: string },
-    setJobDetails: React.Dispatch<React.SetStateAction<{ post: string, postCategory: string, amount: number, paymentFrequency: string }>>
+    jobDetails: { post: string, postCategory: string, amount: number, paymentFrequency: string, joiningDate: string },
+    setJobDetails: React.Dispatch<React.SetStateAction<{ post: string, postCategory: string, amount: number, paymentFrequency: string, joiningDate: string }>>
 
 }) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -576,6 +594,14 @@ function JobSpecifications({ jobDetails, setJobDetails }: {
                 <option value="sales">Sales/Support</option>
                 <option value="hire">Work on Hire</option>
             </select>
+            <input
+                type="date"
+                name="joiningDate"
+                placeholder="Enter date of birth"
+                value={jobDetails.joiningDate}
+                onChange={handleChange}
+                className="rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
+            />
             <input
                 type="number"
                 name="amount"
