@@ -29,11 +29,12 @@ export default function AddEmployee() {
         pan: null,
         voter: null
     })
-    const [educationDetails, setEducationDetails] = useState<{ qualification: string, institute: string, yearOfPassing: string, percentage: number }>({
+    const [educationDetails, setEducationDetails] = useState<{ qualification: string, institute: string, yearOfPassing: string, percentage: number, marksheet: File | null }>({
         qualification: "",
         institute: "",
         yearOfPassing: "",
-        percentage: 0
+        percentage: 0,
+        marksheet: null
     })
     const [bankDetails, setBankDetails] = useState<{
         accountHolderName: string,
@@ -423,10 +424,12 @@ function Documents({ documentFiles, setDocumentFiles }: { documentFiles: { aadha
 }
 
 function Education({ educationDetails, setEducationDetails }: {
-    educationDetails: { qualification: string, institute: string, yearOfPassing: string, percentage: number },
-    setEducationDetails: React.Dispatch<React.SetStateAction<{ qualification: string, institute: string, yearOfPassing: string, percentage: number }>>
+    educationDetails: { qualification: string, institute: string, yearOfPassing: string, percentage: number, marksheet: File | null },
+    setEducationDetails: React.Dispatch<React.SetStateAction<{ qualification: string, institute: string, yearOfPassing: string, percentage: number, marksheet: File | null }>>
 
 }) {
+    const marksheetRef = useRef<HTMLInputElement>(null)
+    const [marksheetReview, setMarksheetReview] = useState<string>("")
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEducationDetails(prev => ({
@@ -475,6 +478,42 @@ function Education({ educationDetails, setEducationDetails }: {
                 onChange={handleChange}
                 className="p-2 pl-3 rounded-lg border-2 border-blue-200 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield] outline-none focus:ring-2 focus:ring-blue-400"
             />
+            <div className="flex items-center gap-3 mt-2">
+                    <input
+                        type="file"
+                        name="pan"
+                        className="hidden"
+                        ref={marksheetRef}
+                        accept="application/pdf,image/*"
+                        onChange={(e: ChangeEvent) => {
+                            setMarksheetReview(URL.createObjectURL((e.currentTarget as HTMLInputElement).files?.[0] || new Blob()))
+                            setEducationDetails(prev => ({
+                                ...prev,
+                                marksheet: (e.currentTarget as HTMLInputElement).files?.[0] || null
+                            }))
+                        }}
+                    />
+                    <button
+                        type="button"
+                        className="p-3 bg-blue-500 rounded-lg text-white text-xs font-bold cursor-pointer hover:bg-blue-600 transition-all duration-300"
+                        onClick={() => marksheetRef.current?.click()}
+                    >
+                        Upload Marksheet
+                    </button>
+                    {educationDetails.marksheet && (
+                        <>
+                            <a target="_blank" href={marksheetReview} className="text-green-600 text-sm font-medium underline">
+                                View File
+                            </a>
+                            <span className="text-red-500  underline cursor-pointer" onClick={() => {
+                                setEducationDetails(prev => ({
+                                    ...prev,
+                                    marksheet: null
+                                }))
+                            }}>Clear</span>
+                        </>
+                    )}
+                </div>
         </div>
     )
 }
