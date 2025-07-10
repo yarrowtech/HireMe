@@ -6,27 +6,6 @@ import { CreateEmployeeDto } from "./dto/employeeCred.dto";
 
 @Injectable()
 export class PartnerService {
-
-    async partnerAccountLogin(companyCode: number, username: string, password: string): Promise<{ token: string }> {
-        const user = await prisma.partnerAccount.findFirst({
-            where: {
-                AND: [
-                    { CompanyCode: companyCode },
-                    { Username: username }
-                ]
-            }
-        })
-        if (!user) {
-            throw new UnauthorizedException("Invalid credentials");
-        }
-        if (compareSync(password, user.Password)) {
-            const token = jwt.sign(JSON.stringify({id: user.id, type: "company"}), process.env.JWT_SECRET!)
-            return {token};
-        }
-        else {
-            throw new UnauthorizedException("Invalid credentials");
-        }
-    }
     async getPartnerDetails(partnerId: number): Promise<Object | null> {
         const partner = await prisma.partner.findUnique({
             where: {

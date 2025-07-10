@@ -37,8 +37,12 @@ model Partner {
   TradeLicense String
   MSMC         String
   CreatedAt    DateTime @default(now())
+  UpdatedAt    DateTime @default(now())
 
-  PartnerAccount PartnerAccount[]
+  Username String
+  Password String
+
+  Employee Employee[]
 }
 
 model PartnerRequest {
@@ -61,63 +65,49 @@ model PartnerRequest {
   UpdatedAt    DateTime      @default(now())
 }
 
-model PartnerAccount {
-  id          Int        @id @default(autoincrement())
-  CompanyCode Int
-  Username    String
-  Password    String
-  Employee    Employee[]
-
-  Company Partner @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
-
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @default(now())
-}
-
 model Employee {
-  id        Int      @id @default(autoincrement())
+  id                Int    @id @default(autoincrement())
   // personal details
-  Name      String
-  DOB       String
-  Email     String   @unique
-  Mobile    String   @unique
-  Address   String
-  Pic       String
+  Name              String
+  DOB               String
+  Email             String @unique
+  Mobile            String @unique
+  Address           String
+  Pic               String
   // identity documents
-  AadhaarNo String   @unique
-  Aadhaar String
-  PanNo   String   @unique
-  Pan String
-  Voter String
+  AadhaarNo         String @unique
+  Aadhaar           String
+  PanNo             String @unique
+  Pan               String
+  Voter             String
   // education details
-  Qualification String
-  Institution String
-  YearOfPassing String
-  Percentage Float
-  Marksheet String
+  Qualification     String
+  Institution       String
+  YearOfPassing     String
+  Percentage        Float
+  Marksheet         String
   // bank details
   AccountHolderName String
-  AccountNumber String @unique
-  IFSCCode String
-  BankName String
-  Branch String
-  AccountType String
+  AccountNumber     String @unique
+  IFSCCode          String
+  BankName          String
+  Branch            String
+  AccountType       String
   // job details
-  JoiningDate String
-  Post String
-  PostCategory String
-  Amount Float
-  PaymentFrequency String
-  //account details
-  Username String
-  Password String
-  AccessLevel String @default("employee")
+  CompanyCode       Int
+  JoiningDate       String
+  Post              String
+  PostCategory      String
+  Amount            Float
+  PaymentFrequency  String
 
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @default(now())
 
   SuperiorId Int?
-  Superior   PartnerAccount? @relation(fields: [SuperiorId], references: [id], onDelete: Cascade)
+  Superior   Employee?  @relation(name: "tree", fields: [SuperiorId], references: [id], onDelete: Cascade)
+  Junior     Employee[] @relation(name: "tree")
+  Company    Partner    @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
 }
 
 enum RequestStatus {
