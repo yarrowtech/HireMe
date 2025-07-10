@@ -2,14 +2,13 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { compareSync } from "bcryptjs";
 import prisma from "src/prisma";
 import * as jwt from "jsonwebtoken";
-import { encryptUserData } from "src/utils/encryption";
 
 
 
 @Injectable()
 export class AdminService {
 
-    async login(username: string, password: string): Promise<{ token: string, encryptedData: string }> {
+    async login(username: string, password: string): Promise<{ token: string }> {
         const user = await prisma.admin.findFirst({
             where: {
                 Username: username,
@@ -21,9 +20,8 @@ export class AdminService {
         if (!compareSync(password, user.Password)) {
             throw new UnauthorizedException("Invalid username or password");
         }
-        const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!)
-        const encryptedData = encryptUserData(`${user.id}`, "admin")
-        return { token, encryptedData };
+        const token = jwt.sign(JSON.stringify({id: user.id, type: "admin"}), process.env.JWT_SECRET!)
+        return { token };
     }
 
     async getPartnerList(): Promise<Object[]> {

@@ -10,11 +10,10 @@ export class AdminController {
 
     @Post("auth/login")
     async login(@Body(new ValidationPipe()) loginCred: AdminLoginCredDto): Promise<Object> {
-        const { token, encryptedData } = await this.adminService.login(loginCred.username, loginCred.password);        
+        const { token } = await this.adminService.login(loginCred.username, loginCred.password);        
         return {
             message: "Login successful",
-            token: token,
-            encryptedData: encryptedData
+            token: token
         }
     }
 

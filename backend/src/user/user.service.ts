@@ -1,31 +1,28 @@
-import { HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { decryptUserData } from "src/utils/encryption";
+import { HttpException, Injectable } from "@nestjs/common";
 import prisma from "src/prisma";
+import * as jwt from "jsonwebtoken";
 
 @Injectable()
 export class UserService {
 
-    async getUserDetails(metadata: string): Promise<Object> {
-        const { userId, type} = decryptUserData(metadata)
-        if (type === "admin") { 
-            const data = await prisma.admin.findFirst({
+    async getUserDetails(token: string): Promise<Object> {
+        const data = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET!) as { id: string, type: string };
+        if (data.type === "admin") { 
+            const user = await prisma.admin.findFirst({
                 where: {
-                    id: parseInt(userId),
+                    id: parseInt(data.id),
                 },
                 select: {
                     Username: true,
                     Email: true,
                 }
             })
-            if (!data) {
-                throw new UnauthorizedException("User not found");
-            }
-            return {...data, AccountType: "admin" }
+            return {...user, AccountType: "admin" }
         }
-        else if (type === "company") {
-            const data = await prisma.partnerAccount.findFirst({
+        else if (data.type === "company") {
+            const user = await prisma.partnerAccount.findFirst({
                 where: {
-                    id: parseInt(userId),
+                    id: parseInt(data.id),
                 },
                 select: {
                     Username: true,
@@ -36,10 +33,7 @@ export class UserService {
                     }
                 },
             })
-            if (!data) {
-                throw new UnauthorizedException("User not found");
-            }
-            return {...data, AccountType: "company" }
+            return {...user, AccountType: "company" }
         }
         else throw new HttpException("Invalid metadata", 400);
     }

@@ -78,7 +78,7 @@ export class PartnerController {
   @Post('auth/login')
   async partnerAccountLogin(
     @Body(new ValidationPipe()) partnerAccoundCred: PartnerAccountCredDto,
-  ): Promise<{ token: string; encryptedData: string }> {
+  ): Promise<{ token: string }> {
     return this.partnerService.partnerAccountLogin(
       partnerAccoundCred.companyCode,
       partnerAccoundCred.username,

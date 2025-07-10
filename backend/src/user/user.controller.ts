@@ -7,6 +7,7 @@ import { UserGuard } from "src/guards/user.guard";
 @Catch(JsonWebTokenError)
 class JsonWebTokenErrorFilter implements ExceptionFilter {
       catch(exception: JsonWebTokenError, host: ArgumentsHost) {
+        console.log(exception)
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const status = 401;
@@ -27,8 +28,8 @@ export class UserController {
     
     @Get("details")
     @UseGuards(UserGuard)
-    async getUserDetails(@Headers("metadata") metadata: string): Promise<Object> {
-        const userDetails = await this.userService.getUserDetails(metadata);
+    async getUserDetails(@Headers("authorization") token: string): Promise<Object> {
+        const userDetails = await this.userService.getUserDetails(token);
         return {
             message: "User details retrieved successfully",
             data: userDetails

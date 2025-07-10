@@ -2,13 +2,12 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import prisma from "src/prisma";
 import { compareSync, hashSync } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
-import { encryptUserData } from "src/utils/encryption";
 import { CreateEmployeeDto } from "./dto/employeeCred.dto";
 
 @Injectable()
 export class PartnerService {
 
-    async partnerAccountLogin(companyCode: number, username: string, password: string): Promise<{ token: string, encryptedData: string }> {
+    async partnerAccountLogin(companyCode: number, username: string, password: string): Promise<{ token: string }> {
         const user = await prisma.partnerAccount.findFirst({
             where: {
                 AND: [
@@ -21,9 +20,8 @@ export class PartnerService {
             throw new UnauthorizedException("Invalid credentials");
         }
         if (compareSync(password, user.Password)) {
-            const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET!)
-            const encryptedData = encryptUserData(`${user.id}`, "company")
-            return {token, encryptedData};
+            const token = jwt.sign(JSON.stringify({id: user.id, type: "company"}), process.env.JWT_SECRET!)
+            return {token};
         }
         else {
             throw new UnauthorizedException("Invalid credentials");

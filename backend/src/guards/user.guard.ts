@@ -1,7 +1,6 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import * as jwt from "jsonwebtoken";
 import prisma from "src/prisma";
-import { decryptUserData } from "src/utils/encryption";
 
 
 @Injectable()
@@ -10,23 +9,18 @@ export class UserGuard implements CanActivate {
         try {
             const request = context.switchToHttp().getRequest();
             const token = request.headers.authorization?.split(" ")[1];
-            const metadata = request.headers.metadata;
             if (!token) {
                 return false;
             }
-            if (!jwt.verify(token, process.env.JWT_SECRET!))
+            const data = jwt.verify(token, process.env.JWT_SECRET!) as { id: string, type: string };
+            if (!data)
                 return false;
 
-            if (!metadata || typeof metadata !== "string") {
-                return false;
-            }
 
-            const { userId, type } = decryptUserData(metadata);
-
-            if (type === "admin") {
+            if (data.type === "admin") {
                 const user = await prisma.admin.findFirst({
                     where: {
-                        id: parseInt(userId),
+                        id: parseInt(data.id),
                     }
                 })
 
@@ -34,13 +28,12 @@ export class UserGuard implements CanActivate {
                     return false;
                 }
             }
-            else if (type === "company") {
+            else if (data.type === "company") {
                 const user = await prisma.partnerAccount.findFirst({
                     where: {
-                        id: parseInt(userId)
+                        id: parseInt(data.id)
                     },
                 })
-
                 if (!user) {
                     return false;
                 }
@@ -48,7 +41,6 @@ export class UserGuard implements CanActivate {
             else {
                 return false;
             }
-
             return true;
         } catch (error) {
             throw new BadRequestException("Invalid authentication data");
