@@ -116,8 +116,8 @@ model Employee {
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @default(now())
 
-  ManagerId Int
-  Manager   PartnerAccount @relation(fields: [ManagerId], references: [id], onDelete: Cascade)
+  SuperiorId Int?
+  Superior   PartnerAccount? @relation(fields: [SuperiorId], references: [id], onDelete: Cascade)
 }
 
 enum RequestStatus {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PDFIcon from "../assets/pdfIcon.svg"
 import Bin from "../assets/bin.svg"
+import { useNavigate } from "react-router-dom";
 
 export default function BecomePartner() {
     const [requestDetails, setRequestDetails] = useState({
@@ -39,6 +40,8 @@ export default function BecomePartner() {
     const pfRef = useRef<HTMLInputElement>(null);
     const moaRef = useRef<HTMLInputElement>(null);
     const msmcRef = useRef<HTMLInputElement>(null);
+
+    const navigate = useNavigate()
 
     function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) {
         const file = e.target.files?.[0] || null;
@@ -86,6 +89,7 @@ export default function BecomePartner() {
             const data = await res.json();
             if (res.ok) {
                 toast.success(data.message)
+                navigate("/")
             } else {
                 toast.error(data.message)
             }

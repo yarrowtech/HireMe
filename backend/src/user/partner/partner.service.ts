@@ -3,6 +3,7 @@ import prisma from "src/prisma";
 import { compareSync, hashSync } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { encryptUserData } from "src/utils/encryption";
+import { CreateEmployeeDto } from "./dto/employeeCred.dto";
 
 @Injectable()
 export class PartnerService {
@@ -52,5 +53,17 @@ export class PartnerService {
             }
         });
         return partner;
+    }
+
+    async addEmployee(createEmployeeDto: CreateEmployeeDto): Promise<string> {
+        await prisma.employee.create({
+            data: {
+                ...createEmployeeDto,
+                Amount: parseFloat(createEmployeeDto.Amount.toString()),
+                Percentage: parseFloat(createEmployeeDto.Percentage.toString()),
+                SuperiorId: createEmployeeDto.SuperiorId ? parseInt(createEmployeeDto.SuperiorId.toString()) : null,
+            }
+        })
+        return "Employee created successfully"
     }
 }

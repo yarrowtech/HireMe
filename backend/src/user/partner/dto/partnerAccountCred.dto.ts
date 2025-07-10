@@ -12,9 +12,3 @@ export class PartnerAccountCredDto {
     @Length(6, 50)
     password: string;
 }
-
-export class CreateManagerAccountDto extends PartnerAccountCredDto {
-    @IsString()
-    @Length(5, 20)
-    accountType: string
-}
