@@ -5,8 +5,6 @@ import UserContextProvider from "./context/UserContext";
 import Footer from "./components/Footer";
 import BecomePartner from "./pages/BecomePartner";
 import PartnerRequests from "./pages/PartnerRequests";
-import AllEmployees from "./pages/AllEmployees";
-import AddEmployee from "./pages/AddEmployee";
 import Employee from "./pages/Employee";
 import ProfileDashboard from "./pages/ProfileDashboard";
 import AllPartners from "./pages/AllPartners";
@@ -47,9 +45,7 @@ function App() {
             <Route path="/partner/details/:id" element={<PartnerDetails />} />
             <Route path="/manage-account" element={<ProfileDashboard />} />
           </Route>
-          <Route path="/employees" element={<AllEmployees />} />
           <Route path="/employees/employee/:id" element={<Employee />} />
-          <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
         <Footer />

@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
-import { SideBar, CheckPartnerDetails, SubscriptionPlanContainer, PaymentPanel, ManagerCreationPanel, EmployeesPanel } from './AccountDetails';
+import { SideBar, CheckPartnerDetails, SubscriptionPlanContainer, PaymentPanel, EmployeesPanel } from '../components/AccountDetails';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import AddEmployee from '../components/AddEmployee';
 
 export default function PartnerDetails() {
-    const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "manager" | "employees">("account")
+    const [panelType, setPanelType] = useState<"account" | "plan" | "payment" | "add-employee" | "employees">("account")
     const { userState } = useContext(UserContext)!
     const navigate = useNavigate()
     const isAdminWithCompany = false
@@ -19,7 +20,7 @@ export default function PartnerDetails() {
                 {panelType === "account" && <CheckPartnerDetails />}
                 {panelType === "plan" && <SubscriptionPlanContainer />}
                 {panelType === "payment" && isAdminWithCompany && <PaymentPanel />}
-                {panelType === "manager" && isAdminWithCompany && <ManagerCreationPanel />}
+                {panelType === "add-employee" && isAdminWithCompany && <AddEmployee />}
                 {panelType === "employees" && isAdminWithCompany && <EmployeesPanel />}
             </main>
         </section>

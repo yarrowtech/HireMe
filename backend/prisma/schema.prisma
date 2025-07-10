@@ -66,7 +66,6 @@ model PartnerAccount {
   CompanyCode Int
   Username    String
   Password    String
-  AccountType String     @default("admin")
   Employee    Employee[]
 
   Company Partner @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
@@ -109,6 +108,10 @@ model Employee {
   PostCategory String
   Amount Float
   PaymentFrequency String
+  //account details
+  Username String
+  Password String
+  AccessLevel String @default("employee")
 
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @default(now())

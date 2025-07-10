@@ -20,11 +20,4 @@ export class PartnerController {
     async partnerAccountLogin(@Body(new ValidationPipe()) partnerAccoundCred: PartnerAccountCredDto): Promise<{ token: string, encryptedData: string }> {
         return this.partnerService.partnerAccountLogin(partnerAccoundCred.companyCode, partnerAccoundCred.username, partnerAccoundCred.password);
     }
-    
-    @Post("create-manager-account")
-    @UseGuards(CompanyAdminGuard)
-    async createManagerAccount(@Body(new ValidationPipe()) partnerAccount: CreateManagerAccountDto): Promise<Object> {
-        const message = await this.partnerService.createManagerAccount(partnerAccount.companyCode, partnerAccount.username, partnerAccount.password, partnerAccount.accountType)
-        return {message}
-    }
 }

@@ -29,7 +29,6 @@ export class UserService {
                 },
                 select: {
                     Username: true,
-                    AccountType: true,
                     Company: {
                         select: {
                             id: true,
@@ -40,7 +39,7 @@ export class UserService {
             if (!data) {
                 throw new UnauthorizedException("User not found");
             }
-            return {...data }
+            return {...data, AccountType: "company" }
         }
         else throw new HttpException("Invalid metadata", 400);
     }

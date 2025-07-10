@@ -28,40 +28,6 @@ export class PartnerService {
             throw new UnauthorizedException("Invalid credentials");
         }
     }
-
-    async createManagerAccount(CompanyCode: number, Username: string, Password: string, AccountType: string): Promise<string> {
-        const partner = await prisma.partner.findFirst({
-            where: {
-                id: CompanyCode
-            }
-        })
-        if (!partner) {
-            throw new UnauthorizedException("Invalid company code");
-        }
-        const existingUser = await prisma.partnerAccount.findFirst({
-            where: {
-                AND: [
-                    { CompanyCode: CompanyCode },
-                    { Username: Username }
-                ]
-            }
-        });
-        if (existingUser) {
-            throw new UnauthorizedException("Username already exists for this company");
-        }
-
-        const hashedPassword = hashSync(Password, 10);
-        await prisma.partnerAccount.create({
-            data: {
-                CompanyCode,
-                Username,
-                AccountType,
-                Password: hashedPassword,
-            }
-        });
-        return `Manager account created successfully`;
-    }
-
     async getPartnerDetails(partnerId: number): Promise<Object | null> {
         const partner = await prisma.partner.findUnique({
             where: {

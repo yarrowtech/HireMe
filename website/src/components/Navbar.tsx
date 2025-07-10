@@ -70,7 +70,7 @@ export default function Navbar() {
         <Link to="/" className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-400 to-blue-700 text-transparent bg-clip-text drop-shadow-lg">HireMe</Link>
         <div
           className={`w-3/5 h-full flex items-center ${
-            userState.Company !== null && (userState.position === "admin" || userState.position === "employee")
+            userState.Company !== null
               ? "justify-end"
               : "justify-around"
           }`}
@@ -101,12 +101,6 @@ export default function Navbar() {
           {
             userState.Company !== null &&
             <>
-              {(userState.position !== "admin" && userState.position !== "employee") && (
-                <>
-                  <Link to="/employees" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Employees</Link>
-                  <Link to="/add-employee" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Add Employee</Link>
-                </>
-              )}
               <div id="profile" className="flex relative" onClick={() => setLogout(!logout)}>
                 <h3 className="p-2 cursor-pointer">Welcome, {userState.username}</h3>
                 <img src={UserIcon} className="w-8 cursor-pointer hover:scale-110 transition-transform" />

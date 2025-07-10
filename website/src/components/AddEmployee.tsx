@@ -1,10 +1,7 @@
-import { UserContext } from "../context/UserContext"
-import { useContext, useEffect, useRef, useState, type ChangeEvent } from "react"
-import { useNavigate } from "react-router-dom"
+import { useRef, useState, type ChangeEvent } from "react"
 
 export default function AddEmployee() {
 
-    const { userState } = useContext(UserContext)!
     const [subFormState, setSubFormState] = useState<"details" | "documents" | "education" | "bank" | "job">("details")
     const [personalDetails, setPersonalDetails] = useState<{ firstname: string, lastname: string, middlename: string, dob: string, mobile: string, email: string, address: string, pic: File | null }>({
         firstname: "",
@@ -65,15 +62,8 @@ export default function AddEmployee() {
         joiningDate: ""  // Initialize with empty string
     })
 
-    const navigate = useNavigate()
-
-    useEffect(() => {
-        if (userState.Company === null || userState.position === "admin" || userState.position === "employee")
-            navigate("/")
-    }, [])
-
     return (
-        <form className="mx-auto min-h-[55vh] my-[15vh] w-full max-w-3xl flex flex-col items-center bg-white/90 rounded-3xl shadow-2xl p-10 border border-blue-100">
+        <form className="mx-auto min-h-[55vh] w-full max-w-3xl flex flex-col items-center bg-white/90 rounded-3xl shadow-2xl p-10 border border-blue-100">
             <h2 className="text-3xl font-extrabold text-blue-900 mb-6 tracking-tight">Add Employee</h2>
             <div className="w-full flex flex-wrap items-center gap-2">
                 <button

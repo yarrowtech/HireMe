@@ -32,10 +32,6 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
                 if (!user) {
                     return false;
                 }
-
-                if (user.AccountType !== "admin") {
-                    return false;
-                }
             }
             else {
                 return false;
