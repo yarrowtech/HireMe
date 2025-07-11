@@ -26,7 +26,7 @@ export function AccountDetailsContainer() {
       if (details) {
         setPartner(details);
       } else {
-        toast.error("Failed to fetch partner details");
+        toast.error("Failed to fetch company details");
       }
     };
     fetchDetails(userState.Company || 0);

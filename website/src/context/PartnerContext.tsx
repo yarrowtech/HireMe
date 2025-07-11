@@ -14,7 +14,6 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${localStorage.getItem("authToken")}` || "",
-                "metadata": localStorage.getItem("metadata") || ""
             }
         })
         if (res.ok) {
@@ -31,7 +30,6 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${localStorage.getItem("authToken")}` || "",
-                "metadata": localStorage.getItem("metadata") || ""
             }
         })
         if (res.ok) {

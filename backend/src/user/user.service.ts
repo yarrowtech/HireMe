@@ -19,23 +19,19 @@ export class UserService {
             })
             return {...user, AccountType: "admin" }
         }
-        else if (data.type === "company") {
-            const user = await prisma.partnerAccount.findFirst({
+        else if (data.type === "comp") {
+            const user = await prisma.partner.findFirst({
                 where: {
                     id: parseInt(data.id),
                 },
                 select: {
                     Username: true,
-                    Company: {
-                        select: {
-                            id: true,
-                        }
-                    }
+                    id: true,
                 },
             })
             return {...user, AccountType: "company" }
         }
-        else throw new HttpException("Invalid metadata", 400);
+        else throw new HttpException("Invalid token", 400);
     }
 
    

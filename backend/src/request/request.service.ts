@@ -56,6 +56,7 @@ export class RequestService {
   private generateUsername(companyName: string): string {
     const companyPrefix = companyName
       .replace(/\s+/g, '')
+      .replace(/-/g, '')
       .toLowerCase()
       .substring(0, 4);
     return `comp-${companyPrefix}`;

@@ -135,10 +135,9 @@ export default function Login({ setShowLogin }: { setShowLogin: React.Dispatch<R
       if (response.ok) {
         // Store the token and encrypted data
         localStorage.setItem("authToken", data.token);
-        localStorage.setItem("metadata", data.encryptedData);
         
         await updateUserState();
-        toast.success("Login successful!");
+        toast.success(data.message || "Login successful");
         setShowLogin(false);
         navigate("/manage-account")
       } else {

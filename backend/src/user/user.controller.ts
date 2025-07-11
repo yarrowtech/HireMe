@@ -1,7 +1,6 @@
 import { Catch, Controller, Get, Headers, UseFilters, ExceptionFilter, ArgumentsHost, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JsonWebTokenError } from "jsonwebtoken";
-import { UserGuard } from "src/guards/user.guard";
 
 
 @Catch(JsonWebTokenError)
@@ -27,7 +26,6 @@ export class UserController {
     constructor(private userService: UserService) {}
     
     @Get("details")
-    @UseGuards(UserGuard)
     async getUserDetails(@Headers("authorization") token: string): Promise<Object> {
         const userDetails = await this.userService.getUserDetails(token);
         return {

@@ -27,18 +27,18 @@ import { AdminGuard } from 'src/guards/admin.guard';
 import { PartnerRequestDto } from './dto/partnerRequest.dto';
 
 const storage = diskStorage({
-  destination: process.env.PARTNER_FILE_PATH || 'uploads/partner',
+  destination: process.env.PARTNER_FILE_PATH || 'uploads/comp',
   filename: (req, file, cb) => {
     const ext = extname(file.originalname);
     const name = `${uuidv4()}${ext}`;
     req.body[file.fieldname] =
-      `${process.env.PARTNER_FILE_PATH || 'uploads/partner'}/${name}`;
+      `${process.env.PARTNER_FILE_PATH || 'uploads/comp'}/${name}`;
     cb(null, name);
   },
 });
 
 @Catch(BadRequestException)
-class CleanupFileOnValidationFailFilter implements ExceptionFilter {
+class CleanupFileOnErrorFilter implements ExceptionFilter {
   catch(exception: BadRequestException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -84,7 +84,7 @@ export class RequestController {
 
   @Post('send-request')
   @HttpCode(201)
-  @UseFilters(CleanupFileOnValidationFailFilter)
+  @UseFilters(CleanupFileOnErrorFilter)
   @UseInterceptors(
     FileFieldsInterceptor(
       [

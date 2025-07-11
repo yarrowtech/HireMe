@@ -13,8 +13,8 @@ import {
   ArgumentsHost,
   HttpCode,
   UseFilters,
+  Req,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { unlinkSync } from 'node:fs';
@@ -24,6 +24,7 @@ import { PartnerService } from './partner.service';
 import { PartnerAccountCredDto } from './dto/partnerAccountCred.dto';
 import { CreateEmployeeDto } from './dto/employeeCred.dto';
 import { CompanyAdminGuard } from 'src/guards/company.guard';
+import { Request, Response } from 'express';
 
 const storage = diskStorage({
   destination: process.env.EMPLOYEE_FILE_PATH || 'uploads/emp',
@@ -37,22 +38,20 @@ const storage = diskStorage({
 });
 
 @Catch(BadRequestException)
-class CleanupFileOnValidationFailFilter
+class CleanupFileOnErrorFilter
   implements ExceptionFilter
 {
   catch(exception: BadRequestException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const response: Response = ctx.getResponse<Response>();
+    const request: Request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    if (request.body.ESI) unlinkSync(request.body.ESI);
-    if (request.body.PF) unlinkSync(request.body.PF);
+    if (request.body.Aadhaar) unlinkSync(request.body.Aadhaar);
     if (request.body.PAN) unlinkSync(request.body.PAN);
-    if (request.body.MOA) unlinkSync(request.body.MOA);
-    if (request.body.GST) unlinkSync(request.body.GST);
-    if (request.body.TradeLicense) unlinkSync(request.body.TradeLicense);
-    if (request.body.MSMC) unlinkSync(request.body.MSMC);
+    if (request.body.Voter) unlinkSync(request.body.Voter);
+    if (request.body.Pic) unlinkSync(request.body.Pic);
+    if (request.body.Marksheet) unlinkSync(request.body.Marksheet);
 
     response
       .status(status)
@@ -78,18 +77,18 @@ export class PartnerController {
   @Post('auth/login')
   async partnerAccountLogin(
     @Body(new ValidationPipe()) partnerAccoundCred: PartnerAccountCredDto,
-  ): Promise<{ token: string }> {
-    return this.partnerService.partnerAccountLogin(
+  ): Promise<{ message: string, token: string }> {
+    const { token } = await this.partnerService.login(
       partnerAccoundCred.companyCode,
       partnerAccoundCred.username,
       partnerAccoundCred.password,
     );
+    return { token, message: 'Login successful'};
   }
 
   @Post('add-employee')
-  @UseGuards(CompanyAdminGuard)
   @HttpCode(201)
-  @UseFilters(CleanupFileOnValidationFailFilter)
+  @UseFilters(CleanupFileOnErrorFilter)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -102,9 +101,20 @@ export class PartnerController {
       { storage },
     ),
   )
+  @UseGuards(CompanyAdminGuard)
   async addEmployee(
-    @Body(new ValidationPipe()) createEmployeeDto: CreateEmployeeDto,
-  ): Promise<string> {
-    return this.partnerService.addEmployee(createEmployeeDto);
+    @Body(new ValidationPipe({ transform: true, whitelist: true })) createEmployeeDto: CreateEmployeeDto,
+    @Req() request: Request,
+  ): Promise<{ message: string }> {
+    
+    const authData = (request as any).authData;
+    if (authData) {
+      createEmployeeDto.CompanyCode = authData.CompanyCode;
+      createEmployeeDto.authUserId = authData.authUserId;
+    }
+    
+    this.partnerService.addEmployee(createEmployeeDto);
+
+    return { message: 'Employee created successfully' };
   }
 }

@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 
 export const UserContext = createContext<UserContextType | null>(null)
 
@@ -10,14 +10,13 @@ export default function UserContextProvider({ children }: { children: ReactNode 
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${localStorage.getItem("authToken")}` || "",
-                "metadata": localStorage.getItem("metadata") || ""
             }
         })
         const data = await res.json();
         if (res.ok) {
             setUserState({
                 username: data.data.Username,
-                Company: data.data.Company?.id || null,
+                Company: data.data?.id || null,
                 position: data.data.AccountType
             });
         } else {
@@ -28,6 +27,10 @@ export default function UserContextProvider({ children }: { children: ReactNode 
             })
         }
     }
+
+    useEffect(() => {
+        console.log(userState)
+    }, [userState])
 
     return (
         <UserContext.Provider value={{ userState, setUserState, updateUserState }}>

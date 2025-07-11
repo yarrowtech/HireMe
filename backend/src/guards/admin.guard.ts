@@ -1,4 +1,4 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import * as jwt from "jsonwebtoken";
 import prisma from "src/prisma";
 
@@ -33,6 +33,7 @@ export class AdminGuard implements CanActivate {
 
             return true;
         } catch (error) {
+            if (error instanceof jwt.JsonWebTokenError) throw new UnauthorizedException("Invalid token");
             throw new BadRequestException("Invalid authentication data");
         }
     }

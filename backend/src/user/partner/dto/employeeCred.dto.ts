@@ -90,20 +90,20 @@ export class CreateEmployeeDto {
   @IsString()
   PaymentFrequency: string;
 
-  // Account Details
-  @IsString()
-  Username: string;
-
   @IsString()
   Password: string;
 
   @IsString()
-  @IsIn(['employee', 'admin', 'manager']) // example roles
+  @IsIn(['EMPLOYEE', 'ADMIN', 'MANAGER'])
   AccessLevel: string;
 
-  // Superior relation
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  SuperiorId: number;
+  authUserId: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  CompanyCode: number;
 }

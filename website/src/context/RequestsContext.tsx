@@ -10,15 +10,13 @@ function RequestsContextProvider({ children }: { children: ReactNode }) {
 
     async function fetchRequests() {
         const token = localStorage.getItem("authToken")
-        const metadata = localStorage.getItem("metadata")
-        if (!token || !metadata) {
+        if (!token) {
             return
         }
         const res = await fetch(`${import.meta.env.VITE_API_URL}/request/get-requests`, {
             method: "GET",
             headers: {
                 "authorization": `Bearer ${token}`,
-                "metadata": metadata
             }
         })
         const data = await res.json();
@@ -31,15 +29,13 @@ function RequestsContextProvider({ children }: { children: ReactNode }) {
 
     async function fetchRequestDetails(id: number) {
         const token = localStorage.getItem("authToken")
-        const metadata = localStorage.getItem("metadata")
-        if (!token || !metadata) {
+        if (!token) {
             return
         }
         const res = await fetch(`${import.meta.env.VITE_API_URL}/request/get-request-details/${id}`, {
             method: "GET",
             headers: {
                 "authorization": `Bearer ${token}`,
-                "metadata": metadata
             }
         })
         const data = await res.json();
