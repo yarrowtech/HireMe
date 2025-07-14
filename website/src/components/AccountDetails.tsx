@@ -17,22 +17,7 @@ import { useParams } from "react-router-dom";
 
 export function AccountDetailsContainer() {
   const { userState } = useContext(UserContext)!;
-  const [partner, setPartner] = useState<PartnerDetails>();
-  const { fetchPartnerDetails } = useContext(PartnersContext)!;
-
-  useEffect(() => {
-    const fetchDetails = async (id: number) => {
-      if (id <= 0) return;
-      const details = await fetchPartnerDetails(id);
-      if (details) {
-        setPartner(details);
-      } else {
-        toast.error("Failed to fetch company details");
-      }
-    };
-    fetchDetails(userState.Company || 0);
-  }, []);
-
+  
   return (
     <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
       <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
@@ -64,6 +49,38 @@ export function AccountDetailsContainer() {
         </span>
       </div>
 
+      {/* Add more account-specific fields as needed */}
+      <div className="text-blue-900">
+        Additional account information will be displayed here.
+      </div>
+    </div>
+  );
+}
+
+export function CompanyDetailsContainer() {
+  const { userState } = useContext(UserContext)!;
+  const [partner, setPartner] = useState<PartnerDetails>();
+  const { fetchPartnerDetails } = useContext(PartnersContext)!;
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      console.log("hello")
+      const details = await fetchPartnerDetails(userState.Company || 0);
+      if (details) {
+        setPartner(details);
+      } else {
+        toast.error("Failed to fetch company details");
+      }
+    };
+    fetchDetails();
+  }, []);
+
+  return (
+    <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
+      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
+        Company Details
+      </h2>
+
       <div className="flex items-center gap-3 border-b pb-4">
         <span className="text-lg font-semibold text-blue-900">
           Company Name:
@@ -82,7 +99,6 @@ export function AccountDetailsContainer() {
         </span>
       </div>
 
-      {/* Added CIN */}
       <div className="flex items-center gap-3 border-b pb-4">
         <span className="text-lg font-semibold text-blue-900">CIN:</span>
         <span className="text-base font-medium text-blue-800">
@@ -90,7 +106,6 @@ export function AccountDetailsContainer() {
         </span>
       </div>
 
-      {/* Added PAN No */}
       <div className="flex items-center gap-3 border-b pb-4">
         <span className="text-lg font-semibold text-blue-900">PAN Number:</span>
         <span className="text-base font-medium text-blue-800">
@@ -317,10 +332,10 @@ export function SideBar({
   panelType,
   setPanelType,
 }: {
-  panelType: "account" | "plan" | "payment" | "add-employee" | "employees";
+  panelType: "account" | "company" | "plan" | "payment" | "add-employee" | "employees";
   setPanelType: React.Dispatch<
     React.SetStateAction<
-      "account" | "plan" | "payment" | "add-employee" | "employees"
+      "account" | "company" | "plan" | "payment" | "add-employee" | "employees"
     >
   >;
 }) {
@@ -335,6 +350,16 @@ export function SideBar({
         onClick={() => setPanelType("account")}
       >
         Account Details
+      </button>
+      <button
+        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+          panelType === "company"
+            ? "bg-white text-blue-900 shadow-lg"
+            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
+        }`}
+        onClick={() => setPanelType("company")}
+      >
+        Company Details
       </button>
       <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${

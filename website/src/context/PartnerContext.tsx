@@ -25,12 +25,12 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
     }
 
     async function fetchPartnerDetails(partnerId: number) {
+        console.log("hello")
         if (partnerId <= 0) return
         const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/details/${partnerId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "authorization": `Bearer ${localStorage.getItem("authToken")}` || "",
             }
         })
         if (res.ok) {
