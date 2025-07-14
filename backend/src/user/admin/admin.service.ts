@@ -20,7 +20,7 @@ export class AdminService {
         if (!compareSync(password, user.Password)) {
             throw new UnauthorizedException("Invalid username or password");
         }
-        const token = jwt.sign(JSON.stringify({id: user.id, type: "admin"}), process.env.JWT_SECRET!)
+        const token = jwt.sign(JSON.stringify({id: user.id, type: "superadmin"}), process.env.JWT_SECRET!)
         return { token };
     }
 

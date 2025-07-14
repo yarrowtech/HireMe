@@ -30,7 +30,7 @@ export default function AllPartners() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!(userState.Company === null && userState.position === "admin"))
+        if (!(userState.Company === null && userState.position === "superadmin"))
             navigate("/")
         fetchPartnerList()
     }, [])

@@ -16,7 +16,7 @@ export class AdminGuard implements CanActivate {
             if (!data)
                 return false;
 
-            if (data.type === "admin") {
+            if (data.type === "superadmin") {
                 const user = await prisma.admin.findFirst({
                     where: {
                         id: parseInt(data.id),

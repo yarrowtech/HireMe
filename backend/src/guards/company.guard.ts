@@ -32,7 +32,7 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
                 };
                 
             }
-            else if (data.type === "emp") {
+            else if (data.type === "emp" || data.type === "admin" || data.type === "mng") {
                 const user = await prisma.employee.findFirst({
                     where: {
                         id: parseInt(data.id)

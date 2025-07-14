@@ -7,7 +7,7 @@ export class UserService {
 
     async getUserDetails(token: string): Promise<Object> {
         const data = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET!) as { id: string, type: string };
-        if (data.type === "admin") { 
+        if (data.type === "superadmin") { 
             const user = await prisma.admin.findFirst({
                 where: {
                     id: parseInt(data.id),
@@ -17,7 +17,7 @@ export class UserService {
                     Email: true,
                 }
             })
-            return {...user, AccountType: "admin" }
+            return {...user, AccountType: "superadmin" }
         }
         else if (data.type === "comp") {
             const user = await prisma.partner.findFirst({

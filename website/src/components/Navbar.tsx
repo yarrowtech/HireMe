@@ -86,7 +86,7 @@ export default function Navbar() {
             </>
           }
           {
-            userState.Company === null && userState.position === "admin" &&
+            userState.Company === null && userState.position === "superadmin" &&
             <>
               <Link to="/partner-requests" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partner Requests</Link>
               <Link to="/partners" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partners</Link>

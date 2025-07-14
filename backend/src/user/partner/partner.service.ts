@@ -97,8 +97,25 @@ export class PartnerService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    let type = "comp"
+    if (parts[0] !== "comp") {
+      switch(account.AccessLevel) {
+        case AccessLevel.ADMIN:
+          type = "admin";
+          break;
+        case AccessLevel.EMPLOYEE:
+          type = "emp";
+          break;
+        case AccessLevel.MANAGER:
+          type = "mng";
+          break;
+        default:
+          throw new UnauthorizedException('Invalid access level');
+      }
+    }
+
     const token = jwt.sign(
-      { id: account.id, type: parts[0] },
+      { id: account.id, type },
       process.env.JWT_SECRET!,
     );
     return { token };
