@@ -1,73 +1,87 @@
 import { Link } from "react-router-dom";
-import UserIcon from "../assets/user.svg"
-import Logout from "../assets/logout.svg"
-import Tweak from "../assets/tweak.svg"
+import UserIcon from "../assets/user.svg";
+import Logout from "../assets/logout.svg";
+import Tweak from "../assets/tweak.svg";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import Login from "./Login";
 
 export default function Navbar() {
-  const { userState, updateUserState } = useContext(UserContext)!
-  const [showLogin, setShowLogin] = useState<Boolean>(false)
-  const [logout, setLogout] = useState<Boolean>(false)
-  const userIcon = useRef<HTMLImageElement>(null)
-  const navbar = useRef<HTMLElement>(null)
+  const { userState, updateUserState } = useContext(UserContext)!;
+  const [showLogin, setShowLogin] = useState<Boolean>(false);
+  const [logout, setLogout] = useState<Boolean>(false);
+  const [scrolled, setScrolled] = useState<Boolean>(false);
+  const userIcon = useRef<HTMLImageElement>(null);
+  const navbar = useRef<HTMLElement>(null);
 
   async function handleLogout() {
-    localStorage.removeItem("authToken")
-    localStorage.removeItem("metadata")
-    await updateUserState()
-    window.location.href = "/"
-    setLogout(false)
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("metadata");
+    await updateUserState();
+    window.location.href = "/";
+    setLogout(false);
   }
 
   useEffect(() => {
-
     // fetching user details
-    updateUserState()
+    updateUserState();
 
     userIcon.current?.addEventListener("click", () => {
-      setShowLogin(true)
-    })
+      setShowLogin(true);
+    });
+
     window.addEventListener("mousedown", (e: MouseEvent) => {
       if (!document.getElementById("profile")?.contains(e.target as Node))
-        setLogout(false)
-    })
+        setLogout(false);
+    });
 
     // styling navbar based on scroll position
-    window.addEventListener("scroll", () => {
-      if (window.scrollY < 5) {
-        navbar.current!.style.position = "absolute"
-        navbar.current!.style.width = "95vw"
-        navbar.current!.style.borderRadius = "1.5rem"
-        navbar.current!.style.top = "0.75rem"
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 5;
+      setScrolled(isScrolled);
+      
+      if (navbar.current) {
+        if (!isScrolled) {
+          navbar.current.style.position = "absolute";
+          navbar.current.style.width = "95vw";
+          navbar.current.style.borderRadius = "1.5rem";
+          navbar.current.style.top = "0.75rem";
+          navbar.current.style.boxShadow = "0 4px 30px rgba(0, 0, 0, 0.1)";
+        } else {
+          navbar.current.style.position = "fixed";
+          navbar.current.style.width = "100vw";
+          navbar.current.style.borderRadius = "0";
+          navbar.current.style.top = "0";
+          navbar.current.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
+        }
       }
-    })
+    };
 
-    function intersectionHandler(entries: IntersectionObserverEntry[]) {
-      if (!entries[0].isIntersecting) {
-        navbar.current!.style.position = "fixed"
-        navbar.current!.style.width = "100vw"
-        navbar.current!.style.borderRadius = "0"
-        navbar.current!.style.top = "0"
-      }
-    }
-    const observer = new IntersectionObserver(intersectionHandler, { root: null, threshold: 1 })
-    observer.observe(navbar.current!)
-
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
-    if (showLogin)
-      document.body.style.overflow = "hidden"
-    else
-      document.body.style.overflowY = "scroll"
-  }, [showLogin])
+    document.body.style.overflow = showLogin ? "hidden" : "auto";
+  }, [showLogin]);
 
   return (
     <>
-      <nav ref={navbar} className="w-[95vw] h-[10vh] p-5 bg-white/30 backdrop-blur-md border border-blue-200 shadow-xl rounded-3xl flex items-center justify-between text-blue-900 font-bold absolute left-1/2 top-3 -translate-x-1/2 z-20 transition-all duration-300">
-        <Link to="/" className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-400 to-blue-700 text-transparent bg-clip-text drop-shadow-lg">HireMe</Link>
+      <nav
+        ref={navbar}
+        className={`w-[95vw] h-[12vh] p-5 ${
+          scrolled ? "bg-white/90" : "bg-white/30"
+        } backdrop-blur-md border ${
+          scrolled ? "border-blue-100" : "border-blue-200"
+        } shadow-xl rounded-3xl flex items-center justify-between text-blue-900 font-bold absolute left-1/2 top-3 -translate-x-1/2 z-20 transition-all duration-300 ease-in-out`}
+      >
+        <Link
+          to="/"
+          className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 text-transparent bg-clip-text drop-shadow-lg hover:scale-105 transition-transform duration-300"
+        >
+          HireMe
+        </Link>
+
         <div
           className={`w-3/5 h-full flex items-center ${
             userState.Company !== null
@@ -75,49 +89,144 @@ export default function Navbar() {
               : "justify-around"
           }`}
         >
-          {userState.Company === null && userState.position === "guest" &&
+          {userState.Company === null && userState.position === "guest" && (
             <>
-              <a href="/#about" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">About Us</a>
-              <a href="/#vision" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Our Vision</a>
-              <a href="/#partners" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partners</a>
-              <Link to="/be-a-partner" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Become a Partner</Link>
-              <a href="/#plans" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Subscription</a>
-              <img ref={userIcon} src={UserIcon} className="w-8 cursor-pointer hover:scale-110 transition-transform" />
+              <a
+                href="/#about"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                About Us
+              </a>
+              <a
+                href="/#vision"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Our Vision
+              </a>
+              <a
+                href="/#partners"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Partners
+              </a>
+              <Link
+                to="/be-a-partner"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Become a Partner
+              </Link>
+              <a
+                href="/#plans"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Subscription
+              </a>
+              <img
+                ref={userIcon}
+                src={UserIcon}
+                className="w-8 h-8 p-1.5 cursor-pointer hover:scale-110 transition-transform duration-300 hover:bg-blue-100/50 rounded-full"
+                alt="User profile"
+              />
             </>
-          }
-          {
-            userState.Company === null && userState.position === "superadmin" &&
+          )}
+
+          {userState.Company === null && userState.position === "admin" && (
             <>
-              <Link to="/partner-requests" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partner Requests</Link>
-              <Link to="/partners" className="p-2 rounded-2xl transition-all duration-300 ease-linear hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">Partners</Link>
-              <div id="profile" className="flex relative" onClick={() => setLogout(!logout)}>
-                <h3 className="p-2 cursor-pointer">Welcome, {userState.username}</h3>
-                <img src={UserIcon} className="w-8 cursor-pointer hover:scale-110 transition-transform" />
-                {logout && <button onClick={handleLogout} className="absolute -right-5 -bottom-18 py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-lg font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
-                }
-              </div>
-            </>
-          }
-          {
-            userState.Company !== null &&
-            <>
-              <div id="profile" className="flex relative" onClick={() => setLogout(!logout)}>
-                <h3 className="p-2 cursor-pointer">Welcome, {userState.username}</h3>
-                <img src={UserIcon} className="w-8 cursor-pointer hover:scale-110 transition-transform" />
-                {logout &&
-                  <div className="flex flex-col absolute -right-5 -bottom-30 gap-2">
-                    <Link to={`${userState.position !== "employee" ? "/manage-account" : "/employees/employee/ae41hcahfq24awfh"}`} className="py-3 px-5 bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-blue-300 text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"><img src={Tweak} />Manage Account</Link>
-                    <button onClick={handleLogout} className="py-3 px-5 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-2xl flex items-center gap-2 cursor-pointer shadow-xl border border-red-300 text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"><img src={Logout} />LogOut</button>
+              <Link
+                to="/partner-requests"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Partner Requests
+              </Link>
+              <Link
+                to="/partners"
+                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              >
+                Partners
+              </Link>
+              <div
+                id="profile"
+                className="flex relative items-center gap-2 group"
+                onClick={() => setLogout(!logout)}
+              >
+                <div className="flex items-center gap-2 hover:bg-blue-100/50 p-2 rounded-xl transition-all duration-200 cursor-pointer">
+                  <h3 className="font-medium">Welcome, {userState.username}</h3>
+                  <div className="w-8 h-8 rounded-full bg-blue-100/70 flex items-center justify-center">
+                    <img
+                      src={UserIcon}
+                      className="w-5 h-5"
+                      alt="User profile"
+                    />
                   </div>
-                }
+                </div>
+                {logout && (
+                  <button
+                    onClick={handleLogout}
+                    className="absolute right-0 top-14 py-2 px-4 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl flex items-center gap-2 cursor-pointer shadow-lg border border-red-300 text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+                  >
+                    <img src={Logout} className="w-4 h-4" alt="Logout" />
+                    LogOut
+                  </button>
+                )}
               </div>
             </>
-          }
+          )}
+
+          {userState.Company !== null && (
+            <>
+              <div
+                id="profile"
+                className="flex relative items-center gap-2 group"
+                onClick={() => setLogout(!logout)}
+              >
+                <div className="flex items-center gap-2 hover:bg-blue-100/50 p-2 rounded-xl transition-all duration-200 cursor-pointer">
+                  <h3 className="font-medium">Welcome, {userState.username}</h3>
+                  <div className="w-8 h-8 rounded-full bg-blue-100/70 flex items-center justify-center">
+                    <img
+                      src={UserIcon}
+                      className="w-5 h-5"
+                      alt="User profile"
+                    />
+                  </div>
+                </div>
+                {logout && (
+                  <div className="flex flex-col absolute right-0 top-14 gap-2 bg-white p-3 rounded-xl shadow-xl border border-blue-100 min-w-[180px]">
+                    <Link
+                      to={`${
+                        userState.position !== "employee"
+                          ? "/manage-account"
+                          : "/employees/employee/ae41hcahfq24awfh"
+                      }`}
+                      className="py-2 px-3 bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-xl flex items-center gap-2 cursor-pointer text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+                      onClick={() => setLogout(false)}
+                    >
+                      <img src={Tweak} className="w-4 h-4" alt="Settings" />
+                      Manage Account
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="py-2 px-3 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl flex items-center gap-2 cursor-pointer text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+                    >
+                      <img src={Logout} className="w-4 h-4" alt="Logout" />
+                      LogOut
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </nav>
+
       {showLogin && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowLogin(false)}>
-          <div onClick={e => e.stopPropagation()} className="z-40">
+        <div
+          className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn"
+          onClick={() => setShowLogin(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="z-40 animate-scaleIn transition-all duration-300"
+          >
             <Login setShowLogin={setShowLogin} />
           </div>
         </div>
