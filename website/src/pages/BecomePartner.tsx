@@ -95,7 +95,7 @@ export default function BecomePartner() {
                 toast.error(typeof data.message === 'object' ? data.message[0] : data.message)
             }
         } catch (err) {
-            alert("An error occurred while submitting the request.");
+            toast.error("An error occurred while submitting the request.");
         }
         finally {
             setIsSubmitting(false);

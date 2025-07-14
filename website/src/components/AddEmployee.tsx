@@ -1,4 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react"
+import { toast } from "react-toastify"
 
 export default function AddEmployee() {
     const [subFormState, setSubFormState] = useState<"details" | "documents" | "education" | "bank" | "job">("details")
@@ -64,10 +65,111 @@ export default function AddEmployee() {
     // Add loading and feedback state
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Reference for confirm account number
+    const confirmAccountNumberRef = useRef<HTMLInputElement>(null);
+
+    // Reset form function
+    function resetForm() {
+        setPersonalDetails({
+            firstname: "",
+            middlename: "",
+            lastname: "",
+            dob: "",
+            mobile: "",
+            email: "",
+            address: "",
+            pic: null
+        });
+        setDocumentFiles({
+            aadhaarNo: "",
+            panNo: "",
+            aadhaar: null,
+            pan: null,
+            voter: null
+        });
+        setEducationDetails({
+            qualification: "",
+            institute: "",
+            yearOfPassing: "",
+            percentage: 0,
+            marksheet: null
+        });
+        setBankDetails({
+            accountHolderName: "",
+            bankName: "",
+            accountNumber: "",
+            ifscCode: "",
+            branchName: "",
+            accountType: ""
+        });
+        setJobDetails({
+            post: "",
+            amount: 0,
+            paymentFrequency: "",
+            joiningDate: "",
+            accessLevel: ""
+        });
+        setSubFormState("details");
+    }
+
+    // Validation function
+    function validateForm() {
+        // Personal Details
+        if (!personalDetails.firstname.trim()) return "First name is required";
+        if (!personalDetails.lastname.trim()) return "Last name is required";
+        if (!personalDetails.dob) return "Date of birth is required";
+        if (!personalDetails.mobile.match(/^\d{10}$/)) return "Mobile number must be 10 digits";
+        if (!personalDetails.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return "Invalid email address";
+        if (!personalDetails.address.trim()) return "Address is required";
+        if (!personalDetails.pic) return "Photo is required";
+
+        // Documents
+        if (!documentFiles.aadhaarNo.match(/^\d{12}$/)) return "Aadhaar number must be 12 digits";
+        if (!documentFiles.aadhaar) return "Aadhaar card file is required";
+        if (!documentFiles.panNo.match(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)) return "PAN number format is invalid";
+        if (!documentFiles.pan) return "PAN card file is required";
+
+        // Education
+        if (!educationDetails.qualification.trim()) return "Qualification is required";
+        if (!educationDetails.institute.trim()) return "Institute is required";
+        if (!educationDetails.yearOfPassing.match(/^\d{4}$/)) return "Year of passing must be 4 digits";
+        if (educationDetails.percentage < 0 || educationDetails.percentage > 100) return "Percentage must be between 0 and 100";
+        if (!educationDetails.marksheet) return "Marksheet file is required";
+
+        // Bank
+        if (!bankDetails.accountHolderName.trim()) return "Account holder name is required";
+        if (!bankDetails.bankName.trim()) return "Bank name is required";
+        if (!bankDetails.accountNumber.trim()) return "Account number is required";
+        if (!bankDetails.ifscCode.match(/^[A-Z]{4}0[A-Z0-9]{6}$/)) return "Invalid IFSC code";
+        if (!bankDetails.branchName.trim()) return "Branch name is required";
+        if (!bankDetails.accountType) return "Account type is required";
+        // Confirm account number validation
+        if (
+            confirmAccountNumberRef.current &&
+            bankDetails.accountNumber !== confirmAccountNumberRef.current.value.trim()
+        ) return "Account number and confirm account number do not match";
+
+        // Job
+        if (!jobDetails.post.trim()) return "Job post is required";
+        if (!jobDetails.joiningDate) return "Joining date is required";
+        if (!jobDetails.amount || jobDetails.amount <= 0) return "Amount must be greater than 0";
+        if (!jobDetails.paymentFrequency) return "Payment frequency is required";
+        if (!jobDetails.accessLevel) return "Access level is required";
+
+        return null;
+    }
+
     // Form submission handler
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsSubmitting(true);
+
+        const errorMsg = validateForm();
+        if (errorMsg) {
+            toast.error(errorMsg);
+            setIsSubmitting(false);
+            return;
+        }
 
         const formData = new FormData();
 
@@ -122,13 +224,13 @@ export default function AddEmployee() {
             });
             const data = await res.json();
             if (res.ok) {
-                alert("Employee added successfully!");
-                // Optionally reset form here
+                toast.success("Employee added successfully!");
+                resetForm(); // <-- Reset form after success
             } else {
-                alert(data.message || "Failed to add employee");
+                toast.error(typeof data.message === 'object' ? data.message[0] : data.message || "Failed to add employee");
             }
         } catch (err) {
-            alert("An error occurred while submitting the employee.");
+            toast.error("An error occurred while submitting the employee.");
         } finally {
             setIsSubmitting(false);
         }
@@ -185,7 +287,7 @@ export default function AddEmployee() {
                 ) : subFormState === "education" ? (
                     <Education educationDetails={educationDetails} setEducationDetails={setEducationDetails} />
                 ) : subFormState === "bank" ? (
-                    <Bank bankDetails={bankDetails} setBankDetails={setBankDetails} />
+                    <Bank bankDetails={bankDetails} setBankDetails={setBankDetails} confirmAccountNumberRef={confirmAccountNumberRef} />
                 ) : (
                     <JobSpecifications jobDetails={jobDetails} setJobDetails={setJobDetails} />
                 )}
@@ -228,8 +330,7 @@ function PersonalDetails({
 }) {
 
     const employeePicUploader = useRef<HTMLInputElement>(null)
-    const employeePic = useRef<HTMLImageElement>(null)
-    const [picUploaded, setPicUploaded] = useState(false)
+    const [employeePic, setEmployeePic] = useState<string | null>(personalDetails.pic ? URL.createObjectURL(personalDetails.pic) : null)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -338,12 +439,12 @@ function PersonalDetails({
                     onChange={() => {
                         const file = employeePicUploader.current?.files?.[0]
                         if (!file) return
-                        setPicUploaded(true)
-                        employeePic.current!.src = URL.createObjectURL(file)
+                        setEmployeePic(URL.createObjectURL(file))
                         setPersonalDetails(prev => ({
                             ...prev,
                             pic: file
                         }))
+                        if (employeePicUploader.current) employeePicUploader.current.value = "" 
                     }}
                 />
                 <button
@@ -354,16 +455,15 @@ function PersonalDetails({
                     Upload Photo
                 </button>
                 <img
-                    ref={employeePic}
+                    src={employeePic || undefined}
                     alt=""
-                    className={`w-40 aspect-square border-0 ${picUploaded ? "" : "hidden"}`}
+                    className={`w-40 aspect-square border-0 ${employeePic ? "" : "hidden"}`}
                 />
-                {picUploaded && (
+                {employeePic && (
                     <p
                         className="text-red-500 underline cursor-pointer self-end"
                         onClick={() => {
-                            employeePic.current!.src = ""
-                            setPicUploaded(false)
+                            setEmployeePic(null)
                             setPersonalDetails(prev => ({
                                 ...prev,
                                 pic: null
@@ -532,7 +632,7 @@ function Education({ educationDetails, setEducationDetails }: {
 
 }) {
     const marksheetRef = useRef<HTMLInputElement>(null)
-    const [marksheetReview, setMarksheetReview] = useState<string>("")
+    const [marksheetReview, setMarksheetReview] = useState<string | null>(educationDetails.marksheet ? URL.createObjectURL(educationDetails.marksheet) : null)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEducationDetails(prev => ({
@@ -639,12 +739,13 @@ function Education({ educationDetails, setEducationDetails }: {
     )
 }
 
-function Bank({ bankDetails, setBankDetails }: {
+function Bank({ bankDetails, setBankDetails, confirmAccountNumberRef }: {
     bankDetails: {
         accountHolderName: string, bankName: string, accountNumber: string, ifscCode: string,
         branchName: string, accountType: string
     },
-    setBankDetails: React.Dispatch<React.SetStateAction<{ accountHolderName: string, bankName: string; accountNumber: string, ifscCode: string, branchName: string, accountType: string }>>
+    setBankDetails: React.Dispatch<React.SetStateAction<{ accountHolderName: string, bankName: string; accountNumber: string, ifscCode: string, branchName: string, accountType: string }>>,
+    confirmAccountNumberRef: React.RefObject<HTMLInputElement|null>
 }) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -702,6 +803,7 @@ function Bank({ bankDetails, setBankDetails }: {
                     name="confirmAccountNumber"
                     id="confirmAccountNumber"
                     placeholder="Confirm Account Number"
+                    ref={confirmAccountNumberRef}
                     className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
                 />
             </div>
