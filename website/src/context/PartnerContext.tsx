@@ -25,6 +25,7 @@ export function PartnersContextProvider({ children }: { children: React.ReactNod
     }
 
     async function fetchPartnerDetails(partnerId: number) {
+        if (partnerId <= 0) return
         const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/details/${partnerId}`, {
             method: "GET",
             headers: {

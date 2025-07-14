@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode } from "react";
 
 export const UserContext = createContext<UserContextType | null>(null)
 
@@ -27,10 +27,6 @@ export default function UserContextProvider({ children }: { children: ReactNode 
             })
         }
     }
-
-    useEffect(() => {
-        console.log(userState)
-    }, [userState])
 
     return (
         <UserContext.Provider value={{ userState, setUserState, updateUserState }}>
