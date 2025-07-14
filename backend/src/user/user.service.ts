@@ -17,6 +17,7 @@ export class UserService {
                     Email: true,
                 }
             })
+            if (!user) throw new HttpException("Invalid token", 400);
             return {...user, AccountType: "superadmin" }
         }
         else if (data.type === "comp") {
@@ -29,6 +30,7 @@ export class UserService {
                     id: true,
                 },
             })
+            if (!user) throw new HttpException("Invalid token", 400);
             return {...user, AccountType: "company" }
         }
         else if (data.type === "emp" || data.type === "admin" || data.type === "mng") {
@@ -38,10 +40,11 @@ export class UserService {
                 },
                 select: {
                     Username: true,
-                    id: true,
+                    CompanyCode: true,
                 },
             })
-            return {...user, AccountType: data.type }
+            if (!user) throw new HttpException("Invalid token", 400);
+            return {...user, id: user?.CompanyCode, AccountType: data.type }
         }
         else throw new HttpException("Invalid token", 400);
     }
