@@ -97,7 +97,6 @@ model Employee {
   CompanyCode       Int
   JoiningDate       String
   Post              String
-  PostCategory      String
   Amount            Float
   PaymentFrequency  String
   AccessLevel       AccessLevel

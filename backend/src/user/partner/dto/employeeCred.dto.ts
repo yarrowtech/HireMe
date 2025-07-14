@@ -80,9 +80,6 @@ export class CreateEmployeeDto {
   @IsString()
   Post: string;
 
-  @IsString()
-  PostCategory: string;
-
   @IsNumber()
   @Type(() => Number)
   Amount: number;
@@ -91,11 +88,11 @@ export class CreateEmployeeDto {
   PaymentFrequency: string;
 
   @IsString()
-  Password: string;
-
-  @IsString()
   @IsIn(['EMPLOYEE', 'ADMIN', 'MANAGER'])
   AccessLevel: string;
+
+  @IsString()
+  Password: string;
 
   @IsNumber()
   @Type(() => Number)

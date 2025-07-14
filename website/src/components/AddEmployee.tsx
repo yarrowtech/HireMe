@@ -1,7 +1,6 @@
 import { useRef, useState, type ChangeEvent } from "react"
 
 export default function AddEmployee() {
-
     const [subFormState, setSubFormState] = useState<"details" | "documents" | "education" | "bank" | "job">("details")
     const [personalDetails, setPersonalDetails] = useState<{ firstname: string, lastname: string, middlename: string, dob: string, mobile: string, email: string, address: string, pic: File | null }>({
         firstname: "",
@@ -50,20 +49,96 @@ export default function AddEmployee() {
     })
     const [jobDetails, setJobDetails] = useState<{
         post: string,
-        postCategory: string,
         amount: number,
         paymentFrequency: string,
-        joiningDate: string  // Added joining date
+        joiningDate: string,
+        accessLevel: string // Added
     }>({
         post: "",
-        postCategory: "",
         amount: 0,
         paymentFrequency: "",
-        joiningDate: ""  // Initialize with empty string
+        joiningDate: "",
+        accessLevel: "" // Added
     })
 
+    // Add loading and feedback state
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Form submission handler
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const formData = new FormData();
+
+        // Personal Details
+        formData.append("Name", `${personalDetails.firstname} ${personalDetails.middlename} ${personalDetails.lastname}`.trim());
+        formData.append("DOB", personalDetails.dob);
+        formData.append("Email", personalDetails.email);
+        formData.append("Mobile", personalDetails.mobile);
+        formData.append("Address", personalDetails.address);
+        if (personalDetails.pic) formData.append("Pic", personalDetails.pic);
+
+        // Documents
+        formData.append("AadhaarNo", documentFiles.aadhaarNo);
+        formData.append("PanNo", documentFiles.panNo);
+        if (documentFiles.aadhaar) formData.append("Aadhaar", documentFiles.aadhaar);
+        if (documentFiles.pan) formData.append("Pan", documentFiles.pan);
+        if (documentFiles.voter) formData.append("Voter", documentFiles.voter);
+
+        // Education
+        formData.append("Qualification", educationDetails.qualification);
+        formData.append("Institution", educationDetails.institute);
+        formData.append("YearOfPassing", educationDetails.yearOfPassing);
+        formData.append("Percentage", educationDetails.percentage.toString());
+        if (educationDetails.marksheet) formData.append("Marksheet", educationDetails.marksheet);
+
+        // Bank
+        formData.append("AccountHolderName", bankDetails.accountHolderName);
+        formData.append("BankName", bankDetails.bankName);
+        formData.append("AccountNumber", bankDetails.accountNumber);
+        formData.append("IFSCCode", bankDetails.ifscCode);
+        formData.append("Branch", bankDetails.branchName);
+        formData.append("AccountType", bankDetails.accountType);
+
+        // Job
+        formData.append("Post", jobDetails.post);
+        formData.append("Amount", jobDetails.amount.toString());
+        formData.append("PaymentFrequency", jobDetails.paymentFrequency);
+        formData.append("JoiningDate", jobDetails.joiningDate);
+        formData.append("AccessLevel", jobDetails.accessLevel); // Added
+
+        // Password (optional, set as needed)
+        formData.append("Password", "defaultPassword"); // You may want to generate or ask for this
+
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/add-employee`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: formData,
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("Employee added successfully!");
+                // Optionally reset form here
+            } else {
+                alert(data.message || "Failed to add employee");
+            }
+        } catch (err) {
+            alert("An error occurred while submitting the employee.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
     return (
-        <form className="mx-auto min-h-[55vh] w-full max-w-3xl flex flex-col items-center bg-white/90 rounded-3xl shadow-2xl p-10 border border-blue-100">
+        <form
+            className="mx-auto min-h-[55vh] w-full max-w-3xl flex flex-col items-center bg-white/90 rounded-3xl shadow-2xl p-10 border border-blue-100"
+            onSubmit={handleSubmit}
+        >
             <h2 className="text-3xl font-extrabold text-blue-900 mb-6 tracking-tight">Add Employee</h2>
             <div className="w-full flex flex-wrap items-center gap-2">
                 <button
@@ -115,7 +190,13 @@ export default function AddEmployee() {
                     <JobSpecifications jobDetails={jobDetails} setJobDetails={setJobDetails} />
                 )}
             </div>
-            <button type="submit" className="px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-400 rounded-lg self-end font-bold text-sm text-white cursor-pointer hover:bg-blue-600 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400">Submit</button>
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-400 rounded-lg self-end font-bold text-sm text-white cursor-pointer hover:bg-blue-600 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+                {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
         </form >
     )
 }
@@ -160,62 +241,94 @@ function PersonalDetails({
 
     return (
         <div className="w-full grid grid-cols-3 gap-5">
-            <input
-                type="text"
-                name="firstname"
-                placeholder="Enter firstname"
-                value={personalDetails.firstname}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="middlename"
-                placeholder="Enter middlename"
-                value={personalDetails.middlename}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="lastname"
-                placeholder="Enter lastname"
-                value={personalDetails.lastname}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="date"
-                name="dob"
-                placeholder="Enter date of birth"
-                value={personalDetails.dob}
-                onChange={handleChange}
-                className="rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="mobileNo"
-                placeholder="Enter mobile no"
-                value={personalDetails.mobile}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 col-span-full w-[30%] outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="emailId"
-                placeholder="Enter email address"
-                value={personalDetails.email}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 col-span-full w-1/2 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <textarea
-                name="address"
-                placeholder="Enter address"
-                value={personalDetails.address}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 resize-none col-span-full w-[70%] outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <div className="flex items-center gap-3">
+            <div className="col-span-full mb-2">
+                <h3 className="text-lg font-semibold text-blue-900 mb-3">Personal Details</h3>
+            </div>
+            <div>
+                <label htmlFor="firstname" className="block text-blue-900 font-semibold mb-1">First Name</label>
+                <input
+                    type="text"
+                    name="firstname"
+                    id="firstname"
+                    placeholder="Enter firstname"
+                    value={personalDetails.firstname}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="middlename" className="block text-blue-900 font-semibold mb-1">Middle Name</label>
+                <input
+                    type="text"
+                    name="middlename"
+                    id="middlename"
+                    placeholder="Enter middlename"
+                    value={personalDetails.middlename}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="lastname" className="block text-blue-900 font-semibold mb-1">Last Name</label>
+                <input
+                    type="text"
+                    name="lastname"
+                    id="lastname"
+                    placeholder="Enter lastname"
+                    value={personalDetails.lastname}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="dob" className="block text-blue-900 font-semibold mb-1">Date of Birth</label>
+                <input
+                    type="date"
+                    name="dob"
+                    id="dob"
+                    placeholder="Enter date of birth"
+                    value={personalDetails.dob}
+                    onChange={handleChange}
+                    className="rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full h-3/5 p-2"
+                />
+            </div>
+            <div>
+                <label htmlFor="mobileNo" className="block text-blue-900 font-semibold mb-1">Mobile No</label>
+                <input
+                    type="text"
+                    name="mobile"
+                    id="mobileNo"
+                    placeholder="Enter mobile no"
+                    value={personalDetails.mobile}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="emailId" className="block text-blue-900 font-semibold mb-1">Email Address</label>
+                <input
+                    type="text"
+                    name="email"
+                    id="emailId"
+                    placeholder="Enter email address"
+                    value={personalDetails.email}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div className="col-span-full">
+                <label htmlFor="address" className="block text-blue-900 font-semibold mb-1">Address</label>
+                <textarea
+                    name="address"
+                    id="address"
+                    placeholder="Enter address"
+                    value={personalDetails.address}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 resize-none w-full outline-none focus:ring-2 focus:ring-blue-400"
+                />
+            </div>
+            <div className="flex items-center gap-3 col-span-full">
+                <label className="block text-blue-900 font-semibold mb-1">Photo</label>
                 <input
                     type="file"
                     name=""
@@ -433,77 +546,95 @@ function Education({ educationDetails, setEducationDetails }: {
             <div className="col-span-full mb-2">
                 <h3 className="text-lg font-semibold text-blue-900 mb-3">Educational Qualifications</h3>
             </div>
-            <input
-                type="text"
-                name="qualification"
-                placeholder="Highest Qualification"
-                value={educationDetails.qualification}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="institute"
-                placeholder="Institute/University"
-                value={educationDetails.institute}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="yearOfPassing"
-                placeholder="Year of Passing"
-                value={educationDetails.yearOfPassing}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="number"
-                name="percentage"
-                placeholder="Percentage/CGPA"
-                step="0.01"
-                min="0"
-                max="100"
-                value={educationDetails.percentage || ''}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield] outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <div className="flex items-center gap-3 mt-2">
-                    <input
-                        type="file"
-                        name="pan"
-                        className="hidden"
-                        ref={marksheetRef}
-                        accept="application/pdf,image/*"
-                        onChange={(e: ChangeEvent) => {
-                            setMarksheetReview(URL.createObjectURL((e.currentTarget as HTMLInputElement).files?.[0] || new Blob()))
+            <div>
+                <label htmlFor="qualification" className="block text-blue-900 font-semibold mb-1">Highest Qualification</label>
+                <input
+                    type="text"
+                    name="qualification"
+                    id="qualification"
+                    placeholder="Highest Qualification"
+                    value={educationDetails.qualification}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="institute" className="block text-blue-900 font-semibold mb-1">Institute/University</label>
+                <input
+                    type="text"
+                    name="institute"
+                    id="institute"
+                    placeholder="Institute/University"
+                    value={educationDetails.institute}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="yearOfPassing" className="block text-blue-900 font-semibold mb-1">Year of Passing</label>
+                <input
+                    type="text"
+                    name="yearOfPassing"
+                    id="yearOfPassing"
+                    placeholder="Year of Passing"
+                    value={educationDetails.yearOfPassing}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="percentage" className="block text-blue-900 font-semibold mb-1">Percentage/CGPA</label>
+                <input
+                    type="number"
+                    name="percentage"
+                    id="percentage"
+                    placeholder="Percentage/CGPA"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={educationDetails.percentage || ''}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield] outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div className="flex items-center gap-3 mt-2 col-span-full">
+                <label className="block text-blue-900 font-semibold mb-1">Marksheet</label>
+                <input
+                    type="file"
+                    name="marksheet"
+                    className="hidden"
+                    ref={marksheetRef}
+                    accept="application/pdf,image/*"
+                    onChange={(e: ChangeEvent) => {
+                        const file = (e.currentTarget as HTMLInputElement).files?.[0]
+                        setMarksheetReview(URL.createObjectURL(file || new Blob()))
+                        setEducationDetails(prev => ({
+                            ...prev,
+                            marksheet: file || null
+                        }))
+                    }}
+                />
+                <button
+                    type="button"
+                    className="p-3 bg-blue-500 rounded-lg text-white text-xs font-bold cursor-pointer hover:bg-blue-600 transition-all duration-300"
+                    onClick={() => marksheetRef.current?.click()}
+                >
+                    Upload Marksheet
+                </button>
+                {marksheetReview && (
+                    <>
+                        <a target="_blank" href={marksheetReview} className="text-green-600 text-sm font-medium underline">
+                            View File
+                        </a>
+                        <span className="text-red-500 underline cursor-pointer" onClick={() => {
                             setEducationDetails(prev => ({
                                 ...prev,
-                                marksheet: (e.currentTarget as HTMLInputElement).files?.[0] || null
+                                marksheet: null
                             }))
-                        }}
-                    />
-                    <button
-                        type="button"
-                        className="p-3 bg-blue-500 rounded-lg text-white text-xs font-bold cursor-pointer hover:bg-blue-600 transition-all duration-300"
-                        onClick={() => marksheetRef.current?.click()}
-                    >
-                        Upload Marksheet
-                    </button>
-                    {educationDetails.marksheet && (
-                        <>
-                            <a target="_blank" href={marksheetReview} className="text-green-600 text-sm font-medium underline">
-                                View File
-                            </a>
-                            <span className="text-red-500  underline cursor-pointer" onClick={() => {
-                                setEducationDetails(prev => ({
-                                    ...prev,
-                                    marksheet: null
-                                }))
-                            }}>Clear</span>
-                        </>
-                    )}
-                </div>
+                        }}>Clear</span>
+                    </>
+                )}
+            </div>
         </div>
     )
 }
@@ -528,71 +659,98 @@ function Bank({ bankDetails, setBankDetails }: {
             <div className="col-span-full mb-2">
                 <h3 className="text-lg font-semibold text-blue-900 mb-3">Bank Account Details</h3>
             </div>
-            <input
-                type="text"
-                name="accountHolderName"
-                placeholder="Account Holder Name"
-                value={bankDetails.accountHolderName}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="bankName"
-                placeholder="Bank Name"
-                value={bankDetails.bankName}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="accountNumber"
-                placeholder="Account Number"
-                value={bankDetails.accountNumber}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="confirmAccountNumber"
-                placeholder="Confirm Account Number"
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="ifscCode"
-                placeholder="IFSC Code"
-                value={bankDetails.ifscCode}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="text"
-                name="branchName"
-                placeholder="Branch Name"
-                value={bankDetails.branchName}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <select
-                name="accountType"
-                value={bankDetails.accountType}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            >
-                <option value="" hidden>Select Account Type</option>
-                <option value="savings">Savings</option>
-                <option value="current">Current</option>
-                <option value="salary">Salary</option>
-            </select>
+            <div>
+                <label htmlFor="accountHolderName" className="block text-blue-900 font-semibold mb-1">Account Holder Name</label>
+                <input
+                    type="text"
+                    name="accountHolderName"
+                    id="accountHolderName"
+                    placeholder="Account Holder Name"
+                    value={bankDetails.accountHolderName}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="bankName" className="block text-blue-900 font-semibold mb-1">Bank Name</label>
+                <input
+                    type="text"
+                    name="bankName"
+                    id="bankName"
+                    placeholder="Bank Name"
+                    value={bankDetails.bankName}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="accountNumber" className="block text-blue-900 font-semibold mb-1">Account Number</label>
+                <input
+                    type="text"
+                    name="accountNumber"
+                    id="accountNumber"
+                    placeholder="Account Number"
+                    value={bankDetails.accountNumber}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="confirmAccountNumber" className="block text-blue-900 font-semibold mb-1">Confirm Account Number</label>
+                <input
+                    type="text"
+                    name="confirmAccountNumber"
+                    id="confirmAccountNumber"
+                    placeholder="Confirm Account Number"
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="ifscCode" className="block text-blue-900 font-semibold mb-1">IFSC Code</label>
+                <input
+                    type="text"
+                    name="ifscCode"
+                    id="ifscCode"
+                    placeholder="IFSC Code"
+                    value={bankDetails.ifscCode}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="branchName" className="block text-blue-900 font-semibold mb-1">Branch Name</label>
+                <input
+                    type="text"
+                    name="branchName"
+                    id="branchName"
+                    placeholder="Branch Name"
+                    value={bankDetails.branchName}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="accountType" className="block text-blue-900 font-semibold mb-1">Account Type</label>
+                <select
+                    name="accountType"
+                    id="accountType"
+                    value={bankDetails.accountType}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                >
+                    <option value="" hidden>Select Account Type</option>
+                    <option value="savings">Savings</option>
+                    <option value="current">Current</option>
+                    <option value="salary">Salary</option>
+                </select>
+            </div>
         </div>
     )
 }
 
 function JobSpecifications({ jobDetails, setJobDetails }: {
-    jobDetails: { post: string, postCategory: string, amount: number, paymentFrequency: string, joiningDate: string },
-    setJobDetails: React.Dispatch<React.SetStateAction<{ post: string, postCategory: string, amount: number, paymentFrequency: string, joiningDate: string }>>
-
+    jobDetails: { post: string, amount: number, paymentFrequency: string, joiningDate: string, accessLevel: string },
+    setJobDetails: React.Dispatch<React.SetStateAction<{ post: string, amount: number, paymentFrequency: string, joiningDate: string, accessLevel: string }>>
 }) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -604,52 +762,75 @@ function JobSpecifications({ jobDetails, setJobDetails }: {
 
     return (
         <div className="w-full grid grid-cols-2 gap-5">
-            <input
-                type="text"
-                name="post"
-                placeholder="Enter job post name"
-                value={jobDetails.post}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <select
-                name="postCategory"
-                value={jobDetails.postCategory}
-                onChange={handleChange}
-                className="pl-2 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            >
-                <option value="" hidden>Select Post Category</option>
-                <option value="domestic">Domestic Help</option>
-                <option value="sales">Sales/Support</option>
-                <option value="hire">Work on Hire</option>
-            </select>
-            <input
-                type="date"
-                name="joiningDate"
-                placeholder="Enter date of birth"
-                value={jobDetails.joiningDate}
-                onChange={handleChange}
-                className="rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-                type="number"
-                name="amount"
-                placeholder="Enter payable amount"
-                value={jobDetails.amount || ''}
-                onChange={handleChange}
-                className="p-2 pl-3 rounded-lg border-2 border-blue-200 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield] outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <select
-                name="paymentFrequency"
-                value={jobDetails.paymentFrequency}
-                onChange={handleChange}
-                className="p-2 rounded-lg border-2 border-blue-200 h-full outline-none focus:ring-2 focus:ring-blue-400"
-            >
-                <option value="" hidden>Select Frequency</option>
-                <option value="monthly">Monthly</option>
-                <option value="hourly">Hourly</option>
-                <option value="weekly">Weekly</option>
-            </select>
+            <div className="col-span-full mb-2">
+                <h3 className="text-lg font-semibold text-blue-900 mb-3">Job Specifications</h3>
+            </div>
+            <div>
+                <label htmlFor="post" className="block text-blue-900 font-semibold mb-1">Job Post</label>
+                <input
+                    type="text"
+                    name="post"
+                    id="post"
+                    placeholder="Enter job post name"
+                    value={jobDetails.post}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="joiningDate" className="block text-blue-900 font-semibold mb-1">Joining Date</label>
+                <input
+                    type="date"
+                    name="joiningDate"
+                    id="joiningDate"
+                    placeholder="Joining Date"
+                    value={jobDetails.joiningDate}
+                    onChange={handleChange}
+                    className="rounded-lg border-2 border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="amount" className="block text-blue-900 font-semibold mb-1">Payable Amount</label>
+                <input
+                    type="number"
+                    name="amount"
+                    id="amount"
+                    placeholder="Enter payable amount"
+                    value={jobDetails.amount || ''}
+                    onChange={handleChange}
+                    className="p-2 pl-3 rounded-lg border-2 border-blue-200 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield] outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                />
+            </div>
+            <div>
+                <label htmlFor="paymentFrequency" className="block text-blue-900 font-semibold mb-1">Payment Frequency</label>
+                <select
+                    name="paymentFrequency"
+                    id="paymentFrequency"
+                    value={jobDetails.paymentFrequency}
+                    onChange={handleChange}
+                    className="p-2 rounded-lg border-2 border-blue-200 h-3/5 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                >
+                    <option value="" hidden>Select Frequency</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </div>
+            <div>
+                <label htmlFor="accessLevel" className="block text-blue-900 font-semibold mb-1">Access Level</label>
+                <select
+                    name="accessLevel"
+                    id="accessLevel"
+                    value={jobDetails.accessLevel}
+                    onChange={handleChange}
+                    className="p-2 rounded-lg border-2 border-blue-200 h-3/5 outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                >
+                    <option value="" hidden>Select Access Level</option>
+                    <option value="EMPLOYEE">Employee</option>
+                    <option value="MANAGER">Manager</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+            </div>
         </div>
     )
 }

@@ -28,10 +28,6 @@ export default function UserContextProvider({ children }: { children: ReactNode 
         }
     }
 
-    useEffect(() => {
-        console.log(userState)
-    }, [userState])
-
     return (
         <UserContext.Provider value={{ userState, setUserState, updateUserState }}>
             {children}

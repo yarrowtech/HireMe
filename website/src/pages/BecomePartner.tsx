@@ -33,6 +33,7 @@ export default function BecomePartner() {
     });
     const [previewData, setPreviewData] = useState("")
     const [previewVisible, setPreviewVisible] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const panCardRef = useRef<HTMLInputElement>(null);
     const gstRef = useRef<HTMLInputElement>(null);
     const tradeRef = useRef<HTMLInputElement>(null);
@@ -67,7 +68,6 @@ export default function BecomePartner() {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData();
-        console.log(requestDetails);
 
         // Append text fields
         Object.entries(requestDetails).forEach(([key, value]) => {
@@ -82,6 +82,7 @@ export default function BecomePartner() {
         });
 
         try {
+            setIsSubmitting(true);
             const res = await fetch(`${import.meta.env.VITE_API_URL}/request/send-request`, {
                 method: "POST",
                 body: formData,
@@ -91,10 +92,13 @@ export default function BecomePartner() {
                 toast.success(data.message)
                 navigate("/")
             } else {
-                toast.error(data.message)
+                toast.error(typeof data.message === 'object' ? data.message[0] : data.message)
             }
         } catch (err) {
             alert("An error occurred while submitting the request.");
+        }
+        finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -357,7 +361,7 @@ export default function BecomePartner() {
                 </div>
 
                 <button className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-3/5 transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Submit
+                    {isSubmitting ? "Submitting..." : "Submit Request"}
                 </button>
             </form>
             {previewVisible && <DocumentPreview fileData={previewData} setPreviewVisible={setPreviewVisible} />}
