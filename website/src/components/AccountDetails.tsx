@@ -22,6 +22,7 @@ export function AccountDetailsContainer() {
 
   useEffect(() => {
     const fetchDetails = async (id: number) => {
+      if (id <= 0) return;
       const details = await fetchPartnerDetails(id);
       if (details) {
         setPartner(details);

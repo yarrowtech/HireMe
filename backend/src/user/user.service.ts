@@ -31,6 +31,18 @@ export class UserService {
             })
             return {...user, AccountType: "company" }
         }
+        else if (data.type === "emp" || data.type === "admin" || data.type === "mng") {
+            const user = await prisma.employee.findFirst({
+                where: {
+                    id: parseInt(data.id),
+                },
+                select: {
+                    Username: true,
+                    id: true,
+                },
+            })
+            return {...user, AccountType: data.type }
+        }
         else throw new HttpException("Invalid token", 400);
     }
 

@@ -3,7 +3,7 @@ import { createContext, useState, type ReactNode } from "react";
 export const UserContext = createContext<UserContextType | null>(null)
 
 export default function UserContextProvider({ children }: { children: ReactNode }) {
-    const [userState, setUserState] = useState<UserState>({ username: "Kishore", Company: null, position: "guest" })
+    const [userState, setUserState] = useState<UserState>({ username: "", Company: null, position: "guest" })
     async function updateUserState() {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/user/details`, {
             method: "GET",
