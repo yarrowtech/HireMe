@@ -1,9 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import prisma from 'src/prisma';
-import { compareSync, hashSync } from 'bcryptjs';
+import { compareSync } from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { CreateEmployeeDto } from './dto/employeeCred.dto';
-import { AccessLevel, Prisma } from '@prisma/client';
+import { AccessLevel } from '@prisma/client';
 
 @Injectable()
 export class PartnerService {
@@ -31,38 +30,6 @@ export class PartnerService {
       },
     });
     return partner;
-  }
-
-  private async generateUniqueUsername(name: string): Promise<string> {
-    let username: string;
-    const prefix = 'emp';
-    const namePrefix = name.substring(0, 4).toLowerCase();
-    let counter = 1;
-    do {
-      username = `${prefix}-${namePrefix}${counter}`;
-      counter++;
-    } while (
-      await prisma.employee.findFirst({ where: { Username: username } })
-    );
-    return username;
-  }
-
-  async addEmployee(createEmployeeDto: CreateEmployeeDto) {
-    const username = await this.generateUniqueUsername(createEmployeeDto.Name);
-    const { authUserId, AccessLevel: accessLevelString, ...employeeData } = createEmployeeDto;
-    
-    const accessLevelKey = accessLevelString.toUpperCase();
-    const accessLevelEnum = AccessLevel[accessLevelKey];
-    
-    await prisma.employee.create({
-      data: {
-        ...employeeData,
-        Username: username,
-        Password: hashSync(createEmployeeDto.Password, 10),
-        SuperiorId: authUserId,
-        AccessLevel: accessLevelEnum,
-      },
-    });
   }
 
   async login(

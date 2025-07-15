@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
 
 @Injectable()
-export class CompanyAdminGuard implements CanActivate {
+export class CompanyGuard implements CanActivate {
 async canActivate(context: ExecutionContext): Promise<boolean> {
         try {
             const request: Request = context.switchToHttp().getRequest();

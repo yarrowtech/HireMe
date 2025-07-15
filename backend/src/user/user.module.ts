@@ -5,11 +5,13 @@ import { AdminController } from "./admin/admin.controller";
 import { AdminService } from "./admin/admin.service";
 import { PartnerController } from "./partner/partner.controller";
 import { PartnerService } from "./partner/partner.service";
+import { EmployeeService } from "./partner/employee.service";
+import { EmployeeController } from "./partner/employee.controller";
 
 
 
 @Module({
-    controllers: [UserController, AdminController, PartnerController],
-    providers: [UserService, AdminService, PartnerService]
+    controllers: [UserController, AdminController, PartnerController, EmployeeController],
+    providers: [UserService, AdminService, PartnerService, EmployeeService]
 })
 export class UserModule {}
