@@ -215,7 +215,7 @@ export default function AddEmployee() {
 
         try {
             const token = localStorage.getItem("authToken");
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/partner/add-employee`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/employee/add-employee`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

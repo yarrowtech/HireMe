@@ -5,7 +5,7 @@ import { UserContext } from '../context/UserContext';
 import AddEmployee from '../components/AddEmployee';
 
 export default function PartnerDetails() {
-    const [panelType, setPanelType] = useState<"account" | "company" | "plan" | "payment" | "add-employee" | "employees">("account")
+    const [panelType, setPanelType] = useState<"account" | "personal" | "company" | "plan" | "payment" | "add-employee" | "employees">("account")
     const { userState } = useContext(UserContext)!
     const navigate = useNavigate()
     useEffect(() => {
