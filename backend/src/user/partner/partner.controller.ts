@@ -6,9 +6,11 @@ import {
   Get,
   Param,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { PartnerAccountCredDto } from './dto/partnerAccountCred.dto';
+import { CompanyGuard } from 'src/guards/company.guard';
 
 
 @Controller('partner')
@@ -38,4 +40,15 @@ export class PartnerController {
     return { token, message: 'Login successful'};
   }
 
+  @Get('employees/:partnerId')
+  @UseGuards(CompanyGuard)
+  async getPartnerEmployees(
+    @Param('partnerId') partnerId: string,
+  ): Promise<any[]> {
+    const employees = await this.partnerService.getPartnerEmployees(
+      parseInt(partnerId),
+    );
+    if (!employees) throw new BadRequestException('Failed to fetch employees');
+    return employees;
+  }
 }

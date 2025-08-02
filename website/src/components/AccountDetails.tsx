@@ -7,8 +7,8 @@ import React, {
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
 import Search from "../assets/search.svg";
-import type { Employee } from "./AllEmployees";
 import { EmployeeCard } from "./AllEmployees";
+import type { Employee } from "./AllEmployees";
 import {
   PartnersContext,
   type PartnerDetails,
@@ -653,27 +653,52 @@ export function PaymentPanel() {
 }
 
 export function EmployeesPanel() {
-  // Example employees data
-  const allEmployees: Employee[] = [
-    {
-      id: "ae41hcahfq24awfh",
-      fullname: "Atanu Ghosh",
-      dob: "01/01/2001",
-      mobileNo: "1234567890",
-      emailId: "example@gmail.com",
-      pic: "",
-    },
-    {
-      id: "ae41hcahfq24awfh2",
-      fullname: "Amit Saha",
-      dob: "01/01/2001",
-      mobileNo: "1234567890",
-      emailId: "example@gmail.com",
-      pic: "",
-    },
-  ];
+  const { userState } = useContext(UserContext)!;
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [employees, setEmployees] = useState<Employee[]>(allEmployees);
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/partner/employees/${userState.Company}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          // Transform data to match Employee type
+          const transformedData = data.map((emp: any) => ({
+            id: emp.id,
+            fullname: emp.Name,
+            pic: emp.Pic || '',
+          }));
+          setEmployees(transformedData);
+          setAllEmployees(transformedData);
+        } else {
+          toast.error("Failed to fetch employees");
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+        toast.error("Error fetching employees");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userState.Company) {
+      fetchEmployees();
+    }
+  }, [userState.Company]);
+
   const search = (e: ChangeEvent) => {
     const param = (e.target as HTMLInputElement).value.toLowerCase();
     const filteredEmployees = allEmployees.filter((employee) => {
@@ -681,6 +706,14 @@ export function EmployeesPanel() {
     });
     setEmployees(filteredEmployees);
   };
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
+        <div className="text-blue-900 font-semibold">Loading employees...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
@@ -696,13 +729,14 @@ export function EmployeesPanel() {
           <img
             src={Search}
             className="w-5 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
+            alt="Search"
           />
         </div>
       </div>
       <div className="w-full flex flex-wrap justify-around gap-6">
         {employees.length > 0 ? (
-          employees.map((employee, idx) => (
-            <EmployeeCard key={employee.id + idx} employeeData={employee} />
+          employees.map((employee) => (
+            <EmployeeCard key={employee.id} employeeData={employee} />
           ))
         ) : (
           <div className="text-blue-700 font-semibold">No employees found.</div>
@@ -739,7 +773,7 @@ export function SideBar({
       </button>
       
       {/* Show Personal Details button only for non-admin users */}
-      {userState.position !== "admin" && (
+      {userState.position !== "company" && (
         <button
           className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
             panelType === "personal"
@@ -762,7 +796,7 @@ export function SideBar({
       >
         Company Details
       </button>
-      <button
+      {userState.position !== "emp" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "plan"
             ? "bg-white text-blue-900 shadow-lg"
@@ -771,8 +805,8 @@ export function SideBar({
         onClick={() => setPanelType("plan")}
       >
         Subscription Plan
-      </button>
-      <button
+      </button>}
+      {userState.position !== "emp" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "payment"
             ? "bg-white text-blue-900 shadow-lg"
@@ -781,9 +815,9 @@ export function SideBar({
         onClick={() => setPanelType("payment")}
       >
         Payment
-      </button>
+      </button>}
 
-      <button
+      {userState.position !== "emp" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "add-employee"
             ? "bg-white text-blue-900 shadow-lg"
@@ -792,9 +826,9 @@ export function SideBar({
         onClick={() => setPanelType("add-employee")}
       >
         Add Employee
-      </button>
+      </button>}
 
-      <button
+      {userState.position !== "emp" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "employees"
             ? "bg-white text-blue-900 shadow-lg"
@@ -803,7 +837,7 @@ export function SideBar({
         onClick={() => setPanelType("employees")}
       >
         Employees
-      </button>
+      </button>}
     </nav>
   );
 }

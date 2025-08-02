@@ -130,7 +130,7 @@ export default function Navbar() {
             </>
           )}
 
-          {userState.Company === null && userState.position === "admin" && (
+          {userState.Company === null && userState.position === "superadmin" && (
             <>
               <Link
                 to="/partner-requests"

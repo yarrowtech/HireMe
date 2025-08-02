@@ -1,11 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import prisma from 'src/prisma';
 import { compareSync } from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { AccessLevel } from '@prisma/client';
+import prisma from 'src/prisma';
 
 @Injectable()
 export class PartnerService {
+
   async getPartnerDetails(partnerId: number): Promise<Object | null> {
     const partner = await prisma.partner.findUnique({
       where: {
@@ -86,5 +87,25 @@ export class PartnerService {
       process.env.JWT_SECRET!,
     );
     return { token };
+  }
+
+  async getPartnerEmployees(partnerId: number) {
+    try {
+      const employees = await prisma.employee.findMany({
+        where: {
+          CompanyCode: partnerId,
+        },
+        select: {
+          id: true,
+          Name: true,
+          Pic: true,
+        },
+      });
+      
+      return employees;
+    } catch (error) {
+      console.error('Error fetching partner employees:', error);
+      return null;
+    }
   }
 }
