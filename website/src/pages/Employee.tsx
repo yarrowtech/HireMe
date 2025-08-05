@@ -1,36 +1,71 @@
 import { UserContext } from "../context/UserContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useContext, useEffect, useRef, useState } from "react"
 import RightArrow from "../assets/right-arrow.svg"
 import LeftArrow from "../assets/left-arrow.svg"
+import { toast } from "react-toastify"
 
 
 export default function Employee() {
 
 
     const { userState } = useContext(UserContext)!
-    const [employeeDetailsType, setEmployeeDetailsType] = useState<"details" | "job" | "attendance" | "education">("details")
+    const [employeeDetailsType, setEmployeeDetailsType] = useState<"details" | "job" | "attendance" | "education" | "bank">("details")
     const navigate = useNavigate()
+    const [employeeData, setEmployeeData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const params = useParams()
 
     useEffect(() => {
         if (userState.position === "guest" && userState.Company === null) 
             navigate("/")
+        
+        const fetchEmployeeDetails = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/employee/get-employee-details/${params.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    setEmployeeData(data);
+                } else {
+                    toast.error('Failed to fetch employee details');
+                }
+            } catch (error) {
+                toast.error('Error fetching employee details');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEmployeeDetails();
     }, [])
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <section className="flex flex-col md:grid md:grid-cols-[18rem_auto] min-h-screen mt-[12vh] bg-gradient-to-br from-blue-50 to-blue-100">
             <SideBar employeeDetailsType={employeeDetailsType} setEmployeeDetailsType={setEmployeeDetailsType} />
             <main className="flex flex-col items-center w-full p-4">
-                {employeeDetailsType === "details" && <PersonalDetailsContainer />}
-                {employeeDetailsType === "job" && <JobDescriptionContainer />}
+                {employeeDetailsType === "details" && <PersonalDetailsContainer data={employeeData} />}
+                {employeeDetailsType === "job" && <JobDescriptionContainer data={employeeData} />}
                 {employeeDetailsType === "attendance" && <Attendance />}
-                {employeeDetailsType === "education" && <EducationQualificationsContainer />}
+                {employeeDetailsType === "education" && <EducationQualificationsContainer data={employeeData} />}
+                {employeeDetailsType === "bank" && <BankDetailsContainer data={employeeData} />}
             </main>
         </section>
     )
 }
 
-function SideBar({ employeeDetailsType, setEmployeeDetailsType }: { employeeDetailsType: "details" | "job" | "attendance" | "education", setEmployeeDetailsType: React.Dispatch<React.SetStateAction<"details" | "job" | "attendance" | "education">> }) {
+function SideBar({ employeeDetailsType, setEmployeeDetailsType }: { 
+    employeeDetailsType: "details" | "job" | "attendance" | "education" | "bank", 
+    setEmployeeDetailsType: React.Dispatch<React.SetStateAction<"details" | "job" | "attendance" | "education" | "bank">> 
+}) {
     return (
         <nav className="h-full w-full md:w-auto bg-gradient-to-b from-blue-900 to-blue-700 shadow-xl p-6 flex flex-row md:flex-col items-center gap-6 md:gap-8 rounded-b-3xl md:rounded-none md:rounded-r-3xl">
             <button
@@ -44,6 +79,12 @@ function SideBar({ employeeDetailsType, setEmployeeDetailsType }: { employeeDeta
                 onClick={() => setEmployeeDetailsType("education")}
             >
                 Education
+            </button>
+            <button
+                className={`px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear focus:outline-none focus:ring-2 focus:ring-blue-400 ${employeeDetailsType === "bank" ? 'bg-white text-blue-900 shadow-lg' : 'text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg'}`}
+                onClick={() => setEmployeeDetailsType("bank")}
+            >
+                Bank Details
             </button>
             <button
                 className={`px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear focus:outline-none focus:ring-2 focus:ring-blue-400 ${employeeDetailsType === "job" ? 'bg-white text-blue-900 shadow-lg' : 'text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg'}`}
@@ -62,45 +103,107 @@ function SideBar({ employeeDetailsType, setEmployeeDetailsType }: { employeeDeta
     )
 }
 
-function PersonalDetailsContainer() {
+function PersonalDetailsContainer({ data }: { data: any }) {
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Personal Details</h2>
-            <img src="." className="w-30 aspect-square m-auto border-2 rounded-full bg-blue-100" />
+            {data.Pic && (
+                <img 
+                    src={`${import.meta.env.VITE_API_URL}/${data.Pic}`} 
+                    className="w-32 h-32 object-cover m-auto border-2 rounded-full bg-blue-100" 
+                    alt="Profile"
+                />
+            )}
             <div className="grid grid-cols-[40%_auto] gap-5">
                 <h2 className="text-center text-lg font-semibold text-blue-900">Full Name:</h2>
-                <h3 className="text-center text-base font-medium text-blue-800">Atanu Ghosh</h3>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.Name}</h3>
                 <h2 className="text-center text-lg font-semibold text-blue-900">Date of Birth:</h2>
-                <h3 className="text-center text-base font-medium text-blue-800">01/01/1991</h3>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.DOB}</h3>
                 <h2 className="text-center text-lg font-semibold text-blue-900">Mobile No.:</h2>
-                <h3 className="text-center text-base font-medium text-blue-800">+91 1234567890</h3>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.Mobile}</h3>
                 <h2 className="text-center text-lg font-semibold text-blue-900">Email ID:</h2>
-                <h3 className="text-center text-base font-medium text-blue-800">someexample@example.com</h3>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.Email}</h3>
                 <h2 className="text-center text-lg font-semibold text-blue-900">Address:</h2>
-                <h3 className="text-center text-base font-medium text-blue-800">Kolkata, India, 7000144</h3>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.Address}</h3>
+            </div>
+
+            {/* Identity Documents Section */}
+            <div className="border-t-2 border-blue-200 pt-6">
+                <h3 className="text-xl font-bold text-blue-900 mb-4">Identity Documents</h3>
+                <div className="grid grid-cols-[40%_auto] gap-5">
+                    <h2 className="text-center text-lg font-semibold text-blue-900">Aadhaar Number:</h2>
+                    <h3 className="text-center text-base font-medium text-blue-800">{data.AadhaarNo}</h3>
+                    {data.Aadhaar && (
+                        <>
+                            <h2 className="text-center text-lg font-semibold text-blue-900">Aadhaar Card:</h2>
+                            <a 
+                                href={`${import.meta.env.VITE_API_URL}/${data.Aadhaar}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-center text-base font-medium text-blue-600 hover:text-blue-800 underline"
+                            >
+                                View Document
+                            </a>
+                        </>
+                    )}
+
+                    <h2 className="text-center text-lg font-semibold text-blue-900">PAN Number:</h2>
+                    <h3 className="text-center text-base font-medium text-blue-800">{data.PanNo}</h3>
+                    {data.Pan && (
+                        <>
+                            <h2 className="text-center text-lg font-semibold text-blue-900">PAN Card:</h2>
+                            <a 
+                                href={`${import.meta.env.VITE_API_URL}/${data.Pan}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-center text-base font-medium text-blue-600 hover:text-blue-800 underline"
+                            >
+                                View Document
+                            </a>
+                        </>
+                    )}
+
+                    {data.Voter && (
+                        <>
+                            <h2 className="text-center text-lg font-semibold text-blue-900">Voter ID:</h2>
+                            <a 
+                                href={`${import.meta.env.VITE_API_URL}/${data.Voter}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-center text-base font-medium text-blue-600 hover:text-blue-800 underline"
+                            >
+                                View Document
+                            </a>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     )
 }
 
-function JobDescriptionContainer() {
+function JobDescriptionContainer({ data }: { data: any }) {
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Job Description</h2>
             <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
                     <span className="text-lg font-semibold text-blue-900">Job Post Name:</span>
-                    <span className="text-base font-medium text-blue-800">Some Executive</span>
-                </div>
-                <div className="flex items-center gap-3">
-                    <span className="text-lg font-semibold text-blue-900">Job Category:</span>
-                    <span className="text-base font-medium text-blue-800">Sales / Support</span>
+                    <span className="text-base font-medium text-blue-800">{data.Post}</span>
                 </div>
                 <div className="flex items-center gap-8">
                     <span className="text-lg font-semibold text-blue-900">Payable Amount:</span>
-                    <span className="text-base font-medium text-blue-800">8000</span>
+                    <span className="text-base font-medium text-blue-800">₹ {data.Amount}</span>
                     <span className="text-lg font-semibold text-blue-900">Basis:</span>
-                    <span className="text-base font-medium text-blue-800">Monthly</span>
+                    <span className="text-base font-medium text-blue-800">{data.PaymentFrequency}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Joining Date:</span>
+                    <span className="text-base font-medium text-blue-800">{data.JoiningDate}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Access Level:</span>
+                    <span className="text-base font-medium text-blue-800">{data.AccessLevel}</span>
                 </div>
             </div>
         </div>
@@ -264,15 +367,52 @@ function Attendance() {
     )
 }
 
-function EducationQualificationsContainer() {
+function EducationQualificationsContainer({ data }: { data: any }) {
     return (
         <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
             <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Education Qualifications</h2>
-            <ul className="list-disc pl-6 text-blue-800 text-base font-medium">
-                <li>Bachelor of Science in Computer Science - XYZ University (2012-2016)</li>
-                <li>Master of Business Administration - ABC Institute (2017-2019)</li>
-                <li>Certification in Project Management - PMI (2020)</li>
-            </ul>
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Qualification:</span>
+                    <span className="text-base font-medium text-blue-800">{data.Qualification}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Institution:</span>
+                    <span className="text-base font-medium text-blue-800">{data.Institution}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Year of Passing:</span>
+                    <span className="text-base font-medium text-blue-800">{data.YearOfPassing}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-lg font-semibold text-blue-900">Percentage:</span>
+                    <span className="text-base font-medium text-blue-800">{data.Percentage}%</span>
+                    <span className="text-lg font-semibold text-blue-900">Marksheet:</span>
+                    <a className="text-base font-medium text-blue-800 underline" href={`${import.meta.env.VITE_API_URL}/${data.Marksheet}`} target="_blank">Marksheet File</a>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function BankDetailsContainer({ data }: { data: any }) {
+    return (
+        <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
+            <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">Bank Details</h2>
+            <div className="grid grid-cols-[40%_auto] gap-5">
+                <h2 className="text-center text-lg font-semibold text-blue-900">Account Holder:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.AccountHolderName}</h3>
+                <h2 className="text-center text-lg font-semibold text-blue-900">Account Number:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.AccountNumber}</h3>
+                <h2 className="text-center text-lg font-semibold text-blue-900">IFSC Code:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.IFSCCode}</h3>
+                <h2 className="text-center text-lg font-semibold text-blue-900">Bank Name:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.BankName}</h3>
+                <h2 className="text-center text-lg font-semibold text-blue-900">Branch:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.Branch}</h3>
+                <h2 className="text-center text-lg font-semibold text-blue-900">Account Type:</h2>
+                <h3 className="text-center text-base font-medium text-blue-800">{data.AccountType}</h3>
+            </div>
         </div>
     )
 }

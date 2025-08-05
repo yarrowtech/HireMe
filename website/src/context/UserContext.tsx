@@ -1,9 +1,9 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode } from "react";
 
 export const UserContext = createContext<UserContextType | null>(null)
 
 export default function UserContextProvider({ children }: { children: ReactNode }) {
-    const [userState, setUserState] = useState<UserState>({ username: "", Company: null, position: "guest" })
+    const [userState, setUserState] = useState<UserState>({ id: -1, username: "", Company: null, position: "guest" })
     async function updateUserState() {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/user/details`, {
             method: "GET",
@@ -15,22 +15,20 @@ export default function UserContextProvider({ children }: { children: ReactNode 
         const data = await res.json();
         if (res.ok) {
             setUserState({
+                id: data.data.id,
                 username: data.data.Username,
-                Company: data.data?.id || null,
+                Company: data.data?.CompanyCode || null,
                 position: data.data.AccountType
             });
         } else {
             setUserState({
+                id: -1,
                 username: "",
                 Company: null,
                 position: "guest"
             })
         }
     }
-
-    useEffect(() => {
-        console.log(userState)
-    }, [userState])
 
     return (
         <UserContext.Provider value={{ userState, setUserState, updateUserState }}>
@@ -46,6 +44,7 @@ type UserContextType = {
 }
 
 type UserState = {
+    id: number
     username: string
     Company: null | number
     position: string 

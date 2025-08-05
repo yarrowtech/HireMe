@@ -1,9 +1,9 @@
-import { Controller, HttpCode, UseFilters, Post, Get, UseInterceptors, Catch, BadRequestException, ExceptionFilter, ArgumentsHost, UseGuards, Body, Req, ValidationPipe, UnauthorizedException  } from "@nestjs/common";
+import { Controller, HttpCode, UseFilters, Post, Get, UseInterceptors, Catch, BadRequestException, ExceptionFilter, ArgumentsHost, UseGuards, Body, Req, ValidationPipe, UnauthorizedException, Param  } from "@nestjs/common";
 import { CreateEmployeeDto } from "./dto/employeeCred.dto";
 import { Request, Response } from "express";
 import { unlinkSync } from "node:fs";
 import { diskStorage } from "multer";
-import { extname } from "node:path";
+import { extname, parse } from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import { CompanyGuard } from "src/guards/company.guard";
 import { EmployeeService } from "./employee.service";
@@ -81,14 +81,10 @@ export class EmployeeController {
         return { message: 'Employee created successfully' };
       }
     
-      @Get('get-employee-details')
+      @Get('get-employee-details/:id')
       @UseGuards(CompanyGuard)
-      async getEmployeeDetails(@Req() request: Request): Promise<Object> {
-        const { authUserId } = request['authData'];
-        if (!authUserId) {
-          throw new UnauthorizedException('Unauthorized access');
-        }
-        const employeeDetails = await this.employeeService.getEmployeeDetails(request['authData'].authUserId);
+      async getEmployeeDetails(@Param('id') id: string): Promise<Object> {
+        const employeeDetails = await this.employeeService.getEmployeeDetails(parseInt(id));
         return employeeDetails;
       }
 }

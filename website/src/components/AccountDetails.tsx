@@ -55,12 +55,13 @@ export function AccountDetailsContainer() {
 export function PersonalDetailsContainer() {
   const [personalDetails, setPersonalDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { userState } = useContext(UserContext)!
 
   useEffect(() => {
     const fetchPersonalDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/employee/get-employee-details`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/employee/get-employee-details/${userState.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -83,10 +84,6 @@ export function PersonalDetailsContainer() {
 
     fetchPersonalDetails();
   }, []);
-
-  useEffect(() => {
-    console.log(personalDetails)
-  }, [personalDetails])
 
   if (loading) {
     return (
@@ -123,8 +120,8 @@ export function PersonalDetailsContainer() {
       <div className="w-full grid grid-cols-3 gap-5">
         <div className="col-span-full">
           <label className="block text-blue-900 font-semibold mb-1">Full Name</label>
-          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full">
-            <span className="text-base font-medium text-blue-800">
+          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full overflow-x-auto">
+            <span className="text-base font-medium text-blue-800 whitespace-nowrap inline-block min-w-fit">
               {personalDetails.Name || 'N/A'}
             </span>
           </div>
@@ -132,8 +129,8 @@ export function PersonalDetailsContainer() {
 
         <div>
           <label className="block text-blue-900 font-semibold mb-1">Date of Birth</label>
-          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full">
-            <span className="text-base font-medium text-blue-800">
+          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full overflow-x-auto">
+            <span className="text-base font-medium text-blue-800 whitespace-nowrap inline-block min-w-fit">
               {personalDetails.DOB || 'Not Available'}
             </span>
           </div>
@@ -141,8 +138,8 @@ export function PersonalDetailsContainer() {
 
         <div>
           <label className="block text-blue-900 font-semibold mb-1">Mobile No</label>
-          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full">
-            <span className="text-base font-medium text-blue-800">
+          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full overflow-x-auto">
+            <span className="text-base font-medium text-blue-800 whitespace-nowrap inline-block min-w-fit">
               {personalDetails.Mobile || 'Not Available'}
             </span>
           </div>
@@ -150,8 +147,8 @@ export function PersonalDetailsContainer() {
 
         <div>
           <label className="block text-blue-900 font-semibold mb-1">Email Address</label>
-          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full">
-            <span className="text-base font-medium text-blue-800">
+          <div className="p-2 pl-3 rounded-lg border-2 border-blue-200 bg-gray-50 w-full overflow-x-auto">
+            <span className="text-base font-medium text-blue-800 whitespace-nowrap inline-block min-w-fit">
               {personalDetails.Email || 'Not Available'}
             </span>
           </div>

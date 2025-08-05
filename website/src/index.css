@@ -14,7 +14,25 @@
   border-radius: 13px;
 }
 
+/* Custom scrollbar for span containers */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
 
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #1c398e;
+  border-radius: 4px;
+}
+
+/* For Firefox */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #1c398e transparent;
+}
 
 /*utility classes*/
 .active-employee-sidebar-item {

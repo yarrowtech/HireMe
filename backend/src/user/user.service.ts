@@ -13,6 +13,7 @@ export class UserService {
                     id: parseInt(data.id),
                 },
                 select: {
+                    id: true,
                     Username: true,
                     Email: true,
                 }
@@ -31,7 +32,7 @@ export class UserService {
                 },
             })
             if (!user) throw new HttpException("Invalid token", 400);
-            return {...user, AccountType: "company" }
+            return {...user, CompanyCode: user.id, AccountType: "company" }
         }
         else if (data.type === "emp" || data.type === "admin" || data.type === "mng") {
             const user = await prisma.employee.findFirst({
@@ -39,12 +40,13 @@ export class UserService {
                     id: parseInt(data.id),
                 },
                 select: {
+                    id: true,
                     Username: true,
                     CompanyCode: true,
                 },
             })
             if (!user) throw new HttpException("Invalid token", 400);
-            return {...user, id: user?.CompanyCode, AccountType: data.type }
+            return {...user, AccountType: data.type }
         }
         else throw new HttpException("Invalid token", 400);
     }
