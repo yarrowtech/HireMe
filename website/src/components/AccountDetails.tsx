@@ -443,10 +443,12 @@ export function CompanyDetailsContainer() {
   const { userState } = useContext(UserContext)!;
   const [partner, setPartner] = useState<PartnerDetails>();
   const { fetchPartnerDetails } = useContext(PartnersContext)!;
+  const params = useParams()
 
   useEffect(() => {
     const fetchDetails = async () => {
-      const details = await fetchPartnerDetails(userState.Company || 0);
+      const compid = userState.position === "superadmin" ? parseInt(params.id || "-1") : userState.Company
+      const details = await fetchPartnerDetails(compid || -1);
       if (details) {
         setPartner(details);
       } else {
@@ -770,7 +772,7 @@ export function SideBar({
       </button>
       
       {/* Show Personal Details button only for non-admin users */}
-      {userState.position !== "company" && (
+      {userState.position === "emp" && (
         <button
           className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
             panelType === "personal"
@@ -814,7 +816,7 @@ export function SideBar({
         Payment
       </button>}
 
-      {userState.position !== "emp" && <button
+      {userState.position === "company" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "add-employee"
             ? "bg-white text-blue-900 shadow-lg"
@@ -825,7 +827,7 @@ export function SideBar({
         Add Employee
       </button>}
 
-      {userState.position !== "emp" && <button
+      {userState.position === "company" && <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "employees"
             ? "bg-white text-blue-900 shadow-lg"
@@ -836,190 +838,5 @@ export function SideBar({
         Employees
       </button>}
     </nav>
-  );
-}
-
-export function CheckPartnerDetails() {
-  const [partner, setPartner] = useState<PartnerDetails>();
-  const { id } = useParams();
-  const { fetchPartnerDetails } = useContext(PartnersContext)!;
-
-  useEffect(() => {
-    const fetchDetails = async (id: number) => {
-      const details = await fetchPartnerDetails(id);
-      if (details) {
-        setPartner(details);
-      } else {
-        toast.error("Failed to fetch partner details");
-      }
-    };
-    fetchDetails(parseInt(id || "0"));
-  }, []);
-
-  return (
-    <div className="w-full bg-white/90 rounded-3xl shadow-2xl p-8 flex flex-col gap-6 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Partner Details
-      </h2>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Company Name:
-        </span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.CompanyName}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Company Code:
-        </span>
-        <span className="text-base font-medium text-blue-800 bg-blue-50 px-3 py-1 rounded-lg font-mono">
-          {partner?.id}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">CIN:</span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.CIN}
-        </span>
-      </div>
-
-      {/* Added PAN No */}
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">PAN Number:</span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.PAN_No}
-        </span>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-6 border-b pb-4">
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold text-blue-900">Phone No:</span>
-          <span className="text-base font-medium text-blue-800">
-            {partner?.Contact}
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold text-blue-900">Email ID:</span>
-          <span className="text-base font-medium text-blue-800">
-            {partner?.Email}
-          </span>
-        </div>
-      </div>
-
-      {/* Company Documents Section */}
-      <div className="mt-2">
-        <h3 className="text-xl font-bold text-blue-900 mb-4">
-          Company Documents
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {partner?.ESI && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">ESI:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.ESI}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.PF && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">PF:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.PF}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.PAN && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">PAN Card:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.PAN}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.MOA && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">MOA:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.MOA}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.GST && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">
-                GST Certificate:
-              </span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.GST}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.TradeLicense && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">
-                Trade License:
-              </span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.TradeLicense}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-          {partner?.MSMC && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">MSMC:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.MSMC}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
   );
 }
