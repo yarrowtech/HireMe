@@ -6,7 +6,6 @@ import { JsonWebTokenError } from "jsonwebtoken";
 @Catch(JsonWebTokenError)
 class JsonWebTokenErrorFilter implements ExceptionFilter {
       catch(exception: JsonWebTokenError, host: ArgumentsHost) {
-        console.log(exception)
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const status = 401;

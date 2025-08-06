@@ -5,7 +5,7 @@ import { unlinkSync } from "node:fs";
 import { diskStorage } from "multer";
 import { extname, parse } from "node:path";
 import { v4 as uuidv4 } from "uuid";
-import { CompanyGuard } from "src/guards/company.guard";
+import { CompanyAdminGuard, CompanyGuard } from "src/guards/company.guard";
 import { EmployeeService } from "./employee.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 
@@ -86,5 +86,28 @@ export class EmployeeController {
       async getEmployeeDetails(@Param('id') id: string): Promise<Object> {
         const employeeDetails = await this.employeeService.getEmployeeDetails(parseInt(id));
         return employeeDetails;
+      }
+
+      @Post('mark-attendance/:id')
+      @UseGuards(CompanyAdminGuard)
+      async markAttendance(@Param('id') id: string, @Req() request: Request): Promise<{ message: string }> {
+        const employeeId = parseInt(id);
+        const present = request.body.present;
+        if (typeof present !== 'boolean') {
+          throw new BadRequestException('Present must be a boolean value');
+        }
+        await this.employeeService.markAttendance(employeeId, present);
+        return { message: 'Attendance marked successfully' };
+      }
+
+      @Get('get-attendance/:id')
+      @UseGuards(CompanyGuard)
+      async getAttendance(@Param('id') id: string): Promise<Object> {
+        const employeeId = parseInt(id);
+        if (isNaN(employeeId)) {
+          throw new BadRequestException('Invalid employee ID');
+        }
+        const attendance = await this.employeeService.getAttendance(employeeId);
+        return attendance;
       }
 }
