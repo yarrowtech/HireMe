@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, EmployeesPanel, CompanyDetailsContainer, PersonalDetailsContainer } from "../components/AccountDetails"
+import { SideBar, AccountDetailsContainer, SubscriptionPlanContainer, PaymentPanel, EmployeesPanel, CompanyDetailsContainer } from "../components/AccountDetails"
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import AddEmployee from "../components/AddEmployee";
@@ -7,7 +7,6 @@ import AddEmployee from "../components/AddEmployee";
 export default function PartnerDetails() {
   const [panelType, setPanelType] = useState<
     | "account"
-    | "personal"
     | "company"
     | "plan"
     | "payment"
@@ -25,7 +24,6 @@ export default function PartnerDetails() {
       <SideBar panelType={panelType} setPanelType={setPanelType} />
       <main className="flex flex-col items-center w-full p-4">
         {panelType === "account" && <AccountDetailsContainer />}
-        {panelType === "personal" && <PersonalDetailsContainer />}
         {panelType === "company" && <CompanyDetailsContainer />}
         {panelType === "plan" && <SubscriptionPlanContainer />}
         {panelType === "payment" && <PaymentPanel />}

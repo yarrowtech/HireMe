@@ -190,7 +190,50 @@ function PersonalDetailsContainer({ data }: { data: any }) {
         </h3>
       </div>
 
-      {/* Identity Documents Section */}
+      <div className="border-t-2 border-blue-200 pt-6">
+        <h3 className="text-xl font-bold text-blue-900 mb-4">
+          Company Details
+        </h3>
+        <div className="grid grid-cols-[40%_auto] gap-5">
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Username
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.Username}
+          </h3>
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Company Name
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.Company.CompanyName}
+          </h3>
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Company Code
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.CompanyCode}
+          </h3>
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Company Contact No
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.Company.Contact}
+          </h3>
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Company Email
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.Company.Email}
+          </h3>
+          <h2 className="text-center text-lg font-semibold text-blue-900">
+            Company Address
+          </h2>
+          <h3 className="text-center text-base font-medium text-blue-800">
+            {data.Company.Address}
+          </h3>
+        </div>
+      </div>
+
       <div className="border-t-2 border-blue-200 pt-6">
         <h3 className="text-xl font-bold text-blue-900 mb-4">
           Identity Documents
@@ -300,7 +343,7 @@ function JobDescriptionContainer({ data }: { data: any }) {
           <span className="text-lg font-semibold text-blue-900">
             Access Level:
           </span>
-          <span className="text-base font-medium text-blue-800">
+          <span className={`text-base font-bold text-blue-800 ${data.AccessLevel === "EMPLOYEE" ? "text-green-600" : "text-yellow-600"}`}>
             {data.AccessLevel}
           </span>
         </div>
@@ -320,7 +363,7 @@ function Attendance() {
   >([]);
   const [loading, setLoading] = useState(true);
   const params = useParams();
-
+  const { userState } = useContext(UserContext)!;
   const title = useRef<HTMLHeadingElement>(null);
   const calendarGrid = useRef<HTMLDivElement>(null);
 
@@ -366,7 +409,6 @@ function Attendance() {
           date.getFullYear() === year
         );
       });
-      console.log(attendance);
       if (attendance) {
         p.classList.add(attendance.Present ? "bg-green-600" : "bg-red-600");
       }
@@ -500,7 +542,7 @@ function Attendance() {
         <div ref={calendarGrid} className="grid grid-cols-7 gap-2 w-full"></div>
       </div>
       {/* Add Mark Attendance Button */}
-      <div className="flex gap-4">
+      {userState.position === "company" && <div className="flex gap-4">
         <button
           onClick={() => markAttendance(true)}
           disabled={loading}
@@ -604,7 +646,7 @@ function Attendance() {
             </>
           )}
         </button>
-      </div>
+      </div>}
     </section>
   );
 }

@@ -193,9 +193,9 @@ export default function Navbar() {
                   <div className="flex flex-col absolute right-0 top-14 gap-2 bg-white p-3 rounded-xl shadow-xl border border-blue-100 min-w-[180px]">
                     <Link
                       to={`${
-                        userState.position !== "employee"
+                        userState.position !== "emp"
                           ? "/manage-account"
-                          : "/employees/employee/ae41hcahfq24awfh"
+                          : `/employees/employee/${userState.id}`
                       }`}
                       className="py-2 px-3 bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-xl flex items-center gap-2 cursor-pointer text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
                       onClick={() => setLogout(false)}

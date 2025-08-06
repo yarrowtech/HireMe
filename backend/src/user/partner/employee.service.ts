@@ -54,6 +54,16 @@ export class EmployeeService {
         UpdatedAt: true,
         SuperiorId: true,
       },
+      include: {
+        Company: {
+          select: {
+            CompanyName: true,
+            Email: true,
+            Address: true,
+            Contact: true,
+          },
+        }
+      }
     });
 
     if (!employee) {
