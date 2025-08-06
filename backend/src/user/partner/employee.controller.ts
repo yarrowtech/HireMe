@@ -3,7 +3,7 @@ import { CreateEmployeeDto } from "./dto/employeeCred.dto";
 import { Request, Response } from "express";
 import { unlinkSync } from "node:fs";
 import { diskStorage } from "multer";
-import { extname, parse } from "node:path";
+import { extname } from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import { CompanyAdminGuard, CompanyGuard } from "src/guards/company.guard";
 import { EmployeeService } from "./employee.service";

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { PartnerAccountCredDto } from './dto/partnerAccountCred.dto';
-import { CompanyGuard } from 'src/guards/company.guard';
+import { CompanyAdminGuard } from 'src/guards/company.guard';
 
 
 @Controller('partner')
@@ -41,7 +41,7 @@ export class PartnerController {
   }
 
   @Get('employees/:partnerId')
-  @UseGuards(CompanyGuard)
+  @UseGuards(CompanyAdminGuard)
   async getPartnerEmployees(
     @Param('partnerId') partnerId: string,
   ): Promise<any[]> {
