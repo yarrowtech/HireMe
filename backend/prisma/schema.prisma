@@ -112,6 +112,20 @@ model Employee {
   Superior   Employee?  @relation(name: "tree", fields: [SuperiorId], references: [id], onDelete: Cascade)
   Junior     Employee[] @relation(name: "tree")
   Company    Partner    @relation(fields: [CompanyCode], references: [id], onDelete: Cascade)
+
+
+  Attendance Attendance[]
+}
+
+model Attendance {
+  id          Int      @id @default(autoincrement())
+  EmployeeId  Int
+  Date        DateTime
+  Present     Boolean
+  CreatedAt   DateTime @default(now())
+  UpdatedAt   DateTime @default(now())
+
+  Employee   Employee @relation(fields: [EmployeeId], references: [id], onDelete: Cascade)
 }
 
 enum RequestStatus {

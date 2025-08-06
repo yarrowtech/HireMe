@@ -213,81 +213,6 @@ function JobDescriptionContainer({ data }: { data: any }) {
 function Attendance() {
 
     const [date, setDate] = useState<{ month: number, year: number }>({ month: new Date().getMonth(), year: new Date().getFullYear() })
-    const attendanceData: { [key: number]: { [key: number]: { [key: number]: boolean } } } = {
-        2025: {
-            0: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            1: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            },
-
-            2: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            3: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            },
-
-            4: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            5: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            },
-
-            6: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            7: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            },
-
-            8: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            9: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            },
-
-            10: {
-                1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: false, 8: true, 9: true, 10: false,
-                11: true, 12: false, 13: true, 14: true, 15: false, 16: true, 17: false, 18: true, 19: true, 20: false,
-                21: true, 22: false, 23: true, 24: true, 25: false, 26: true, 27: false, 28: true, 29: true, 30: false
-            },
-
-            11: {
-                1: false, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: false, 9: true, 10: true,
-                11: false, 12: true, 13: false, 14: true, 15: true, 16: false, 17: true, 18: false, 19: true, 20: true,
-                21: false, 22: true, 23: false, 24: true, 25: true, 26: false, 27: true, 28: false, 29: true, 30: true
-            }
-        }
-    };
 
     const title = useRef<HTMLHeadingElement>(null)
     const calendarGrid = useRef<HTMLDivElement>(null)
@@ -314,11 +239,6 @@ function Attendance() {
         for (let i = 1; i <= totalDays; i++) {
             const p = document.createElement("p")
             p.classList.add("calendar-day")
-            const isPresent: boolean = attendanceData[year][month][i]
-            if (isPresent)
-                p.classList.add("text-green-600")
-            else
-                p.classList.add("text-red-600")
             p.innerText = `${i}`
             calendarGrid.current?.appendChild(p)
         }
@@ -343,6 +263,38 @@ function Attendance() {
         generateCalendar()
     }, [date])
 
+    const [loading, setLoading] = useState(false);
+    const params = useParams();
+
+    const markAttendance = async (present: boolean) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/employee/mark-attendance/${params.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify({
+                    date: new Date().toISOString(),
+                    present: present
+                })
+            });
+
+            if (response.ok) {
+                toast.success('Attendance marked successfully');
+                generateCalendar();
+            } else {
+                toast.error('Failed to mark attendance');
+            }
+        } catch (error) {
+            toast.error('Error marking attendance');
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <section className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col items-center gap-8 border border-blue-100">
             <div className="grid grid-cols-[10%_auto_10%] items-center w-full mb-4">
@@ -350,6 +302,7 @@ function Attendance() {
                 <h2 ref={title} className="font-extrabold text-blue-900 text-2xl justify-self-center">Calendar</h2>
                 <img src={RightArrow} alt="Next" className="cursor-pointer w-10 hover:scale-110 transition-transform" onClick={increaseDate} />
             </div>
+
             <div className="flex flex-col items-center gap-6 w-full h-full">
                 <div className="grid grid-cols-7 gap-2 w-full h-2/5">
                     <p className="calendar-day-name">Sun</p>
@@ -362,6 +315,60 @@ function Attendance() {
                 </div>
                 <div ref={calendarGrid} className="grid grid-cols-7 gap-2 w-full">
                 </div>
+            </div>
+            {/* Add Mark Attendance Button */}
+            <div className="flex gap-4">
+                <button
+                    onClick={() => markAttendance(true)}
+                    disabled={loading}
+                    className={`px-6 py-3 rounded-xl bg-green-600 text-white font-semibold 
+                        transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 
+                        focus:ring-green-400 disabled:bg-green-300 disabled:cursor-not-allowed
+                        flex items-center gap-2`}
+                >
+                    {loading ? (
+                        <>
+                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Marking...
+                        </>
+                    ) : (
+                        <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Mark Present
+                        </>
+                    )}
+                </button>
+
+                <button
+                    onClick={() => markAttendance(false)}
+                    disabled={loading}
+                    className={`px-6 py-3 rounded-xl bg-red-600 text-white font-semibold 
+                        transition-all duration-300 hover:bg-red-700 focus:outline-none focus:ring-2 
+                        focus:ring-red-400 disabled:bg-red-300 disabled:cursor-not-allowed
+                        flex items-center gap-2`}
+                >
+                    {loading ? (
+                        <>
+                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Marking...
+                        </>
+                    ) : (
+                        <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Mark Absent
+                        </>
+                    )}
+                </button>
             </div>
         </section>
     )
