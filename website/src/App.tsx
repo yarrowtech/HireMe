@@ -18,10 +18,11 @@ import PartnerDetails from "./pages/PartnerDetails";
 function App() {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const isPartnerRegistration = location.pathname === "/be-a-partner";
   return (
     <>
       <UserContextProvider>
-        {!isHome && <Navbar />}
+        {!isHome && !isPartnerRegistration && <Navbar />}
         <ToastContainer
           position="bottom-right"
           autoClose={5000}

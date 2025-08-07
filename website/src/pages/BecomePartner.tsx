@@ -163,15 +163,6 @@ export default function BecomePartner() {
             {/* Floating Grid Pattern */}
             <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMTQ3LCAxOTcsIDI1MywgMC4xKSIvPgo8L3N2Zz4=')] opacity-30"></div>
 
-            {/* Back Button */}
-            <button 
-                onClick={() => navigate('/')}
-                className="absolute top-8 left-8 flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-300 group z-20"
-            >
-                <FaArrowLeft className="transition-transform group-hover:-translate-x-1" />
-                <span>Back to Home</span>
-            </button>
-
             <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-12">
                 {/* Header */}
                 <div className="text-center mb-12">
@@ -407,36 +398,266 @@ export default function BecomePartner() {
     )
 }
 
-function DocumentPreview({ fileData, setPreviewVisible }: { fileData: string, setPreviewVisible: React.Dispatch<React.SetStateAction<boolean>> }) {
+// Form Field Component
+function FormField({ 
+    icon: Icon, 
+    label, 
+    name, 
+    type = "text", 
+    placeholder, 
+    value, 
+    onChange, 
+    required = false 
+}: {
+    icon: React.ComponentType<any>;
+    label: string;
+    name: string;
+    type?: string;
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    required?: boolean;
+}) {
+    return (
+        <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-300 mb-2">
+                <Icon className="text-cyan-400" />
+                {label} {required && <span className="text-red-400">*</span>}
+            </label>
+            <input
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                required={required}
+                className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-300"
+            />
+        </div>
+    );
+}
 
+// File Upload Card Component
+function FileUploadCard({
+    label,
+    fileKey,
+    file,
+    required,
+    onUpload,
+    onPreview,
+    onDelete
+}: {
+    label: string;
+    fileKey: string;
+    file: File | null;
+    required: boolean;
+    onUpload: () => void;
+    onPreview: (file: File) => void;
+    onDelete: () => void;
+}) {
+    return (
+        <div className="p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                    <FaFileUpload className="text-white" />
+                </div>
+                <div>
+                    <h4 className="font-semibold text-white">{label}</h4>
+                    <p className="text-xs text-slate-400">
+                        {required ? "Required" : "Optional"} • PDF only
+                    </p>
+                </div>
+            </div>
+            
+            {!file ? (
+                <button
+                    type="button"
+                    onClick={onUpload}
+                    className="w-full p-4 border-2 border-dashed border-white/30 rounded-2xl hover:border-cyan-400 hover:bg-white/5 transition-all duration-300 group"
+                >
+                    <div className="flex flex-col items-center gap-2">
+                        <FaCloudUploadAlt className="text-2xl text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                        <span className="text-slate-400 group-hover:text-white text-sm">
+                            Click to upload {label}
+                        </span>
+                    </div>
+                </button>
+            ) : (
+                <div className="space-y-3">
+                    <div className="flex items-center gap-2 p-3 bg-white/10 rounded-xl">
+                        <FaFileUpload className="text-cyan-400" />
+                        <span className="text-white text-sm font-medium flex-1 truncate">
+                            {file.name}
+                        </span>
+                        <div className="flex items-center gap-2 px-2 py-1 bg-green-500/20 rounded-full">
+                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span className="text-green-400 text-xs">Uploaded</span>
+                        </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            onClick={() => onPreview(file)}
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-xl hover:bg-blue-500/30 transition-all duration-300 text-sm font-medium"
+                        >
+                            <FaEye />
+                            Preview
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onDelete}
+                            className="flex items-center justify-center gap-2 px-3 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/30 transition-all duration-300 text-sm font-medium"
+                        >
+                            <FaTrash />
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Review Section Component
+function ReviewSection({ 
+    requestDetails, 
+    files, 
+    fileRequirements 
+}: {
+    requestDetails: any;
+    files: any;
+    fileRequirements: any[];
+}) {
+    return (
+        <div className="space-y-6">
+            {/* Company Information Review */}
+            <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+                <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <FaBuilding className="text-cyan-400" />
+                    Company Information
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span className="text-slate-400">Company Name:</span>
+                        <p className="text-white font-medium">{requestDetails.CompanyName}</p>
+                    </div>
+                    <div>
+                        <span className="text-slate-400">Contact:</span>
+                        <p className="text-white font-medium">{requestDetails.Contact}</p>
+                    </div>
+                    <div>
+                        <span className="text-slate-400">Email:</span>
+                        <p className="text-white font-medium">{requestDetails.Email}</p>
+                    </div>
+                    <div>
+                        <span className="text-slate-400">CIN:</span>
+                        <p className="text-white font-medium">{requestDetails.CIN}</p>
+                    </div>
+                    <div>
+                        <span className="text-slate-400">PAN:</span>
+                        <p className="text-white font-medium">{requestDetails.PAN_No}</p>
+                    </div>
+                    <div className="md:col-span-2">
+                        <span className="text-slate-400">Address:</span>
+                        <p className="text-white font-medium">{requestDetails.Address}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Documents Review */}
+            <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+                <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <FaFileUpload className="text-cyan-400" />
+                    Uploaded Documents
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {fileRequirements.map((req) => (
+                        <div key={req.key} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                            <span className="text-slate-300">{req.label}</span>
+                            <div className="flex items-center gap-2">
+                                {files[req.key] ? (
+                                    <div className="flex items-center gap-2 px-2 py-1 bg-green-500/20 rounded-full">
+                                        <FaCheck className="text-green-400 text-xs" />
+                                        <span className="text-green-400 text-xs">Uploaded</span>
+                                    </div>
+                                ) : req.required ? (
+                                    <div className="flex items-center gap-2 px-2 py-1 bg-red-500/20 rounded-full">
+                                        <FaTimes className="text-red-400 text-xs" />
+                                        <span className="text-red-400 text-xs">Missing</span>
+                                    </div>
+                                ) : (
+                                    <span className="text-slate-500 text-xs">Optional</span>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className="p-6 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl border border-blue-500/20">
+                <div className="flex items-start gap-3">
+                    <FaShieldAlt className="text-cyan-400 text-xl mt-1" />
+                    <div>
+                        <h4 className="text-lg font-semibold text-white mb-2">Terms & Conditions</h4>
+                        <p className="text-slate-300 text-sm leading-relaxed mb-4">
+                            By submitting this application, you agree to our partner terms and conditions. 
+                            Your application will be reviewed within 3-5 business days. We may contact you 
+                            for additional information if required.
+                        </p>
+                        <ul className="text-slate-400 text-xs space-y-1">
+                            <li>• All information provided must be accurate and up-to-date</li>
+                            <li>• Documents must be clear and readable PDF files</li>
+                            <li>• Approval is subject to verification of all submitted documents</li>
+                            <li>• Partnership terms will be provided upon approval</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function DocumentPreview({ fileData, setPreviewVisible }: { fileData: string, setPreviewVisible: React.Dispatch<React.SetStateAction<boolean>> }) {
     const file = useRef<HTMLObjectElement>(null);
 
     useEffect(() => {
         document.querySelector("body")!.style.overflowY = "hidden";
 
-        window.addEventListener("mousedown", (e) => {
+        const handleClickOutside = (e: MouseEvent) => {
             if (e.target !== file.current) {
                 setPreviewVisible(false);
             }
-        })
+        };
 
+        window.addEventListener("mousedown", handleClickOutside);
 
         return () => {
             document.querySelector("body")!.style.overflowY = "scroll";
+            window.removeEventListener("mousedown", handleClickOutside);
         }
-    }, [])
+    }, [setPreviewVisible])
 
     return (
-        <section className="absolute top-0 left-0 w-screen h-screen flex justify-center">
-            <div className="absolute top-0 left-0 w-full h-full bg-gray-700 opacity-70 z-20">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
+            <button
+                onClick={() => setPreviewVisible(false)}
+                className="absolute top-8 right-8 w-12 h-12 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 z-60"
+            >
+                <FaTimes className="text-xl" />
+            </button>
+            <div className="w-[90vw] h-[90vh] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden">
+                <object
+                    data={fileData}
+                    type="application/pdf"
+                    className="w-full h-full"
+                    ref={file}
+                >
+                    <div className="flex items-center justify-center h-full text-white">
+                        <p>Unable to display PDF. Please download to view.</p>
+                    </div>
+                </object>
             </div>
-            <object
-                data={fileData}
-                type="application/pdf"
-                style={{ width: "90%" }}
-                className="mx-auto h-full z-30"
-                ref={file}
-            ></object>
-        </section>
+        </div>
     );
 }
