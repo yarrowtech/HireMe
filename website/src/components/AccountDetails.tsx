@@ -19,34 +19,41 @@ export function AccountDetailsContainer() {
   const { userState } = useContext(UserContext)!;
 
   return (
-    <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Account Details
-      </h2>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">Username:</span>
-        <span className="text-base font-medium text-blue-800">
-          {userState.username}
-        </span>
+    <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 flex flex-col gap-6 border border-blue-200/50 backdrop-blur-sm">
+      <div className="flex items-center gap-4 mb-2">
+        <div className="p-3 rounded-xl bg-blue-100/80 shadow-inner">
+          <i className="fas fa-user-circle text-2xl text-blue-600"></i>
+        </div>
+        <h2 className="text-2xl font-bold text-blue-800 tracking-tight">
+          Account Details
+        </h2>
       </div>
 
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Account Type:
-        </span>
-        <span
-          className={`text-base font-medium px-3 py-1 rounded-full ${
-            userState.position === "admin"
-              ? "bg-red-100 text-red-800"
-              : userState.position === "manager"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-green-100 text-green-800"
-          }`}
-        >
-          {userState.position?.charAt(0).toUpperCase() +
-            userState.position?.slice(1)}
-        </span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Username</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1">
+            {userState.username}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Account Type</span>
+          <p className="mt-1">
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
+                userState.position === "admin"
+                  ? "bg-red-100 text-red-800"
+                  : userState.position === "manager"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-green-100 text-green-800"
+              }`}
+            >
+              {userState.position?.charAt(0).toUpperCase() +
+                userState.position?.slice(1)}
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -75,193 +82,218 @@ export function CompanyDetailsContainer() {
   }, []);
 
   return (
-    <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Company Details
-      </h2>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Company Name:
-        </span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.CompanyName}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Company Code:
-        </span>
-        <span className="text-base font-medium text-blue-800 bg-blue-50 px-3 py-1 rounded-lg font-mono">
-          {partner?.id}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">CIN:</span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.CIN}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">PAN Number:</span>
-        <span className="text-base font-medium text-blue-800">
-          {partner?.PAN_No}
-        </span>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-6 border-b pb-4">
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold text-blue-900">Phone No:</span>
-          <span className="text-base font-medium text-blue-800">
-            {partner?.Contact}
-          </span>
+    <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 flex flex-col gap-6 border border-blue-200/50 backdrop-blur-sm">
+      <div className="flex items-center gap-4 mb-2">
+        <div className="p-3 rounded-xl bg-blue-100/80 shadow-inner">
+          <i className="fas fa-building text-2xl text-blue-600"></i>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold text-blue-900">Email ID:</span>
-          <span className="text-base font-medium text-blue-800">
-            {partner?.Email}
-          </span>
+        <h2 className="text-2xl font-bold text-blue-800 tracking-tight">
+          Company Details
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Company Name</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1">
+            {partner?.CompanyName}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Company Code</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1 font-mono bg-blue-50 px-3 py-1 rounded-lg inline-block">
+            {partner?.id}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">CIN</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1">
+            {partner?.CIN || "N/A"}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">PAN Number</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1">
+            {partner?.PAN_No || "N/A"}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Phone No</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1">
+            {partner?.Contact || "N/A"}
+          </p>
+        </div>
+
+        <div className="bg-white/80 p-4 rounded-xl shadow-sm border border-blue-100">
+          <span className="text-sm font-medium text-blue-500">Email ID</span>
+          <p className="text-lg font-semibold text-blue-800 mt-1 truncate">
+            {partner?.Email || "N/A"}
+          </p>
         </div>
       </div>
 
       {/* Company Documents Section */}
-      <div className="mt-2">
-        <h3 className="text-xl font-bold text-blue-900 mb-4">
-          Company Documents
-        </h3>
+      <div className="mt-4">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 rounded-xl bg-blue-100/80 shadow-inner">
+            <i className="fas fa-file-alt text-2xl text-blue-600"></i>
+          </div>
+          <h3 className="text-xl font-bold text-blue-800">Company Documents</h3>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {partner?.ESI && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">ESI:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.ESI}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="ESI" 
+              url={partner.ESI} 
+            />
           )}
           {partner?.PF && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">PF:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.PF}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="PF" 
+              url={partner.PF} 
+            />
           )}
           {partner?.PAN && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">PAN Card:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.PAN}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="PAN Card" 
+              url={partner.PAN} 
+            />
           )}
           {partner?.MOA && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">MOA:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.MOA}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="MOA" 
+              url={partner.MOA} 
+            />
           )}
           {partner?.GST && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">
-                GST Certificate:
-              </span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.GST}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="GST Certificate" 
+              url={partner.GST} 
+            />
           )}
           {partner?.TradeLicense && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">
-                Trade License:
-              </span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.TradeLicense}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="Trade License" 
+              url={partner.TradeLicense} 
+            />
           )}
           {partner?.MSMC && (
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-800">MSMC:</span>
-              <a
-                href={`${import.meta.env.VITE_API_URL}/${partner.MSMC}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
-              >
-                View Document{" "}
-                <i className="fas fa-external-link-alt text-xs"></i>
-              </a>
-            </div>
+            <DocumentItem 
+              label="MSMC" 
+              url={partner.MSMC} 
+            />
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DocumentItem({ label, url }: { label: string; url: string }) {
+  return (
+    <div className="bg-white/80 p-3 rounded-lg shadow-sm border border-blue-100 flex items-center justify-between">
+      <span className="font-medium text-blue-700">{label}</span>
+      <a
+        href={`${import.meta.env.VITE_API_URL}/${url}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm font-medium px-3 py-1 rounded-md bg-blue-50 hover:bg-blue-100 transition-colors"
+      >
+        View <i className="fas fa-external-link-alt text-xs"></i>
+      </a>
     </div>
   );
 }
 
 export function SubscriptionPlanContainer() {
   return (
-    <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Subscription Plan
-      </h2>
-      <div className="text-blue-900">
-        Your current plan details will appear here.
+    <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 flex flex-col gap-6 border border-blue-200/50 backdrop-blur-sm">
+      <div className="flex items-center gap-4 mb-2">
+        <div className="p-3 rounded-xl bg-blue-100/80 shadow-inner">
+          <i className="fas fa-crown text-2xl text-blue-600"></i>
+        </div>
+        <h2 className="text-2xl font-bold text-blue-800 tracking-tight">
+          Subscription Plan
+        </h2>
+      </div>
+      
+      <div className="bg-white/80 p-6 rounded-xl shadow-sm border border-blue-100">
+        <div className="text-center py-8">
+          <i className="fas fa-gem text-4xl text-blue-400 mb-4"></i>
+          <h3 className="text-xl font-bold text-blue-800 mb-2">Premium Plan</h3>
+          <p className="text-blue-600 mb-4">Active until December 31, 2023</p>
+          <div className="flex justify-center gap-4">
+            <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-md">
+              Upgrade Plan
+            </button>
+            <button className="px-6 py-2 bg-white border border-blue-300 hover:bg-blue-50 text-blue-700 font-medium rounded-lg transition-colors shadow-md">
+              View Usage
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 export function PaymentPanel() {
+  // Mock payment history data
+  const paymentHistory = [
+    { id: 1, date: "2023-10-15", amount: "$49.99", status: "Completed" },
+    { id: 2, date: "2023-09-15", amount: "$49.99", status: "Completed" },
+    { id: 3, date: "2023-08-15", amount: "$49.99", status: "Completed" },
+  ];
+
   return (
-    <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Payment
-      </h2>
-      <div className="text-blue-900">
-        Your payment details and history will appear here.
+    <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 flex flex-col gap-6 border border-blue-200/50 backdrop-blur-sm">
+      <div className="flex items-center gap-4 mb-2">
+        <div className="p-3 rounded-xl bg-blue-100/80 shadow-inner">
+          <i className="fas fa-credit-card text-2xl text-blue-600"></i>
+        </div>
+        <h2 className="text-2xl font-bold text-blue-800 tracking-tight">
+          Payment
+        </h2>
+      </div>
+
+      <div className="bg-white/80 p-6 rounded-xl shadow-sm border border-blue-100">
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-blue-800 mb-4">Payment Method</h3>
+          <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="p-3 bg-white rounded-lg shadow-sm">
+              <i className="fab fa-cc-visa text-3xl text-blue-800"></i>
+            </div>
+            <div>
+              <p className="font-medium text-blue-800">Visa ending in 4242</p>
+              <p className="text-sm text-blue-600">Expires 04/2025</p>
+            </div>
+            <button className="ml-auto text-blue-600 hover:text-blue-800 font-medium">
+              Change
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-blue-800 mb-4">Payment History</h3>
+          <div className="space-y-3">
+            {paymentHistory.map((payment) => (
+              <div key={payment.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div>
+                  <p className="font-medium text-blue-800">{payment.date}</p>
+                  <p className="text-sm text-blue-600">{payment.status}</p>
+                </div>
+                <p className="font-semibold text-blue-800">{payment.amount}</p>
+                <button className="text-blue-600 hover:text-blue-800">
+                  <i className="fas fa-download"></i>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -292,7 +324,6 @@ export function EmployeesPanel() {
 
         if (response.ok) {
           const data = await response.json();
-          // Transform data to match Employee type
           const transformedData = data.map((emp: any) => ({
             id: emp.id,
             fullname: emp.Name,
@@ -326,39 +357,52 @@ export function EmployeesPanel() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
-        <div className="text-blue-900 font-semibold">Loading employees...</div>
+      <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-8 py-8">
+        <div className="w-full flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-blue-800">All Employees</h2>
+          <div className="animate-pulse bg-blue-200 rounded-lg h-10 w-48"></div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-blue-100 rounded-xl h-40"></div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-8">
-      <div className="flex items-center justify-between w-full mb-10">
-        <h2 className="font-extrabold text-blue-900 text-4xl">All Employees</h2>
-        <div className="w-[20%] relative">
+    <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-8 py-8">
+      <div className="w-full flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <h2 className="text-3xl font-bold text-blue-800">All Employees</h2>
+        <div className="relative w-full md:w-64">
           <input
             type="text"
-            className="border-2 border-blue-200 w-full h-[5vh] pl-2 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-            placeholder="Search....."
+            className="border-2 border-blue-200 w-full h-12 pl-4 pr-10 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none bg-white/90 shadow-sm"
+            placeholder="Search employees..."
             onChange={search}
           />
           <img
             src={Search}
-            className="w-5 absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
+            className="w-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
             alt="Search"
           />
         </div>
       </div>
-      <div className="w-full flex flex-wrap justify-around gap-6">
-        {employees.length > 0 ? (
-          employees.map((employee) => (
+      
+      {employees.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+          {employees.map((employee) => (
             <EmployeeCard key={employee.id} employeeData={employee} />
-          ))
-        ) : (
-          <div className="text-blue-700 font-semibold">No employees found.</div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="w-full bg-white/80 p-8 rounded-xl shadow-sm border border-blue-100 text-center">
+          <i className="fas fa-users text-4xl text-blue-400 mb-4"></i>
+          <h3 className="text-xl font-semibold text-blue-800 mb-2">No Employees Found</h3>
+          <p className="text-blue-600">Your search didn't match any employees</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -381,76 +425,99 @@ export function SideBar({
   >;
 }) {
   const { userState } = useContext(UserContext)!;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="h-full w-full md:w-auto bg-gradient-to-b from-blue-900 to-blue-700 shadow-xl p-6 flex flex-row md:flex-col items-center gap-6 md:gap-8 rounded-b-3xl md:rounded-none md:rounded-r-3xl">
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "account"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("account")}
+    <>
+      {/* Mobile menu button */}
+      <button 
+        className="md:hidden fixed bottom-6 right-6 z-20 bg-blue-600 text-white p-4 rounded-full shadow-xl"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
       >
-        Account Details
+        <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
       </button>
 
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "company"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("company")}
-      >
-        Company Details
-      </button>
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "plan"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("plan")}
-      >
-        Subscription Plan
-      </button>
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "payment"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("payment")}
-      >
-        Payment
-      </button>
+      <nav className={`fixed md:relative bottom-0 left-0 right-0 md:inset-auto h-auto md:h-full w-full md:w-64 bg-gradient-to-b md:bg-gradient-to-r from-blue-800 to-blue-600 shadow-xl p-4 md:p-6 flex flex-row md:flex-col items-stretch gap-2 md:gap-4 rounded-t-2xl md:rounded-r-2xl md:rounded-l-none transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}`}>
+        <NavButton
+          icon="user-circle"
+          label="Account Details"
+          active={panelType === "account"}
+          onClick={() => {
+            setPanelType("account");
+            setMobileMenuOpen(false);
+          }}
+        />
 
-      {userState.position === "company" && (
-        <>
-          <button
-            className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-              panelType === "add-employee"
-                ? "bg-white text-blue-900 shadow-lg"
-                : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-            }`}
-            onClick={() => setPanelType("add-employee")}
-          >
-            Add Employee
-          </button>
+        <NavButton
+          icon="building"
+          label="Company Details"
+          active={panelType === "company"}
+          onClick={() => {
+            setPanelType("company");
+            setMobileMenuOpen(false);
+          }}
+        />
 
-          <button
-            className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-              panelType === "employees"
-                ? "bg-white text-blue-900 shadow-lg"
-                : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-            }`}
-            onClick={() => setPanelType("employees")}
-          >
-            Employees
-          </button>
-        </>
-      )}
-    </nav>
+        <NavButton
+          icon="crown"
+          label="Subscription Plan"
+          active={panelType === "plan"}
+          onClick={() => {
+            setPanelType("plan");
+            setMobileMenuOpen(false);
+          }}
+        />
+
+        <NavButton
+          icon="credit-card"
+          label="Payment"
+          active={panelType === "payment"}
+          onClick={() => {
+            setPanelType("payment");
+            setMobileMenuOpen(false);
+          }}
+        />
+
+        {userState.position === "company" && (
+          <>
+            <NavButton
+              icon="user-plus"
+              label="Add Employee"
+              active={panelType === "add-employee"}
+              onClick={() => {
+                setPanelType("add-employee");
+                setMobileMenuOpen(false);
+              }}
+            />
+
+            <NavButton
+              icon="users"
+              label="Employees"
+              active={panelType === "employees"}
+              onClick={() => {
+                setPanelType("employees");
+                setMobileMenuOpen(false);
+              }}
+            />
+          </>
+        )}
+      </nav>
+    </>
+  );
+}
+
+function NavButton({ icon, label, active, onClick }: { icon: string; label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl w-full text-base font-medium transition-all duration-200 ease-linear cursor-pointer focus:outline-none ${
+        active
+          ? "bg-white text-blue-800 shadow-md"
+          : "text-white hover:bg-blue-500/50 hover:shadow-md"
+      }`}
+      onClick={onClick}
+    >
+      <i className={`fas fa-${icon} ${active ? 'text-blue-600' : 'text-white'} text-lg w-6 text-center`}></i>
+      <span>{label}</span>
+    </button>
   );
 }
