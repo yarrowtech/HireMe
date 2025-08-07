@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PDFIcon from "../assets/pdfIcon.svg"
 import Bin from "../assets/bin.svg"
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 export default function BecomePartner() {
     const [requestDetails, setRequestDetails] = useState({
@@ -101,6 +102,15 @@ export default function BecomePartner() {
             setIsSubmitting(false);
         }
     }
+
+    const { userState } = useContext(UserContext)!
+
+    useEffect(() => {
+        if (userState.position !== "guest") {
+            navigate("/")
+            toast.success("You already have an account with us.")
+        }
+    }, [userState])
 
     return (
         <>
