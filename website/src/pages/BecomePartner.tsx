@@ -309,7 +309,7 @@ export default function BecomePartner() {
                                         <FileUploadCard
                                             key={requirement.key}
                                             label={requirement.label}
-                                            fileKey={requirement.key as keyof typeof files}
+                                            fileKey={requirement.key as string}
                                             file={files[requirement.key as keyof typeof files]}
                                             required={requirement.required}
                                             onUpload={() => requirement.ref.current?.click()}
@@ -440,7 +440,6 @@ function FormField({
 // File Upload Card Component
 function FileUploadCard({
     label,
-    fileKey,
     file,
     required,
     onUpload,

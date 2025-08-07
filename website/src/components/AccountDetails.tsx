@@ -17,7 +17,7 @@ import { useParams } from "react-router-dom";
 
 export function AccountDetailsContainer() {
   const { userState } = useContext(UserContext)!;
-  
+
   return (
     <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
       <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
@@ -56,11 +56,14 @@ export function CompanyDetailsContainer() {
   const { userState } = useContext(UserContext)!;
   const [partner, setPartner] = useState<PartnerDetails>();
   const { fetchPartnerDetails } = useContext(PartnersContext)!;
-  const params = useParams()
+  const params = useParams();
 
   useEffect(() => {
     const fetchDetails = async () => {
-      const compid = userState.position === "superadmin" ? parseInt(params.id || "-1") : userState.Company
+      const compid =
+        userState.position === "superadmin"
+          ? parseInt(params.id || "-1")
+          : userState.Company;
       const details = await fetchPartnerDetails(compid || -1);
       if (details) {
         setPartner(details);
@@ -275,12 +278,14 @@ export function EmployeesPanel() {
       try {
         setLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/partner/employees/${userState.Company}`,
+          `${import.meta.env.VITE_API_URL}/partner/employees/${
+            userState.Company
+          }`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
           }
         );
@@ -291,7 +296,7 @@ export function EmployeesPanel() {
           const transformedData = data.map((emp: any) => ({
             id: emp.id,
             fullname: emp.Name,
-            pic: emp.Pic || '',
+            pic: emp.Pic || "",
           }));
           setEmployees(transformedData);
           setAllEmployees(transformedData);
@@ -299,7 +304,7 @@ export function EmployeesPanel() {
           toast.error("Failed to fetch employees");
         }
       } catch (error) {
-        console.error('Error fetching employees:', error);
+        console.error("Error fetching employees:", error);
         toast.error("Error fetching employees");
       } finally {
         setLoading(false);
@@ -362,13 +367,20 @@ export function SideBar({
   panelType,
   setPanelType,
 }: {
-  panelType: "account" | "company" | "plan" | "payment" | "add-employee" | "employees";
+  panelType:
+    | "account"
+    | "company"
+    | "plan"
+    | "payment"
+    | "add-employee"
+    | "employees";
   setPanelType: React.Dispatch<
     React.SetStateAction<
       "account" | "company" | "plan" | "payment" | "add-employee" | "employees"
     >
   >;
 }) {
+  const { userState } = useContext(UserContext)!;
 
   return (
     <nav className="h-full w-full md:w-auto bg-gradient-to-b from-blue-900 to-blue-700 shadow-xl p-6 flex flex-row md:flex-col items-center gap-6 md:gap-8 rounded-b-3xl md:rounded-none md:rounded-r-3xl">
@@ -382,7 +394,7 @@ export function SideBar({
       >
         Account Details
       </button>
-      
+
       <button
         className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
           panelType === "company"
@@ -414,27 +426,31 @@ export function SideBar({
         Payment
       </button>
 
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "add-employee"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("add-employee")}
-      >
-        Add Employee
-      </button>
+      {userState.position === "company" && (
+        <>
+          <button
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+              panelType === "add-employee"
+                ? "bg-white text-blue-900 shadow-lg"
+                : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
+            }`}
+            onClick={() => setPanelType("add-employee")}
+          >
+            Add Employee
+          </button>
 
-      <button
-        className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          panelType === "employees"
-            ? "bg-white text-blue-900 shadow-lg"
-            : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
-        }`}
-        onClick={() => setPanelType("employees")}
-      >
-        Employees
-      </button>
+          <button
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl w-full text-lg font-semibold transition-all duration-300 ease-linear cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+              panelType === "employees"
+                ? "bg-white text-blue-900 shadow-lg"
+                : "text-white hover:bg-blue-300 hover:text-blue-900 hover:scale-105 hover:shadow-lg"
+            }`}
+            onClick={() => setPanelType("employees")}
+          >
+            Employees
+          </button>
+        </>
+      )}
     </nav>
   );
 }
