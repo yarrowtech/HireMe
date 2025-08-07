@@ -107,6 +107,48 @@ export default function BecomePartner() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        
+        // Only actually submit if we're on step 3, otherwise just prevent default
+        if (currentStep !== 3) {
+            return;
+        }
+        
+        const formData = new FormData();
+
+        // Append text fields
+        Object.entries(requestDetails).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        // Append files from state
+        Object.entries(files).forEach(([key, file]) => {
+            if (file) {
+                formData.append(key, file);
+            }
+        });
+
+        try {
+            setIsSubmitting(true);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/request/send-request`, {
+                method: "POST",
+                body: formData,
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success(data.message)
+                navigate("/")
+            } else {
+                toast.error(typeof data.message === 'object' ? data.message[0] : data.message)
+            }
+        } catch (err) {
+            toast.error("An error occurred while submitting the request.");
+        }
+        finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleFinalSubmit() {
         const formData = new FormData();
 
         // Append text fields
@@ -370,7 +412,8 @@ export default function BecomePartner() {
                                     </button>
                                 ) : (
                                     <button
-                                        type="submit"
+                                        type="button"
+                                        onClick={handleFinalSubmit}
                                         disabled={isSubmitting}
                                         className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                                     >

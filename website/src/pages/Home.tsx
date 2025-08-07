@@ -2,12 +2,10 @@ import { Link } from "react-router-dom";
 import { FaLinkedin, FaInstagram, FaFacebook, FaCheckCircle, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaArrowRight, FaRocket, FaUsers, FaShieldAlt, FaChartLine, FaCog, FaStar } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import Login from "../components/Login";
 
 export default function Home() {
     // Navbar visibility state
     const [showNavbar, setShowNavbar] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
