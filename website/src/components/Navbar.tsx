@@ -6,11 +6,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import Login from "./Login";
 
-export default function Navbar() {
+export default function Navbar({ forceHidden = false }: { forceHidden?: boolean }) {
   const { userState, updateUserState } = useContext(UserContext)!;
-  const [showLogin, setShowLogin] = useState<Boolean>(false);
-  const [logout, setLogout] = useState<Boolean>(false);
-  const [scrolled, setScrolled] = useState<Boolean>(false);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [logout, setLogout] = useState<boolean>(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
   const userIcon = useRef<HTMLImageElement>(null);
   const navbar = useRef<HTMLElement>(null);
 
@@ -64,6 +64,8 @@ export default function Navbar() {
   useEffect(() => {
     document.body.style.overflow = showLogin ? "hidden" : "auto";
   }, [showLogin]);
+
+  if (forceHidden) return null;
 
   return (
     <>
@@ -227,7 +229,7 @@ export default function Navbar() {
             onClick={(e) => e.stopPropagation()}
             className="z-40 animate-scaleIn transition-all duration-300"
           >
-            <Login setShowLogin={setShowLogin} />
+            <Login setShowLogin={(value: boolean) => setShowLogin(value)} />
           </div>
         </div>
       )}

@@ -72,7 +72,7 @@ function ForgotPasswordModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function Login({ setShowLogin }: { setShowLogin: React.Dispatch<React.SetStateAction<Boolean>> }) {
+export default function Login({ setShowLogin }: { setShowLogin: (value: boolean) => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [companyCode, setCompanyCode] = useState("");

@@ -1,148 +1,246 @@
 import { Link } from "react-router-dom";
-import { FaLinkedin, FaInstagram, FaFacebook, FaCheckCircle, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaArrowRight } from "react-icons/fa";
+import { FaLinkedin, FaInstagram, FaFacebook, FaCheckCircle, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaArrowRight, FaRocket, FaUsers, FaShieldAlt, FaChartLine, FaCog, FaStar } from "react-icons/fa";
+import Navbar from "../components/Navbar";
+import { useEffect, useState } from "react";
+import Login from "../components/Login";
 
 export default function Home() {
+    // Navbar visibility state
+    const [showNavbar, setShowNavbar] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 100) {
+                setShowNavbar(true);
+            } else {
+                setShowNavbar(false);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     const scrollToPlans = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         const plansSection = document.getElementById('plans');
         plansSection?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // Remove the MinimalBar definition and its usage in the JSX.
+    // Only render the Navbar after scroll as before.
+
     return (
-        <section className="relative flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 overflow-x-hidden">
-            {/* Decorative Background Elements */}
-            <div className="absolute top-0 left-0 w-[60vw] h-[60vw] bg-gradient-to-br from-blue-200/40 to-blue-400/10 rounded-full blur-3xl -z-10" />
-            <div className="absolute bottom-0 right-0 w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/30 to-blue-400/10 rounded-full blur-2xl -z-10" />
-            <div className="absolute top-1/4 left-10 w-16 h-16 rounded-full bg-blue-300/20 blur-xl -z-10" />
-            <div className="absolute bottom-1/3 right-20 w-24 h-24 rounded-full bg-blue-400/15 blur-xl -z-10" />
-
+        <section className="relative flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 overflow-x-hidden">
+            {/* MinimalBar always visible at top until scroll, then replaced by Navbar */}
+            {/* Full Navbar appears after scroll */}
+            <div className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${showNavbar ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                <Navbar forceHidden={false} />
+            </div>
+            {/* Advanced Background Effects */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-gradient-to-tl from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse animation-delay-2000" />
+                <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-to-br from-indigo-400/10 to-purple-500/10 rounded-full blur-2xl animate-float" />
+                <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-gradient-to-br from-cyan-300/20 to-blue-400/20 rounded-full blur-xl animate-float-delayed" />
+            </div>
+            
+            {/* Floating Grid Pattern */}
+            <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMTQ3LCAxOTcsIDI1MywgMC4xKSIvPgo8L3N2Zz4=')] opacity-30"></div>
             {/* Hero Section */}
-            <div className="relative w-full min-h-[110vh] flex items-center justify-center overflow-hidden">
-                {/* Background with overlay */}
-                <div className="absolute inset-0">
-                    <div className="w-full h-full bg-[url('/home_intro_bg.png')] bg-cover bg-center" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-blue-700/20" />
-                </div>
-
+            <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
                 {/* Content container */}
-                <div className="relative z-10 top-10 w-full px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="mx-auto max-w-5xl">
-                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 flex flex-col items-center gap-8 border border-blue-100/50 max-w-5xl mx-auto transform transition-all hover:shadow-3xl hover:scale-[1.005] duration-500">
-                            {/* Headline */}
-                            <div className="text-center space-y-6">
-                                <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-blue-900 leading-tight">
-                                    <span className="block">Revolutionizing Workforce</span>
-                                    <span className="block bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                                        Management Solutions
-                                    </span>
-                                </h1>
-                                <p className="text-lg md:text-xl font-medium text-blue-800/90 max-w-3xl mx-auto leading-relaxed">
-                                    A comprehensive HR ecosystem designed to streamline operations for partner companies while empowering employees with stability and growth opportunities.
-                                </p>
+                <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="mx-auto max-w-7xl">
+                        <div className="text-center space-y-12">
+                            {/* Main Headline with advanced styling */}
+                            <div className="space-y-8">
+                                <div className="relative">
+                                    <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black tracking-tight leading-none">
+                                        <span className="block bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent drop-shadow-2xl">
+                                            The Future of
+                                        </span>
+                                        <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent animate-gradient-x">
+                                            HR Management
+                                        </span>
+                                    </h1>
+                                    {/* Glowing text effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-blue-400/20 to-purple-500/20 blur-3xl -z-10 animate-pulse"></div>
+                                </div>
+                                
+                                <div className="relative max-w-4xl mx-auto">
+                                    <p className="text-xl md:text-2xl font-medium text-slate-300 leading-relaxed">
+                                        Revolutionary AI-powered platform that transforms workforce management through 
+                                        <span className="text-transparent bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text font-semibold"> intelligent automation</span>, 
+                                        <span className="text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-semibold"> seamless integration</span>, 
+                                        and <span className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-semibold">predictive analytics</span>.
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* CTA Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+                            {/* Advanced CTA Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                                 <Link 
                                     to="/be-a-partner" 
-                                    className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-4 text-center rounded-xl font-bold text-white text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] transform-gpu focus:outline-none focus:ring-4 focus:ring-blue-400/50 min-w-[200px]"
+                                    className="group relative overflow-hidden px-10 py-5 rounded-2xl font-bold text-lg shadow-2xl transition-all duration-500 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-400/50 min-w-[240px] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500"
                                 >
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                        Get Started <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                                    <span className="relative z-10 flex items-center justify-center gap-3 text-white">
+                                        <FaRocket className="text-xl transition-transform group-hover:rotate-12 group-hover:scale-110" />
+                                        Launch Your Journey
+                                        <FaArrowRight className="transition-transform group-hover:translate-x-2" />
                                     </span>
-                                    <span className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                                 </Link>
                                 
                                 <a 
                                     href="#plans"
                                     onClick={scrollToPlans}
-                                    className="relative overflow-hidden group bg-white border-2 border-blue-400 px-8 py-4 text-center rounded-xl font-bold text-blue-700 text-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] transform-gpu focus:outline-none focus:ring-4 focus:ring-blue-400/30 min-w-[200px] hover:bg-blue-50/70"
+                                    className="group relative overflow-hidden px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-500 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/30 min-w-[240px] bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white hover:text-white"
                                 >
-                                    <span className="flex items-center justify-center gap-2">
-                                        View Plans <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                                    <span className="flex items-center justify-center gap-3">
+                                        <FaChartLine className="text-xl transition-transform group-hover:scale-110" />
+                                        Explore Solutions
+                                        <FaArrowRight className="transition-transform group-hover:translate-x-2" />
                                     </span>
                                 </a>
                             </div>
 
-                            {/* Additional decorative elements */}
-                            <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-blue-400/20 blur-xl" />
-                            <div className="absolute -top-6 -left-6 w-32 h-32 rounded-full bg-blue-600/10 blur-xl" />
+                            {/* Feature Pills */}
+                            <div className="flex flex-wrap justify-center gap-4 mt-12">
+                                {[
+                                    { icon: FaShieldAlt, text: "Enterprise Security" },
+                                    { icon: FaUsers, text: "Unlimited Scale" },
+                                    { icon: FaCog, text: "AI Automation" },
+                                    { icon: FaStar, text: "5-Star Support" }
+                                ].map((feature, index) => (
+                                    <div key={index} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 hover:bg-white/20 transition-all duration-300 hover:scale-105">
+                                        <feature.icon className="text-cyan-400" />
+                                        <span className="font-medium">{feature.text}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Scrolling indicator */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block animate-bounce">
-                    <div className="w-8 h-14 rounded-3xl border-4 border-blue-500/70 flex justify-center p-1">
-                        <div className="w-2 h-2 rounded-full bg-blue-500/90 animate-pulse" />
+                {/* Advanced scrolling indicator */}
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block">
+                    <div className="flex flex-col items-center gap-2 animate-bounce">
+                        <div className="text-white/70 text-sm font-medium">Scroll to explore</div>
+                        <div className="w-8 h-14 rounded-3xl border-2 border-white/30 flex justify-center p-1 bg-white/5 backdrop-blur-sm">
+                            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-400 animate-pulse" />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Welcome Section */}
-            <div className="w-full flex justify-center px-4 sm:px-6 my-16">
-                <div className="w-full max-w-4xl bg-white/95 rounded-2xl shadow-lg border border-blue-100 px-8 py-12 flex flex-col items-center gap-6 relative overflow-hidden transition-all hover:shadow-xl hover:scale-[1.005] duration-300">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 rounded-t-2xl" />
-                    <h2 className="text-2xl md:text-4xl font-extrabold text-blue-900 mb-2 tracking-tight text-center">
-                        Welcome to <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Hire Me</span>
-                    </h2>
-                    <p className="text-blue-700 text-lg md:text-xl font-semibold text-center max-w-2xl">
-                        Where companies build better teams and employees find greater stability through innovative HR solutions.
-                    </p>
-                    <div className="w-full flex flex-col items-center">
-                        <p className="text-blue-900/90 text-base md:text-lg font-medium text-center max-w-3xl leading-relaxed">
-                            Hire Me transforms traditional human resource operations into a smart, seamless digital experience. Our web-based platform helps partner organizations manage employee data efficiently, streamline HR tasks, and maintain transparency at every organizational level.
-                        </p>
-                        <p className="text-blue-900/90 text-base md:text-lg font-medium text-center max-w-3xl leading-relaxed mt-4">
-                            Whether you're a growing startup or an established enterprise, Hire Me provides scalable workforce management tools tailored to your business needs, all while ensuring employee satisfaction and retention.
-                        </p>
+            {/* Welcome Section - Redesigned */}
+            <div className="w-full flex justify-center px-4 sm:px-6 my-24">
+                <div className="w-full max-w-6xl bg-gradient-to-br from-slate-800/50 via-blue-900/50 to-indigo-900/50 backdrop-blur-xl rounded-3xl p-12 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-700">
+                    {/* Animated border gradient */}
+                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 p-[2px] opacity-50 group-hover:opacity-75 transition-opacity duration-500">
+                        <div className="w-full h-full bg-gradient-to-br from-slate-800/90 via-blue-900/90 to-indigo-900/90 rounded-3xl"></div>
                     </div>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 rounded-b-2xl" />
+                    
+                    <div className="relative z-10 text-center space-y-8">
+                        <div className="space-y-4">
+                            <h2 className="text-3xl md:text-5xl font-bold text-white">
+                                Welcome to the <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Next Generation</span>
+                            </h2>
+                            <p className="text-xl md:text-2xl font-medium text-slate-300 max-w-3xl mx-auto">
+                                Where innovation meets workforce excellence through cutting-edge technology
+                            </p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                            <div className="text-left space-y-4 p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center mb-4">
+                                    <FaRocket className="text-2xl text-white" />
+                                </div>
+                                <p className="text-slate-300 text-lg leading-relaxed">
+                                    Transform traditional HR operations into intelligent, automated workflows that scale with your business growth and adapt to changing workforce dynamics.
+                                </p>
+                            </div>
+                            
+                            <div className="text-left space-y-4 p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center mb-4">
+                                    <FaUsers className="text-2xl text-white" />
+                                </div>
+                                <p className="text-slate-300 text-lg leading-relaxed">
+                                    Empower your workforce with transparent processes, real-time insights, and tools designed to foster career growth and organizational success.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {/* Floating particles effect */}
+                        <div className="absolute -z-10 w-full h-full top-0 left-0">
+                            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400/60 rounded-full animate-float"></div>
+                            <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-blue-400/40 rounded-full animate-float-delayed"></div>
+                            <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-purple-400/80 rounded-full animate-pulse"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* About Us Section */}
-            <div id="about" className="w-[95vw] max-w-6xl mx-auto my-16 grid grid-cols-1 md:grid-cols-[45%_auto] bg-white/95 rounded-3xl p-8 gap-8 shadow-xl border border-blue-100 items-center transition-all hover:shadow-2xl hover:scale-[1.005] duration-300">
-                <div className="relative overflow-hidden rounded-2xl shadow-lg h-full min-h-[300px]">
-                    <img 
-                        src="/about.png" 
-                        alt="About Hire Me" 
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-blue-700/10" />
-                </div>
-                <div className="py-4">
-                    <h2 className="text-3xl font-extrabold text-blue-900 mb-6 tracking-tight relative inline-block">
-                        About Us
-                        <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-200 rounded-full" />
-                    </h2>
-                    <p className="text-blue-900/90 text-base font-medium leading-relaxed mb-4">
-                        At Hire Me, we're reimagining HR for the modern workforce. Our mission is to bridge the gap between organizational efficiency and employee satisfaction through innovative digital solutions.
-                    </p>
-                    <p className="text-blue-900/90 text-base font-medium leading-relaxed mb-6">
-                        We serve a diverse ecosystem of stakeholders with our comprehensive platform:
-                    </p>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                        <li className="flex items-start gap-2">
-                            <FaCheckCircle className="text-blue-500 mt-1 flex-shrink-0" />
-                            <span className="text-blue-900 font-medium">Partner companies seeking HR efficiency</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                            <FaCheckCircle className="text-blue-500 mt-1 flex-shrink-0" />
-                            <span className="text-blue-900 font-medium">HR professionals needing better tools</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                            <FaCheckCircle className="text-blue-500 mt-1 flex-shrink-0" />
-                            <span className="text-blue-900 font-medium">Administrators requiring oversight</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                            <FaCheckCircle className="text-blue-500 mt-1 flex-shrink-0" />
-                            <span className="text-blue-900 font-medium">Employees wanting stability</span>
-                        </li>
-                    </ul>
-                    <p className="text-blue-900/90 text-base font-medium leading-relaxed">
-                        Our platform combines simplicity with powerful features, creating a digital bridge between operational efficiency and workforce empowerment through intuitive design and transparent processes.
-                    </p>
+            {/* About Us Section - Redesigned */}
+            <div id="about" className="w-full max-w-7xl mx-auto my-24 px-4 sm:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="relative group">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-700"></div>
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-slate-800 to-blue-900">
+                            <img 
+                                src="/about.png" 
+                                alt="About Hire Me" 
+                                className="w-full h-[400px] object-cover transition-transform duration-700 hover:scale-110" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-blue-900/30 to-transparent" />
+                            <div className="absolute bottom-6 left-6 right-6">
+                                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                                    <p className="text-white font-semibold text-lg">Transforming HR Since 2024</p>
+                                    <p className="text-slate-300 text-sm">Leading innovation in workforce management</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-8">
+                        <div className="space-y-4">
+                            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                                About <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Our Mission</span>
+                            </h2>
+                            <p className="text-xl text-slate-300 leading-relaxed">
+                                Pioneering the future of workforce management through AI-driven solutions and human-centered design.
+                            </p>
+                        </div>
+                        
+                        <div className="space-y-6">
+                            <p className="text-slate-300 text-lg leading-relaxed">
+                                We're building the next generation of HR technology that seamlessly connects organizations with their most valuable asset - their people. Through intelligent automation and predictive analytics, we're making workforce management more efficient, transparent, and empowering.
+                            </p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {[
+                                    { icon: FaRocket, text: "Innovation-First Approach", desc: "Cutting-edge technology solutions" },
+                                    { icon: FaUsers, text: "Human-Centered Design", desc: "Built for real-world workflows" },
+                                    { icon: FaShieldAlt, text: "Enterprise Security", desc: "Bank-grade data protection" },
+                                    { icon: FaChartLine, text: "Data-Driven Insights", desc: "Actionable workforce analytics" }
+                                ].map((item, index) => (
+                                    <div key={index} className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group">
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                                <item.icon className="text-white text-sm" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-white text-sm">{item.text}</h4>
+                                                <p className="text-slate-400 text-xs mt-1">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

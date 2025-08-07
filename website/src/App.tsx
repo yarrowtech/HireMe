@@ -1,6 +1,6 @@
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import UserContextProvider from "./context/UserContext";
 import Footer from "./components/Footer";
 import BecomePartner from "./pages/BecomePartner";
@@ -16,10 +16,12 @@ import { ToastContainer, Bounce } from "react-toastify";
 import PartnerDetails from "./pages/PartnerDetails";
 
 function App() {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   return (
     <>
       <UserContextProvider>
-        <Navbar />
+        {!isHome && <Navbar />}
         <ToastContainer
           position="bottom-right"
           autoClose={5000}

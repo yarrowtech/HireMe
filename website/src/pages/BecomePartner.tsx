@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import PDFIcon from "../assets/pdfIcon.svg"
-import Bin from "../assets/bin.svg"
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { FaBuilding, FaPhone, FaEnvelope, FaMapMarkerAlt, FaIdCard, FaFileUpload, FaEye, FaTrash, FaCheck, FaArrowRight, FaArrowLeft, FaShieldAlt, FaCloudUploadAlt, FaTimes } from "react-icons/fa";
 
 export default function BecomePartner() {
+    const [currentStep, setCurrentStep] = useState(1);
     const [requestDetails, setRequestDetails] = useState({
         CompanyName: '',
         Contact: '',
@@ -44,6 +44,45 @@ export default function BecomePartner() {
     const msmcRef = useRef<HTMLInputElement>(null);
 
     const navigate = useNavigate()
+    
+    const steps = [
+        { id: 1, title: "Company Information", description: "Basic company details" },
+        { id: 2, title: "Document Upload", description: "Required legal documents" },
+        { id: 3, title: "Review & Submit", description: "Verify and submit application" }
+    ];
+
+    const fileRequirements = [
+        { key: "PAN", label: "PAN Card", ref: panCardRef, required: true },
+        { key: "ESI", label: "ESI Certificate", ref: esiRef, required: true },
+        { key: "PF", label: "PF Registration", ref: pfRef, required: true },
+        { key: "MOA", label: "MOA Document", ref: moaRef, required: true },
+        { key: "MSMC", label: "MSMC Certificate", ref: msmcRef, required: false },
+        { key: "GST", label: "GST Certificate", ref: gstRef, required: true },
+        { key: "TradeLicense", label: "Trade License", ref: tradeRef, required: true }
+    ];
+
+    const validateStep = (step: number) => {
+        if (step === 1) {
+            return requestDetails.CompanyName && requestDetails.Contact && requestDetails.Email && requestDetails.Address && requestDetails.CIN && requestDetails.PAN_No;
+        }
+        if (step === 2) {
+            const requiredFiles = fileRequirements.filter(f => f.required);
+            return requiredFiles.every(f => files[f.key as keyof typeof files]);
+        }
+        return true;
+    };
+
+    const nextStep = () => {
+        if (validateStep(currentStep)) {
+            setCurrentStep(prev => Math.min(prev + 1, 3));
+        } else {
+            toast.error("Please complete all required fields before proceeding.");
+        }
+    };
+
+    const prevStep = () => {
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
 
     function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) {
         const file = e.target.files?.[0] || null;
@@ -113,269 +152,258 @@ export default function BecomePartner() {
     }, [userState])
 
     return (
-        <>
-            <form
-                className="w-[60vw] shadow-2xl p-10 flex flex-col items-center rounded-2xl bg-white/90 gap-5 my-[15vh] mx-auto border border-blue-100"
-                onSubmit={handleSubmit}
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-gradient-to-tl from-purple-500/20 to-blue-600/20 rounded-full blur-3xl animate-pulse animation-delay-2000" />
+                <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-to-br from-indigo-400/10 to-purple-500/10 rounded-full blur-2xl animate-float" />
+            </div>
+            
+            {/* Floating Grid Pattern */}
+            <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMTQ3LCAxOTcsIDI1MywgMC4xKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+
+            {/* Back Button */}
+            <button 
+                onClick={() => navigate('/')}
+                className="absolute top-8 left-8 flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-300 group z-20"
             >
-                <h2 className="underline text-3xl font-extrabold text-blue-900 mb-2 tracking-tight">Become a Partner</h2>
-                <input
-                    type="text"
-                    name="CompanyName"
-                    placeholder="Enter company name"
-                    className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={requestDetails.CompanyName}
-                    onChange={handleInputChange}
-                />
-                <input
-                    type="text"
-                    name="Contact"
-                    placeholder="Enter contact no"
-                    className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={requestDetails.Contact}
-                    onChange={handleInputChange}
-                />
-                <input
-                    type="text"
-                    name="Email"
-                    placeholder="Enter email id"
-                    className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={requestDetails.Email}
-                    onChange={handleInputChange}
-                />
-                <textarea
-                    name="Address"
-                    className="resize-none w-4/5 h-[20vh] p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Enter address"
-                    value={requestDetails.Address}
-                    onChange={handleInputChange}
-                ></textarea>
-                <input
-                    type="text"
-                    name="CIN"
-                    placeholder="CIN No"
-                    className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={requestDetails.CIN}
-                    onChange={handleInputChange}
-                />
-                <input
-                    type="text"
-                    name="PAN_No"
-                    placeholder="PAN Card Number"
-                    className="w-4/5 p-3 border-2 border-blue-200 rounded outline-none focus:ring-2 focus:ring-blue-400"
-                    value={requestDetails.PAN_No}
-                    onChange={handleInputChange}
-                />
+                <FaArrowLeft className="transition-transform group-hover:-translate-x-1" />
+                <span>Back to Home</span>
+            </button>
 
-                {/* PAN Card File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">PAN Card (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={panCardRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "PAN")}
-                    />
-                    <button type="button" onClick={() => panCardRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload PAN Card</button>
-                    {files.PAN && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.PAN!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("PAN")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
+            <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-12">
+                {/* Header */}
+                <div className="text-center mb-12">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg">
+                        <FaBuilding className="text-3xl text-white" />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        Partner <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Registration</span>
+                    </h1>
+                    <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+                        Join our ecosystem of trusted partners and unlock new business opportunities
+                    </p>
                 </div>
 
-                {/* ESI File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">ESI (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={esiRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "ESI")}
-                    />
-                    <button type="button" onClick={() => esiRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload ESI</button>
-                    {files.ESI && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.ESI!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("ESI")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
+                {/* Step Indicator */}
+                <div className="mb-12">
+                    <div className="flex justify-between items-center">
+                        {steps.map((step, index) => (
+                            <div key={step.id} className="flex items-center flex-1">
+                                <div className="flex flex-col items-center">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all duration-300 ${
+                                        currentStep >= step.id 
+                                            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg scale-110' 
+                                            : 'bg-white/10 text-slate-400 border border-white/20'
+                                    }`}>
+                                        {currentStep > step.id ? <FaCheck /> : step.id}
+                                    </div>
+                                    <div className="text-center mt-2">
+                                        <p className={`font-semibold text-sm ${currentStep >= step.id ? 'text-white' : 'text-slate-400'}`}>
+                                            {step.title}
+                                        </p>
+                                        <p className={`text-xs ${currentStep >= step.id ? 'text-slate-300' : 'text-slate-500'}`}>
+                                            {step.description}
+                                        </p>
+                                    </div>
+                                </div>
+                                {index < steps.length - 1 && (
+                                    <div className={`flex-1 h-1 mx-4 rounded-full transition-all duration-300 ${
+                                        currentStep > step.id ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-white/20'
+                                    }`} />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* PF File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">PF (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={pfRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "PF")}
-                    />
-                    <button type="button" onClick={() => pfRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload PF</button>
-                    {files.PF && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.PF!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("PF")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
-                </div>
+                {/* Form Container */}
+                <div className="bg-gradient-to-br from-slate-800/50 to-blue-900/50 backdrop-blur-xl rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                    {/* Animated border glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 p-[2px] opacity-50 rounded-3xl">
+                        <div className="w-full h-full bg-gradient-to-br from-slate-800/90 via-blue-900/90 to-indigo-900/90 rounded-3xl"></div>
+                    </div>
+                    
+                    <form onSubmit={handleSubmit} className="relative z-10">
+                        {/* Step 1: Company Information */}
+                        {currentStep === 1 && (
+                            <div className="space-y-6">
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <FaBuilding className="text-cyan-400" />
+                                    Company Information
+                                </h3>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormField
+                                        icon={FaBuilding}
+                                        label="Company Name"
+                                        name="CompanyName"
+                                        placeholder="Enter your company name"
+                                        value={requestDetails.CompanyName}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <FormField
+                                        icon={FaPhone}
+                                        label="Contact Number"
+                                        name="Contact"
+                                        placeholder="Enter contact number"
+                                        value={requestDetails.Contact}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormField
+                                        icon={FaEnvelope}
+                                        label="Email Address"
+                                        name="Email"
+                                        type="email"
+                                        placeholder="Enter email address"
+                                        value={requestDetails.Email}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <FormField
+                                        icon={FaIdCard}
+                                        label="CIN Number"
+                                        name="CIN"
+                                        placeholder="Corporate Identity Number"
+                                        value={requestDetails.CIN}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                
+                                <FormField
+                                    icon={FaIdCard}
+                                    label="PAN Number"
+                                    name="PAN_No"
+                                    placeholder="Enter PAN card number"
+                                    value={requestDetails.PAN_No}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-sm font-medium text-slate-300 mb-2">
+                                        <FaMapMarkerAlt className="text-cyan-400" />
+                                        Company Address *
+                                    </label>
+                                    <textarea
+                                        name="Address"
+                                        rows={4}
+                                        className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-300 resize-none"
+                                        placeholder="Enter complete company address"
+                                        value={requestDetails.Address}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        )}
 
-                {/* MOA File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">MOA (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={moaRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "MOA")}
-                    />
-                    <button type="button" onClick={() => moaRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload MOA</button>
-                    {files.MOA && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.MOA!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("MOA")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
-                </div>
+                        {/* Step 2: Document Upload */}
+                        {currentStep === 2 && (
+                            <div className="space-y-6">
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <FaFileUpload className="text-cyan-400" />
+                                    Document Upload
+                                </h3>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {fileRequirements.map((requirement) => (
+                                        <FileUploadCard
+                                            key={requirement.key}
+                                            label={requirement.label}
+                                            fileKey={requirement.key as keyof typeof files}
+                                            file={files[requirement.key as keyof typeof files]}
+                                            required={requirement.required}
+                                            onUpload={() => requirement.ref.current?.click()}
+                                            onPreview={(file) => handlePreview(file)}
+                                            onDelete={() => clearFile(requirement.key as keyof typeof files)}
+                                        />
+                                    ))}
+                                </div>
+                                
+                                {/* Hidden file inputs */}
+                                {fileRequirements.map((requirement) => (
+                                    <input
+                                        key={requirement.key}
+                                        type="file"
+                                        ref={requirement.ref}
+                                        accept="application/pdf"
+                                        style={{ display: 'none' }}
+                                        onChange={e => handleFileInputChange(e, requirement.key as keyof typeof files)}
+                                    />
+                                ))}
+                            </div>
+                        )}
 
-                {/* MSMC File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">MSMC (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={msmcRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "MSMC")}
-                    />
-                    <button type="button" onClick={() => msmcRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload MSMC</button>
-                    {files.MSMC && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.MSMC!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("MSMC")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
-                </div>
+                        {/* Step 3: Review & Submit */}
+                        {currentStep === 3 && (
+                            <div className="space-y-6">
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <FaShieldAlt className="text-cyan-400" />
+                                    Review & Submit
+                                </h3>
+                                
+                                <ReviewSection requestDetails={requestDetails} files={files} fileRequirements={fileRequirements} />
+                            </div>
+                        )}
 
-                {/* GST Certificate File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">GST Certificate (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={gstRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "GST")}
-                    />
-                    <button type="button" onClick={() => gstRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload GST Certificate</button>
-                    {files.GST && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.GST!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("GST")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
+                        {/* Navigation Buttons */}
+                        <div className="flex justify-between mt-8 pt-6 border-t border-white/10">
+                            {currentStep > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={prevStep}
+                                    className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-2xl text-white hover:bg-white/20 transition-all duration-300"
+                                >
+                                    <FaArrowLeft />
+                                    Previous
+                                </button>
+                            )}
+                            
+                            <div className="ml-auto">
+                                {currentStep < 3 ? (
+                                    <button
+                                        type="button"
+                                        onClick={nextStep}
+                                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                                    >
+                                        Next Step
+                                        <FaArrowRight />
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                                Submitting...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FaCheck />
+                                                Submit Application
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                {/* Trade License File Upload */}
-                <div className="w-4/5 flex flex-col gap-2">
-                    <label className="font-semibold text-blue-900">Trade License (Upload file)</label>
-                    <input
-                        type="file"
-                        ref={tradeRef}
-                        accept="application/pdf"
-                        style={{ display: 'none' }}
-                        onChange={e => handleFileInputChange(e, "TradeLicense")}
-                    />
-                    <button type="button" onClick={() => tradeRef.current?.click()} className="rounded bg-blue-500 text-white px-3 py-1 text-sm font-semibold hover:bg-blue-600 transition self-start">Upload Trade License</button>
-                    {files.TradeLicense && <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="rounded bg-green-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-green-600 transition self-start"
-                            onClick={() => handlePreview(files.TradeLicense!)}
-                        >
-                            Preview <img src={PDFIcon} />
-                        </button>
-                        <button
-                            type="button"
-                            className="rounded bg-red-500 text-white px-3 flex items-center py-1 text-sm font-semibold hover:bg-red-600 transition self-start"
-                            onClick={() => clearFile("TradeLicense")}
-                        >
-                            <img src={Bin} />
-                        </button>
-                    </div>}
-                </div>
-
-                <button className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 p-3 text-white font-bold cursor-pointer w-3/5 transition-all duration-300 hover:bg-blue-600 hover:scale-105 shadow focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    {isSubmitting ? "Submitting..." : "Submit Request"}
-                </button>
-            </form>
+            </div>
+            
             {previewVisible && <DocumentPreview fileData={previewData} setPreviewVisible={setPreviewVisible} />}
-        </>
+        </div>
     )
 }
 
