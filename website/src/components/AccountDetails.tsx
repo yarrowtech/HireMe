@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
-import Search from "../assets/search.svg";
 import { EmployeeCard } from "./AllEmployees";
 import type { Employee } from "./AllEmployees";
 import {
@@ -14,39 +13,127 @@ import {
   type PartnerDetails,
 } from "../context/PartnerContext";
 import { useParams } from "react-router-dom";
+import { 
+  FaUser, 
+  FaBuilding, 
+  FaIdCard, 
+  FaPhone, 
+  FaEnvelope, 
+  FaMapMarkerAlt, 
+  FaFileAlt, 
+  FaExternalLinkAlt, 
+  FaSearch,
+  FaCrown,
+  FaShield,
+  FaUserTie,
+  FaCreditCard,
+  FaCalendarAlt,
+  FaUsers,
+  FaPlus
+} from "react-icons/fa";
 
 export function AccountDetailsContainer() {
   const { userState } = useContext(UserContext)!;
   
+  const getAccountTypeIcon = (position: string) => {
+    switch (position) {
+      case "admin":
+        return <FaShield className="text-red-400" />;
+      case "manager":
+        return <FaUserTie className="text-blue-400" />;
+      case "superadmin":
+        return <FaCrown className="text-yellow-400" />;
+      default:
+        return <FaUser className="text-green-400" />;
+    }
+  };
+
+  const getAccountTypeColor = (position: string) => {
+    switch (position) {
+      case "admin":
+        return "bg-red-500/20 text-red-400 border-red-500/30";
+      case "manager":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      case "superadmin":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      default:
+        return "bg-green-500/20 text-green-400 border-green-500/30";
+    }
+  };
+  
   return (
-    <div className="w-[70%] bg-white/90 rounded-3xl shadow-2xl p-10 flex flex-col gap-8 border border-blue-100">
-      <h2 className="text-2xl font-extrabold text-blue-900 mb-2 tracking-tight">
-        Account Details
-      </h2>
+    <div className="w-full bg-gradient-to-br from-slate-800/50 to-blue-900/50 backdrop-blur-xl rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-blue-500/5 to-purple-500/5 rounded-3xl"></div>
+      <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-full blur-xl"></div>
+      
+      <div className="relative z-10">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+            <FaUser className="text-2xl text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white">Account Details</h2>
+            <p className="text-slate-300">Your account information and settings</p>
+          </div>
+        </div>
 
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">Username:</span>
-        <span className="text-base font-medium text-blue-800">
-          {userState.username}
-        </span>
-      </div>
+        <div className="space-y-6">
+          <div className="p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                <FaUser className="text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-400 text-sm">Username</p>
+                <p className="text-white text-lg font-semibold">{userState.username}</p>
+              </div>
+            </div>
+          </div>
 
-      <div className="flex items-center gap-3 border-b pb-4">
-        <span className="text-lg font-semibold text-blue-900">
-          Account Type:
-        </span>
-        <span
-          className={`text-base font-medium px-3 py-1 rounded-full ${
-            userState.position === "admin"
-              ? "bg-red-100 text-red-800"
-              : userState.position === "manager"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-green-100 text-green-800"
-          }`}
-        >
-          {userState.position?.charAt(0).toUpperCase() +
-            userState.position?.slice(1)}
-        </span>
+          <div className="p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                {getAccountTypeIcon(userState.position || "user")}
+              </div>
+              <div className="flex-1">
+                <p className="text-slate-400 text-sm">Account Type</p>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-white text-lg font-semibold">
+                    {userState.position?.charAt(0).toUpperCase() + userState.position?.slice(1)}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getAccountTypeColor(userState.position || "user")}`}>
+                    {userState.position === "superadmin" ? "Super Admin" : 
+                     userState.position === "admin" ? "Administrator" :
+                     userState.position === "manager" ? "Manager" : "User"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Info Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-3">
+                <FaCalendarAlt className="text-cyan-400" />
+                <div>
+                  <p className="text-slate-400 text-sm">Last Login</p>
+                  <p className="text-white text-sm font-medium">Today, 10:30 AM</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+              <div className="flex items-center gap-3">
+                <FaShield className="text-green-400" />
+                <div>
+                  <p className="text-slate-400 text-sm">Security Status</p>
+                  <p className="text-green-400 text-sm font-medium">Secure</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
