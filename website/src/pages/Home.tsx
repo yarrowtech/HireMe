@@ -378,53 +378,6 @@ export default function Home() {
                 </p>
             </div>
 
-            {/* Contact Section */}
-            <div id="contact" className="w-[95vw] max-w-6xl mx-auto my-16 bg-white/95 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-8 border border-blue-100 transition-all hover:shadow-2xl hover:scale-[1.005] duration-300">
-                <div className="text-center max-w-2xl">
-                    <h2 className="text-3xl font-extrabold text-blue-900 mb-4 tracking-tight">
-                        Get In <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Touch</span>
-                    </h2>
-                    <p className="text-blue-900/90 text-lg font-medium">
-                        We'd love to hear from you. Reach out for inquiries, support, or partnership opportunities.
-                    </p>
-                </div>
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <ContactCard 
-                        icon={<FaMapMarkerAlt className="text-blue-500 text-2xl" />} 
-                        title="Our Location" 
-                        detail="Hire Me HQ, Sector 5, Salt Lake, Kolkata - 700091" 
-                    />
-                    <ContactCard 
-                        icon={<FaEnvelope className="text-blue-500 text-2xl" />} 
-                        title="Email Us" 
-                        detail="info@hiremeplatform.com\nsupport@hiremeplatform.com" 
-                    />
-                    <ContactCard 
-                        icon={<FaPhoneAlt className="text-blue-500 text-2xl" />} 
-                        title="Call Us" 
-                        detail="+91 90000 12345\nMon - Sat, 10:00 AM - 7:00 PM" 
-                    />
-                </div>
-                <div className="flex flex-col items-center gap-4 mt-4">
-                    <div className="flex gap-4">
-                        <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors duration-300">
-                            <FaLinkedin size={24} />
-                        </a>
-                        <a href="#" className="text-pink-500 hover:text-pink-700 transition-colors duration-300">
-                            <FaInstagram size={24} />
-                        </a>
-                        <a href="#" className="text-blue-700 hover:text-blue-900 transition-colors duration-300">
-                            <FaFacebook size={24} />
-                        </a>
-                    </div>
-                    <Link 
-                        to="/contact" 
-                        className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center gap-2"
-                    >
-                        Contact Support <FaArrowRight />
-                    </Link>
-                </div>
-            </div>
 
             {/* Partners Section */}
             <div id="partners" className="w-full max-w-7xl mx-auto my-24 px-4 sm:px-6">
@@ -555,17 +508,6 @@ function PlanRow({ plan, features, ideal, price }: { plan: string; features: str
     );
 }
 
-function ContactCard({ icon, title, detail }: { icon: React.ReactNode; title: string; detail: string }) {
-    return (
-        <div className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-all duration-300 h-full">
-            <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-blue-100 rounded-full">{icon}</div>
-                <h3 className="text-xl font-bold text-blue-800">{title}</h3>
-            </div>
-            <p className="text-blue-900/90 whitespace-pre-line">{detail}</p>
-        </div>
-    );
-}
 
 function PartnerLogo({ src, alt }: { src: string; alt: string }) {
     return (

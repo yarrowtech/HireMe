@@ -271,7 +271,7 @@ export default function Footer() {
                     {/* Additional Info */}
                     <div className="text-center lg:text-right">
                         <p className="text-xs text-blue-300 mb-1">Version 2.1.0</p>
-                        <p className="text-xs text-blue-300">Made with ❤️ in India</p>
+                        <p className="text-xs text-blue-300">Made with ❤️ in India by Koushik & Atanu</p>
                     </div>
                 </div>
             </div>
