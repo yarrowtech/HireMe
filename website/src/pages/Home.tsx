@@ -59,7 +59,7 @@ export default function Home() {
                                             The Future of
                                         </span>
                                         <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent animate-gradient-x">
-                                            HR Management
+                                            Employee Management
                                         </span>
                                     </h1>
                                     {/* Glowing text effect */}
