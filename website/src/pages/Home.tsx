@@ -427,15 +427,80 @@ export default function Home() {
             </div>
 
             {/* Partners Section */}
-            <div id="partners" className="w-[95vw] max-w-6xl mx-auto my-16 bg-white/95 rounded-3xl p-8 sm:p-10 shadow-xl border border-blue-100 transition-all hover:shadow-2xl hover:scale-[1.005] duration-300">
-                <h2 className="text-3xl font-extrabold text-blue-900 mb-8 tracking-tight text-center">
-                    Trusted By <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Industry Leaders</span>
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center justify-center">
-                    <PartnerLogo src="/swiggy.png" alt="Swiggy" />
-                    <PartnerLogo src="/zepto.png" alt="Zepto" />
-                    <PartnerLogo src="/dunzo.jpg" alt="Dunzo" />
-                    <PartnerLogo src="/zomato.png" alt="Zomato" />
+            <div id="partners" className="w-full max-w-7xl mx-auto my-24 px-4 sm:px-6">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+                        Trusted By <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Industry Leaders</span>
+                    </h2>
+                    <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+                        Join thousands of companies worldwide who trust HireMe to manage their workforce efficiently
+                    </p>
+                </div>
+
+                {/* Partner Logos with Advanced Styling */}
+                <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 rounded-3xl blur-3xl"></div>
+                    <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 md:p-12">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                            <PartnerLogo src="/swiggy.png" alt="Swiggy" />
+                            <PartnerLogo src="/zepto.png" alt="Zepto" />
+                            <PartnerLogo src="/dunzo.jpg" alt="Dunzo" />
+                            <PartnerLogo src="/zomato.png" alt="Zomato" />
+                        </div>
+                        
+                        {/* Stats Section */}
+                        <div className="mt-12 pt-8 border-t border-white/20">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                                <div className="group">
+                                    <div className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                                        500+
+                                    </div>
+                                    <div className="text-slate-300 font-medium">
+                                        Partner Companies
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <div className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                                        50K+
+                                    </div>
+                                    <div className="text-slate-300 font-medium">
+                                        Employees Managed
+                                    </div>
+                                </div>
+                                <div className="group">
+                                    <div className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                                        99.9%
+                                    </div>
+                                    <div className="text-slate-300 font-medium">
+                                        Uptime Guarantee
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Testimonial */}
+                <div className="mt-16 text-center">
+                    <div className="bg-gradient-to-br from-slate-800/50 to-blue-900/50 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-white/10 max-w-4xl mx-auto">
+                        <div className="flex items-center justify-center mb-6">
+                            {[...Array(5)].map((_, i) => (
+                                <FaStar key={i} className="text-yellow-400 text-2xl mx-1" />
+                            ))}
+                        </div>
+                        <blockquote className="text-xl md:text-2xl text-slate-300 font-medium leading-relaxed mb-8">
+                            "HireMe has transformed how we manage our workforce. The AI-powered insights and seamless integration have improved our operational efficiency by 40%."
+                        </blockquote>
+                        <div className="flex items-center justify-center gap-4">
+                            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                                <span className="text-white font-bold text-xl">R</span>
+                            </div>
+                            <div className="text-left">
+                                <div className="font-semibold text-white text-lg">Rajesh Kumar</div>
+                                <div className="text-slate-400">CEO, TechFlow Solutions</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -504,12 +569,15 @@ function ContactCard({ icon, title, detail }: { icon: React.ReactNode; title: st
 
 function PartnerLogo({ src, alt }: { src: string; alt: string }) {
     return (
-        <div className="bg-white p-4 rounded-xl shadow-md border border-blue-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center h-28">
-            <img 
-                src={src} 
-                alt={alt} 
-                className="max-h-16 max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all duration-500" 
-            />
+        <div className="group relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 rounded-2xl p-6 md:p-8 flex items-center justify-center h-28 md:h-32 transition-all duration-300 group-hover:bg-white/10 group-hover:scale-105">
+                <img 
+                    src={src} 
+                    alt={alt} 
+                    className="max-h-12 md:max-h-16 max-w-[100px] md:max-w-[120px] object-contain filter brightness-0 invert opacity-60 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" 
+                />
+            </div>
         </div>
     );
 }

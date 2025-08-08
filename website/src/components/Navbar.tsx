@@ -5,12 +5,14 @@ import Tweak from "../assets/tweak.svg";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import Login from "./Login";
+import { FaUser, FaCog, FaSignOutAlt, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 
 export default function Navbar({ forceHidden = false }: { forceHidden?: boolean }) {
   const { userState, updateUserState } = useContext(UserContext)!;
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [logout, setLogout] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const userIcon = useRef<HTMLImageElement>(null);
   const navbar = useRef<HTMLElement>(null);
 
@@ -37,24 +39,8 @@ export default function Navbar({ forceHidden = false }: { forceHidden?: boolean 
 
     // styling navbar based on scroll position
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 5;
+      const isScrolled = window.scrollY > 20;
       setScrolled(isScrolled);
-      
-      if (navbar.current) {
-        if (!isScrolled) {
-          navbar.current.style.position = "absolute";
-          navbar.current.style.width = "95vw";
-          navbar.current.style.borderRadius = "1.5rem";
-          navbar.current.style.top = "0.75rem";
-          navbar.current.style.boxShadow = "0 4px 30px rgba(0, 0, 0, 0.1)";
-        } else {
-          navbar.current.style.position = "fixed";
-          navbar.current.style.width = "100vw";
-          navbar.current.style.borderRadius = "0";
-          navbar.current.style.top = "0";
-          navbar.current.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
-        }
-      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -71,168 +57,283 @@ export default function Navbar({ forceHidden = false }: { forceHidden?: boolean 
     <>
       <nav
         ref={navbar}
-        className={`w-[95vw] h-[12vh] p-5 ${
-          scrolled ? "bg-white/90" : "bg-white/30"
-        } backdrop-blur-md border ${
-          scrolled ? "border-blue-100" : "border-blue-200"
-        } shadow-xl rounded-3xl flex items-center justify-between text-blue-900 font-bold absolute left-1/2 top-3 -translate-x-1/2 z-20 transition-all duration-300 ease-in-out`}
+        className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/95 backdrop-blur-xl shadow-lg border-b border-blue-100/50"
+            : "bg-white/80 backdrop-blur-md"
+        }`}
       >
-        <Link
-          to="/"
-          className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-500 to-blue-700 text-transparent bg-clip-text drop-shadow-lg hover:scale-105 transition-transform duration-300"
-        >
-          HireMe
-        </Link>
-
-        <div
-          className={`w-3/5 h-full flex items-center ${
-            userState.Company !== null
-              ? "justify-end"
-              : "justify-around"
-          }`}
-        >
-          {userState.Company === null && userState.position === "guest" && (
-            <>
-              <a
-                href="/#about"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                About Us
-              </a>
-              <a
-                href="/#vision"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Our Vision
-              </a>
-              <a
-                href="/#partners"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Partners
-              </a>
-              <Link
-                to="/be-a-partner"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Become a Partner
-              </Link>
-              <a
-                href="/#plans"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Subscription
-              </a>
-              <img
-                ref={userIcon}
-                src={UserIcon}
-                className="w-8 h-8 p-1.5 cursor-pointer hover:scale-110 transition-transform duration-300 hover:bg-blue-100/50 rounded-full"
-                alt="User profile"
-              />
-            </>
-          )}
-
-          {userState.Company === null && userState.position === "superadmin" && (
-            <>
-              <Link
-                to="/partner-requests"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Partner Requests
-              </Link>
-              <Link
-                to="/partners"
-                className="p-2 rounded-2xl transition-all duration-300 ease-in-out hover:bg-blue-100/50 hover:text-blue-700 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-              >
-                Partners
-              </Link>
-              <div
-                id="profile"
-                className="flex relative items-center gap-2 group"
-                onClick={() => setLogout(!logout)}
-              >
-                <div className="flex items-center gap-2 hover:bg-blue-100/50 p-2 rounded-xl transition-all duration-200 cursor-pointer">
-                  <h3 className="font-medium">Welcome, {userState.username}</h3>
-                  <div className="w-8 h-8 rounded-full bg-blue-100/70 flex items-center justify-center">
-                    <img
-                      src={UserIcon}
-                      className="w-5 h-5"
-                      alt="User profile"
-                    />
-                  </div>
-                </div>
-                {logout && (
-                  <button
-                    onClick={handleLogout}
-                    className="absolute right-0 top-14 py-2 px-4 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl flex items-center gap-2 cursor-pointer shadow-lg border border-red-300 text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
-                  >
-                    <img src={Logout} className="w-4 h-4" alt="Logout" />
-                    LogOut
-                  </button>
-                )}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link
+              to="/"
+              className="flex items-center space-x-2"
+            >
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-xl">H</span>
               </div>
-            </>
-          )}
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                HireMe
+              </span>
+            </Link>
 
-          {userState.Company !== null && (
-            <>
-              <div
-                id="profile"
-                className="flex relative items-center gap-2 group"
-                onClick={() => setLogout(!logout)}
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-1">
+              {userState.Company === null && userState.position === "guest" && (
+                <>
+                  <NavLink href="/#about">About Us</NavLink>
+                  <NavLink href="/#vision">Our Vision</NavLink>
+                  <NavLink href="/#partners">Partners</NavLink>
+                  <NavLink href="/be-a-partner" isLink>Become a Partner</NavLink>
+                  <NavLink href="/#plans">Pricing</NavLink>
+                  
+                  <button
+                    onClick={() => setShowLogin(true)}
+                    className="ml-4 px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
+                  >
+                    Sign In
+                  </button>
+                </>
+              )}
+
+              {userState.Company === null && userState.position === "superadmin" && (
+                <>
+                  <NavLink href="/partner-requests" isLink>Partner Requests</NavLink>
+                  <NavLink href="/partners" isLink>Partners</NavLink>
+                  <UserDropdown
+                    username={userState.username}
+                    logout={logout}
+                    setLogout={setLogout}
+                    onLogout={handleLogout}
+                    userType="admin"
+                  />
+                </>
+              )}
+
+              {userState.Company !== null && (
+                <UserDropdown
+                  username={userState.username}
+                  logout={logout}
+                  setLogout={setLogout}
+                  onLogout={handleLogout}
+                  userType="company"
+                  userState={userState}
+                />
+              )}
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors duration-200"
               >
-                <div className="flex items-center gap-2 hover:bg-blue-100/50 p-2 rounded-xl transition-all duration-200 cursor-pointer">
-                  <h3 className="font-medium">Welcome, {userState.username}</h3>
-                  <div className="w-8 h-8 rounded-full bg-blue-100/70 flex items-center justify-center">
-                    <img
-                      src={UserIcon}
-                      className="w-5 h-5"
-                      alt="User profile"
-                    />
-                  </div>
-                </div>
-                {logout && (
-                  <div className="flex flex-col absolute right-0 top-14 gap-2 bg-white p-3 rounded-xl shadow-xl border border-blue-100 min-w-[180px]">
-                    <Link
-                      to={`${
-                        userState.position !== "emp"
-                          ? "/manage-account"
-                          : `/employees/employee/${userState.id}`
-                      }`}
-                      className="py-2 px-3 bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-xl flex items-center gap-2 cursor-pointer text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-                      onClick={() => setLogout(false)}
-                    >
-                      <img src={Tweak} className="w-4 h-4" alt="Settings" />
-                      Manage Account
-                    </Link>
+                {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-blue-100/50">
+            <div className="px-4 py-3 space-y-3">
+              {userState.Company === null && userState.position === "guest" && (
+                <>
+                  <MobileNavLink href="/#about" onClick={() => setMobileMenuOpen(false)}>
+                    About Us
+                  </MobileNavLink>
+                  <MobileNavLink href="/#vision" onClick={() => setMobileMenuOpen(false)}>
+                    Our Vision
+                  </MobileNavLink>
+                  <MobileNavLink href="/#partners" onClick={() => setMobileMenuOpen(false)}>
+                    Partners
+                  </MobileNavLink>
+                  <MobileNavLink href="/be-a-partner" isLink onClick={() => setMobileMenuOpen(false)}>
+                    Become a Partner
+                  </MobileNavLink>
+                  <MobileNavLink href="/#plans" onClick={() => setMobileMenuOpen(false)}>
+                    Pricing
+                  </MobileNavLink>
+                  <button
+                    onClick={() => {
+                      setShowLogin(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 mt-4"
+                  >
+                    Sign In
+                  </button>
+                </>
+              )}
+
+              {userState.Company === null && userState.position === "superadmin" && (
+                <>
+                  <MobileNavLink href="/partner-requests" isLink onClick={() => setMobileMenuOpen(false)}>
+                    Partner Requests
+                  </MobileNavLink>
+                  <MobileNavLink href="/partners" isLink onClick={() => setMobileMenuOpen(false)}>
+                    Partners
+                  </MobileNavLink>
+                  <div className="border-t border-blue-100 pt-3 mt-3">
+                    <div className="flex items-center gap-3 px-4 py-2">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+                        <FaUser className="text-white text-sm" />
+                      </div>
+                      <span className="font-medium text-blue-800">Welcome, {userState.username}</span>
+                    </div>
                     <button
                       onClick={handleLogout}
-                      className="py-2 px-3 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl flex items-center gap-2 cursor-pointer text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2"
                     >
-                      <img src={Logout} className="w-4 h-4" alt="Logout" />
-                      LogOut
+                      <FaSignOutAlt />
+                      Logout
                     </button>
                   </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+                </>
+              )}
+
+              {userState.Company !== null && (
+                <div className="border-t border-blue-100 pt-3 mt-3">
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+                      <FaUser className="text-white text-sm" />
+                    </div>
+                    <span className="font-medium text-blue-800">Welcome, {userState.username}</span>
+                  </div>
+                  <Link
+                    to={userState.position !== "emp" ? "/manage-account" : `/employees/employee/${userState.id}`}
+                    className="w-full text-left px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <FaCog />
+                    Manage Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <FaSignOutAlt />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
+
+      {/* Spacer to prevent content from going under fixed navbar */}
+      <div className="h-16"></div>
 
       {showLogin && (
         <div
-          className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md animate-fadeIn"
           onClick={() => setShowLogin(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="z-40 animate-scaleIn transition-all duration-300"
+            className="z-50 animate-scaleIn transition-all duration-300"
           >
             <Login setShowLogin={(value: boolean) => setShowLogin(value)} />
           </div>
         </div>
       )}
     </>
+  );
+}
+
+// Navigation Link Component
+function NavLink({ href, children, isLink = false }: { href: string; children: React.ReactNode; isLink?: boolean }) {
+  const className = "px-4 py-2 text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-xl transition-all duration-200 relative group";
+  
+  if (isLink) {
+    return (
+      <Link to={href} className={className}>
+        {children}
+        <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+      </Link>
+    );
+  }
+  
+  return (
+    <a href={href} className={className}>
+      {children}
+      <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+    </a>
+  );
+}
+
+// Mobile Navigation Link Component
+function MobileNavLink({ href, children, isLink = false, onClick }: { href: string; children: React.ReactNode; isLink?: boolean; onClick?: () => void }) {
+  const className = "block px-4 py-3 text-base font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-xl transition-colors duration-200";
+  
+  if (isLink) {
+    return (
+      <Link to={href} className={className} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
+  
+  return (
+    <a href={href} className={className} onClick={onClick}>
+      {children}
+    </a>
+  );
+}
+
+// User Dropdown Component
+function UserDropdown({ username, logout, setLogout, onLogout, userType, userState }: {
+  username: string;
+  logout: boolean;
+  setLogout: (value: boolean) => void;
+  onLogout: () => void;
+  userType: 'admin' | 'company';
+  userState?: any;
+}) {
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setLogout(!logout)}
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-xl transition-all duration-200 group"
+        id="profile"
+      >
+        <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+          <FaUser className="text-white text-sm" />
+        </div>
+        <span className="hidden lg:block">Welcome, {username}</span>
+        <FaChevronDown className={`text-xs transition-transform duration-200 ${logout ? 'rotate-180' : ''}`} />
+      </button>
+
+      {logout && (
+        <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-100/50 py-2 z-40">
+          <div className="px-4 py-3 border-b border-blue-100">
+            <p className="text-sm font-medium text-blue-800">Signed in as</p>
+            <p className="text-sm text-blue-600 truncate">{username}</p>
+          </div>
+          
+          {userType === 'company' && userState && (
+            <Link
+              to={userState.position !== "emp" ? "/manage-account" : `/employees/employee/${userState.id}`}
+              className="flex items-center gap-3 px-4 py-3 text-sm text-blue-700 hover:bg-blue-50 transition-colors duration-200"
+              onClick={() => setLogout(false)}
+            >
+              <FaCog className="text-blue-500" />
+              Manage Account
+            </Link>
+          )}
+          
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+          >
+            <FaSignOutAlt className="text-red-500" />
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
